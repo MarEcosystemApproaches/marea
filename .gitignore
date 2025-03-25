@@ -1,0 +1,12 @@
+ideas/
+lib/
+
+*.html
+*.docx
+*.nc
+*.RData
+
+.Rproj.user
+
+# Example one:
+/data-raw/coastwide-indices/oni.txt
