@@ -6,6 +6,9 @@ lib/
 *.nc
 *.RData
 
+*.csv
+*.xlsx
+
 .Rproj.user
 
 # Example one:

@@ -5,6 +5,8 @@ Developers: for some general tips for writing good bullets see https://style.tid
 
 ## Updates by date
 
+* 2025-03-26 Add in `grey_seals`.
+
 TODO: Examples from pacea:
 
 * 2025-02-25 Update indices `ao`, `mei`, `oni`, `pdo`, and `soi`, some now up to
