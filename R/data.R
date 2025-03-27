@@ -160,7 +160,7 @@
 ##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
 "nao"
 
-##' @title food habits.
+##' @title food habits
 ##' @description Metadata for food habits.
 ##' @format A dataframe with columns:
 ##' \describe{
@@ -226,6 +226,6 @@
 ##'   \item{9}{Digestion state not recorded}
 ##'   }}
 ##'  }
-##' @author Manon Cassista Da Ros
+##' @author Manon Cassista Da Ros; Mike McMahon
 ##' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`.
 "food_habits"
