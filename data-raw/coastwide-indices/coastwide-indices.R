@@ -1,7 +1,6 @@
 # Copying over from pacea to show what we did. Running the first one in marea to
 # get an example data set going, with the intention to delete it at some point.
 
-
 # Obtaining the oceanographic basin indices and compile them into pacea.
 # Creating a consistent format of class pacea_index.
 
@@ -21,6 +20,46 @@
 
 load_all()
 library(dplyr)
+
+# NAO - North Atlantic Oscillation
+# Need to update to get latest version:
+remotes::install_github("casaultb/azmpdata")
+library(azmpdata)
+
+
+nao_new <- data.frame(year = azmpdata::Derived_Annual_Broadscale$year,
+                      anomaly =
+                        azmpdata::Derived_Annual_Broadscale$north_atlantic_oscillation) %>%
+  tibble::as_tibble() %>%
+  dplyr::filter(!is.na(anomaly))
+
+nao_new
+
+class(nao_new) <- c("pacea_index",
+                    class(nao_new))
+
+attr(nao_new, "axis_name") <- "North Atlantic Oscillation"
+
+pacea::check_index_changed(nao, nao_new)
+
+tail(nao)
+tail(nao_new)
+
+if(pacea::check_index_changed(nao, nao_new)){
+  par(mfrow=c(2,1))
+  plot(nao, main = "Currently in marea")
+  plot(nao_new, main = "Updated")
+
+  expect_equal(nao[1:(nrow(nao) - 2), ],
+               nao_new[1:(nrow(nao) - 2), ],
+               tolerance = 0.02) # See note at top if this fails
+
+  nao <- nao_new
+  usethis::use_data(nao,
+                    overwrite = TRUE)
+}
+
+
 
 # ENSO ONI
 download.file("https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",

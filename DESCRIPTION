@@ -76,6 +76,7 @@ Imports:
     httr,
     lubridate (>= 1.8.0),
     magrittr (>= 2.0.1),
+    pacea,
     pals,
     parallel,
     rappdirs,
@@ -88,7 +89,7 @@ Imports:
     utils,
     zen4R
 RoxygenNote: 7.3.2
-Remotes: github::pbs-assess/gfiphc
+Remotes: github::pbs-assess/pacea
 Suggests:
     rmarkdown,
     knitr,
@@ -103,7 +104,6 @@ Suggests:
     abind (>= 1.4.5),
     viridis (>= 0.5.1),
     RColorBrewer (>= 1.1-2),
-    gfiphc (>= 0.0.0.9000),
     rerddap (>= 0.7.6),
     stringr (>= 1.4.0),
     assertthat (>= 0.2.1),
