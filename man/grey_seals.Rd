@@ -16,7 +16,7 @@ A tibble also of class `marea_grey_seals` with columns:
    the higher value of the 95\% credible interval}
  }
 
-An object of class \code{marea_grey_seals} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 62 rows and 4 columns.
+An object of class \code{pacea_biomass} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 62 rows and 4 columns.
 }
 \source{
 Estimates provided by Nell den Heyer, then wrangled and imported using
