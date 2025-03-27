@@ -33,7 +33,7 @@ grey_seals_new <- grey_seals_data_raw %>%
          median = "median...12",
          high = "upper95...13")
 
-class(grey_seals_new) <- c("marea_grey_seals",
+class(grey_seals_new) <- c("pacea_biomass",
                               class(grey_seals_new))
 attr(grey_seals_new, "axis_name") <-
   "Estimated abundance (number of seals, 1000s)"
