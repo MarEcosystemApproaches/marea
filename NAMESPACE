@@ -3,3 +3,6 @@
 S3method(plot,pacea_index)
 export(add_tickmarks)
 export(lubridate_pacea_series)
+importFrom(reticulate,use_virtualenv)
+importFrom(reticulate,virtualenv_create)
+importFrom(reticulate,virtualenv_install)

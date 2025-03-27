@@ -13,6 +13,7 @@
 #' @param output_filename character string for the output filename
 #'
 #' @returns
+#' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create
 #' @export
 #'
 #' @examples
@@ -23,14 +24,14 @@ get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id, variables, 
   pythonenv <- try(reticulate::use_virtualenv("CopernicusMarine", required = TRUE))
 
   if (inherits(pythonenv, "try-error")) {
-    virtualenv_create(envname = "CopernicusMarine")
-    virtualenv_install("CopernicusMarine", packages = c("copernicusmarine"))
+    reticulate::virtualenv_create(envname = "CopernicusMarine")
+    reticulate::virtualenv_install("CopernicusMarine", packages = c("copernicusmarine"))
   }
   reticulate::use_virtualenv("CopernicusMarine", required = TRUE)
   cmt <- try(import("copernicusmarine"))
 
   # Login function to create your configuration file
-  if(!is.na(username)|!is.na(password){
+  if(!is.na(username)|!is.na(password)){
     cmt$login(username, password)
   } else {
     stop("Please provide a username and password")
