@@ -5,7 +5,7 @@ lib/
 *.docx
 *.nc
 *.RData
-
+.Rhistory
 *.csv
 *.xlsx
 
