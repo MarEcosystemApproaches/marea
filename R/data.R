@@ -160,7 +160,39 @@
 ##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
 "nao"
 
-##' @title food habits.
+
+
+##' NAO -- AZMP Scotian Shelf Bottom Temperature
+##'
+##' Averaged water temperatures at sea floor, over NAFO areas 4X, 4V and 4W
+##'
+##' TODO The Oceanic Niño Index (ONI) is a 3-month running
+##' mean of sea surface temperature (SST) anomalies in the Niño 3.4 region
+##' (5 deg N to 5 deg S, 120 deg W to 170 deg W) plotted on
+##' the center month. The SST anomalies are calculated based on 30-year base
+##' periods that are updated every 5 years, which accounts for global warming
+##' and some of the decadal-scale SST variability (as seen in the Pacific
+##' Decadal Oscillation index).
+##' The ONI is provided by the NOAA’s National Weather
+##' Service National Centers for Environmental Prediction CPC:
+##' http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml
+##'
+##' @format A tibble also of class `pacea_index` with columns:
+##' \describe{
+##'   \item{year:}{year of value}
+##'   \item{region:}{TODOanomalies based on .....}
+##'    \item{value:}{temperature value}
+##'  }
+##' @examples
+##' \dontrun{
+##' azmp_bottom_temperature
+##' plot(azmp_bottom_temperature)
+##' }
+##' @author Jaimie Harbin and Benoit Casault
+##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
+"azmp_bottom_temperature"
+
+##' @title food habits
 ##' @description Metadata for food habits.
 ##' @format A dataframe with columns:
 ##' \describe{
@@ -226,6 +258,7 @@
 ##'   \item{9}{Digestion state not recorded}
 ##'   }}
 ##'  }
-##' @author Manon Cassista Da Ros
+##' @author Manon Cassista Da Ros; Mike McMahon
 ##' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`.
 "food_habits"
+

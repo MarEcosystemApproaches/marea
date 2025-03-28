@@ -60,6 +60,41 @@ if(pacea::check_index_changed(nao, nao_new)){
 }
 
 
+## AZMP BOTTOM TEMPERATURE
+
+azmp_bottom_temperature_new <- data.frame(year=azmpdata::Derived_Annual_Broadscale$year,region=azmpdata::Derived_Annual_Broadscale$area, mean=azmpdata::Derived_Annual_Broadscale$temperature_at_sea_floor) %>%
+  tibble::as_tibble() %>%
+  dplyr::filter(!is.na(mean))
+
+azmp_bottom_temperature_new
+
+class(azmp_bottom_temperature_new) <- c("marea_trend",
+                    class(azmp_bottom_temperature_new))
+
+attr(azmp_bottom_temperature_new, "axis_name") <- "AZMP Bottom Temperature"
+
+pacea::check_index_changed(azmp_bottom_temperature, azmp_bottom_temperature_new)
+
+tail(azmp_bottom_temperature)
+tail(azmp_bottom_temperature_new)
+
+if(pacea::check_index_changed(azmp_bottom_temperature, azmp_bottom_temperature_new)){
+  par(mfrow=c(2,1))
+  plot(azmp_bottom_temperature, main = "Currently in marea")
+  plot(azmp_bottom_temperature_new, main = "Updated")
+  
+  expect_equal(azmp_bottom_temperature[1:(nrow(azmp_bottom_temperature) - 2), ],
+               azmp_bottom_temperature_new[1:(nrow(azmp_bottom_temperature) - 2), ],
+               tolerance = 0.02) # See note at top if this fails
+  
+  azmp_bottom_temperature <- azmp_bottom_temperature_new
+  usethis::use_data(azmp_bottom_temperature,
+                    overwrite = TRUE)
+}
+
+## END AZMP BOTTOM TEMPERATURE
+
+
 
 # ENSO ONI
 download.file("https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
