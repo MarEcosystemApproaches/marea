@@ -40,3 +40,17 @@ test_that("index plotting works with various options", {
                         style = "goa"))   # that isn't implemented yet
 
 })
+
+
+test_that("Plotting AZMP Bottom Temperature ", {
+  expect_invisible(plot(azmp_bottom_temperature, value="mean"))
+  
+  expect_invisible(plot(azmp_bottom_temperature, value="mean", region=c("4X", "4W")))
+
+  expect_error(
+    plot(azmp_bottom_temperature, value = "mean", region = "hello"),
+    "region must be in Cabot Strait,E Georges Bank,Emerald Basin,Georges Basin,Lurcher Shoal,Misaine Bank,4Vn,4Vs,4W,4X"
+  )
+ 
+  
+})
