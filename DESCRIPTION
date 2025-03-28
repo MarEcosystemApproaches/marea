@@ -80,6 +80,7 @@ Imports:
     pals,
     parallel,
     rappdirs,
+    reticulate,
     rlang (>= 0.4.11),
     sf (>= 1.0.10),
     stats,
