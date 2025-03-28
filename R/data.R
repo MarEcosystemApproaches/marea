@@ -161,6 +161,7 @@
 "nao"
 
 
+
 ##' NAO -- AZMP Scotian Shelf Bottom Temperature
 ##'
 ##' Averaged water temperatures at sea floor, over NAFO areas 4X, 4V and 4W
@@ -190,3 +191,74 @@
 ##' @author Jaimie Harbin and Benoit Casault
 ##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
 "azmp_bottom_temperature"
+
+##' @title food habits
+##' @description Metadata for food habits.
+##' @format A dataframe with columns:
+##' \describe{
+##'   \item{DATASOURCE}{}
+##'   \item{MISSION}{Trip identifier}
+##'   \item{SETNO}{Set number}
+##'   \item{SDATE}{Set date}
+##'   \item{STIME}{Set time (24 hr)}
+##'   \item{STRAT}{Stratum}
+##'   \item{BOTTOM_TEMPERATURE}{Water temperature in °C}
+##'   \item{DEPTH}{Bottom depth in meters}
+##'   \item{GEAR}{
+##'  \describe{
+#'   \item{3}{Yankee #36 otter trawl}
+#'   \item{4}{#41.5 otter trawl}
+#'   \item{5}{Longline}
+#'   \item{7}{Midwater trawl}
+#'   \item{9}{Western IIA trawl}
+#'   \item{11}{Recreational angling}
+#'   \item{14}{Campelen trawl}
+#'   \item{15}{Nephrops trawl}
+#'   \item{16}{NEST trawl}
+#'   \item{17}{Balloon 280 trawl}
+#'   \item{18}{Balloon 300 trawl}
+#'   }
+#'   }
+##'   \item{SLATDD}{Set latitude (DD.DDDDDD)}
+##'   \item{SLONGDD}{Set longitude (-DDD.DDDDDD)}
+##'   \item{NAFO_ZONE}{NAFO zone level identification}
+##'   \item{NAFO_SUBUNIT}{NAFO subunit level of identification}
+##'   \item{SPEC}{see attached SDSPEC list for codes}
+##'   \item{FSHNO}{Individual fish number}
+##'   \item{FWT}{Fish length in cm}
+##'   \item{FLEN}{Fish weight in grams}
+##'   \item{STOWGT}{Total full stomach (with contents) weight in grams }
+##'   \item{EMPTYWGT}{Empty stomach (without contents) weights in grams}
+##'   \item{FULLNESS}{
+##'   \describe{
+##'   \item{0}{empty - no food contents}
+##'   \item{1}{less than ¼ full}
+##'   \item{2}{¼ to ½ full}
+##'   \item{3}{½ to ¾ full}
+##'   \item{4}{¾ full to full}
+##'   \item{5}{everted}
+##'   \item{6}{regurgitated}
+##'   }}
+##'   \item{FGEN}{
+##'   \describe{
+##'   \item{0}{Unknown}
+##'   \item{1}{Male}
+##'   \item{2}{Female}
+##'   }}
+##'   \item{PREYSPECCD}{}
+##'   \item{PWT}{Prey weight in grams}
+##'   \item{PLEN}{Prey length in cm}
+##'   \item{PNUM}{Number of prey}
+##'   \item{DIGESTION}{
+##' \describe{
+##'   \item{1}{Good Condition}
+##'   \item{2}{Partly Digested}
+##'   \item{3}{Well Digested}
+##'   \item{4}{Unidentifiable}
+##'   \item{9}{Digestion state not recorded}
+##'   }}
+##'  }
+##' @author Manon Cassista Da Ros; Mike McMahon
+##' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`.
+"food_habits"
+
