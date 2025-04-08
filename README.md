@@ -1,6 +1,6 @@
 
 <!--
-README.md is generated from README.Rmd. Please edit that file. Build with
+README.md is generated from README.Rmd. Please edit that file. Build with:
 -->
 <!--
 which builds the .html that can be viewed locally (but isn't pushed to GitHub;
@@ -9,15 +9,19 @@ GitHub uses README.md to make the page you see on GitHub).
 Figures - to update a figure, manually run the piece of code that makes
 the .png file. See notes below (and pacea Issue #44). Make the png resolutions the same in
 each direction, at least for multi-panel plots, as seemed a bit blurry when I
-hadn't (primary production and hotssea at least).
+hadn't (primary production and hotssea at least). This is a little fiddly but
+does work.
 -->
 <!-- # pacea <img src="man/figures/logo.png" align="right" height="138" /> -->
 <!-- badges: start -->
 
+[![](https://img.shields.io/badge/lifecycle-under%20development-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#under%20development)
 [![R-CMD-check](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/MarEcosystemApproaches/marea/graph/badge.svg?token=93afkFJUVL)](https://codecov.io/gh/MarEcosystemApproaches/marea)
 <!-- [![DOI](https://zenodo.org/badge/417554147.svg)](https://zenodo.org/doi/10.5281/zenodo.13840804) -->
 <!-- badges: end -->
+
+**UNDER DEVELOPMENT**
 
 An R package of Maritime ecosystem information to help facilitate an
 ecosystem approach to fisheries management.
@@ -35,42 +39,65 @@ who should be cited and consulted as appropriate.
 Please continue reading through this README file, and especially see the
 vignettes section get started.
 
+marea is motivated by, and shares functionality with, its sister package
+[pacea](https://github.com/pbs-assess/pacea?tab=readme-ov-file#pacea-)
+which similarly contains Pacific ecosystem information. pacea in turn
+was motivated the [GSLea](https://github.com/duplisea/gslea) R package
+developed by Dan Duplisea and colleagues for the Gulf of St Lawrence.
+
 ## What is in marea?
 
-Currently, marea contains:
+Currently, marea contains (though it is still in development and help
+files and vignettes have not been written yet)::
 
-**see pacea for examples**
+-   bottom temperatures from the Atlantic Zone Monitoring Program
 
-Plotting and helper functions are provided, and demonstrated in the
-detailed vignettes. All data and model outputs are fully documented and
-referenced.
+-   bottom temperatures from GLORYS outputs
+
+-   the North Atlantic Oscillation index
+
+-   estimated abundances of grey seals
+
+-   stomach content data.
+
+Plotting and helper functions are provided (TODO!), and demonstrated in
+the detailed vignettes. All data and model outputs are fully documented
+and referenced.
 
 ## Brief examples of some questions that can be quickly visualised (see vignettes for full details)
 
-<!--
-**How does this year's sea surface temperature (red curve) in West Dixon Entrance compare to previous
-years, based on the buoy there?**
-<!-- Run this png code manually (as not evaluated here) to update the figure -->
+**How does the bottom temperature estimated from GLORYS differ between
+February and October in 2015 and in 2020?**
 
 ``` r
-plot(buoy_sst)    # Buoy C46205 is plotted by default
+plot(glorys_bottom_temperature,
+     months = c("February", "October"),
+     years = c(2015, 2020))
 ```
 
-<!-- ![](man/figures/README-north-hecate-temp.png){width=80%} -->
+<img src="man/figures/README-glorys-temp.png" style="width:80.0%" />
 
-**Are we experiencing a phase of El Niño, based on the Oceanic Niño
-Index? (If the last bars are red and above 0.5, then ‘yes’)**
+**How does the North Atlantic Oscillation index look through time?**
 
 ``` r
-plot(oni)
+plot(nao, lwd = 4)
 ```
 
-<img src="man/figures/README-oni.png" style="width:80.0%" />
+<img src="man/figures/README-nao.png" style="width:80.0%" />
 
-**see pacea for more examples**
+TODO need to look into as clearly not normalised.
 
-**What climatic and oceanographic indices are currently available, and
-over what years?**
+**How has the estimated abundance of grey seals (TODO give area covered)
+changed through time?**
+
+``` r
+plot(grey_seals)
+```
+
+<img src="man/figures/README-grey-seals.png" style="width:80.0%" />
+
+<!-- **What climatic and oceanographic indices are currently available, and over what
+years?** Add in once have more -->
 
 ``` r
 # knitr::kable(marea_indices)
@@ -181,10 +208,11 @@ each individual assessment scientist having to figure out themselves
 where to get appropriate data.
 
 This work is strongly motivated by, and based on, the
-[pacea](https://github.com/pbs-assess/pacea) R package by Andrew Edwards
-and colleagues for Pacific ecosystem information, which in turn was
-inspired by the [GSLea](https://github.com/duplisea/gslea) R package by
-Dan Duplisea and colleagues for the Gulf of St Lawrence.
+[pacea](https://github.com/pbs-assess/pacea?tab=readme-ov-file#pacea-) R
+package by Andrew Edwards and colleagues for Pacific ecosystem
+information, which in turn was inspired by the
+[GSLea](https://github.com/duplisea/gslea) R package by Dan Duplisea and
+colleagues for the Gulf of St Lawrence.
 
 ## Citation
 
