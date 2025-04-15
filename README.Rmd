@@ -38,18 +38,18 @@ library(tibble)
 <!-- [![DOI](https://zenodo.org/badge/417554147.svg)](https://zenodo.org/doi/10.5281/zenodo.13840804) -->
 <!-- badges: end -->
 
-An R package of Maritime ecosystem information to help facilitate an ecosystem
-approach to fisheries management.
+An R package of Maritime ecosystem information to help facilitate ecosystem
+approaches.
 
 *We wrangle the data so you don't have to*
 
 marea stands for MARitimes Ecosystem Approach.
 
 marea is an R package containing a variety of data
-sets and model output. We wrangle the data sets behind the scenes to get them into usable formats
-in R, and provide helpful plotting functions. All data sets include
-documentation regarding the original sources and authors, who should be cited
-and consulted as appropriate.
+sets and model outputs. We wrangle the ecosystem information behind the scenes 
+to get them into usable formats in R, and provide helpful plotting functions. 
+All data sets include documentation regarding the original sources and authors, 
+who should be cited and consulted as appropriate.
 
 Please continue reading through this README file, and especially see the vignettes
 section get started.
