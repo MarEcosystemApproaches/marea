@@ -153,7 +153,7 @@
 ##' @format A tibble also of class `pacea_index` with columns:
 ##' \describe{
 ##'   \item{year:}{year of value}
-##'   \item{anomaly:}{TODOanomalies based on .....}
+##'   \item{anomaly:}{Index as a measure of streghth of westerly winds over the NA}
 ##'  }
 ##' @examples
 ##' \dontrun{
