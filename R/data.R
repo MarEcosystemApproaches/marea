@@ -130,33 +130,37 @@
 ##' @rdname grey_seals
 "grey_seals_2021"
 
-##' NAO -- North Atlantic Oscillation
+##' NAO -- North Atlantic Oscillation Index
 ##'
-##' TODOThe Oceanic Niño Index is a monthly index which is one measure of the El
-##' Niño-Southern Oscillation.
+##' The North Atlantic Oscillation (NAO) Index (winter), defined as the winter
+##' (December,January, February, March) 500 mb pressure Principal Component 
+##' Analysis which is representative of the difference between the 
+##' Icelandic low and Azores high.
 ##'
-##' TODO The Oceanic Niño Index (ONI) is a 3-month running
-##' mean of sea surface temperature (SST) anomalies in the Niño 3.4 region
-##' (5 deg N to 5 deg S, 120 deg W to 170 deg W) plotted on
-##' the center month. The SST anomalies are calculated based on 30-year base
-##' periods that are updated every 5 years, which accounts for global warming
-##' and some of the decadal-scale SST variability (as seen in the Pacific
-##' Decadal Oscillation index).
-##' The ONI is provided by the NOAA’s National Weather
-##' Service National Centers for Environmental Prediction CPC:
-##' http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml
+##' The NAO Index was originally defined as the 
+##' difference in sea-level atmospheric pressures between the Azores and Iceland 
+##' and is a measure of the strength of the westerly winds over 
+##' the Northwest Atlantic. It represents the dominant, large-scale 
+##' meteorological forcing over the North Atlantic Ocean. The NAO Index is 
+##' based on a Rotated Principal Component Analysis applied to the monthly 
+##' standardized 500 mb height anomalies, averaged over winter months of 
+##' December through March. 
+##' 
+##' The NAO Index are based on monthly data obtained from the National 
+##' Oceanographic and Atmospheric Administration :
+##' https://www.ncei.noaa.gov/access/monitoring/nao/
 ##'
 ##' @format A tibble also of class `pacea_index` with columns:
 ##' \describe{
 ##'   \item{year:}{year of value}
-##'   \item{anomaly:}{TODOanomalies based on .....}
+##'   \item{anomaly:}{Index as a measure of streghth of westerly winds over the NA}
 ##'  }
 ##' @examples
 ##' \dontrun{
 ##' nao
 ##' plot(nao)
 ##' }
-##' @author Everyone
+##' @author Jamie C. Tam; Chantelle Layton
 ##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
 "nao"
 
