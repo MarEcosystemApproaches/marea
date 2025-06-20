@@ -14,11 +14,11 @@
 #' @param end_datetime character string for the end date and time e.g. "1994-12-01T00:00:00"
 #' @param output_filename character string for the output filename
 #'
-#' @returns
+#' 
 #' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import
 #' @export
 #'
-#' @examples
+#'
 #'
 get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod_glo_phy_my_0.083deg_P1M-m", variables, minimum_longitude = -67.74250, maximum_longitude = -54.90132, minimum_latitude = 40.04343, maximum_latitude = 47.83333, start_datetime = "1993-12-01T00:00:00", end_datetime = "1994-12-01T00:00:00", output_filename = tempfile(fileext = ".nc")) {
   # browser()
