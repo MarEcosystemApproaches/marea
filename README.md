@@ -11,7 +11,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15706086.svg)](https://doi.org/10.5281/zenodo.15706086)
 <!-- badges: end -->
 
-# marea <img src="man/figures/marea_virdis_logo.png" align="right" height="138" /></a>
+# marea <img src="man/figures/marea_logo_3.png" align="right" height="138" /></a>
 
 **UNDER DEVELOPMENT**
 
