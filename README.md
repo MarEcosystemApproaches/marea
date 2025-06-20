@@ -4,10 +4,14 @@ README.md is generated from README.Rmd. Please edit that file. Build with:
 -->
 <!-- badges: start -->
 
-[![](https://img.shields.io/badge/lifecycle-under%20development-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#under%20development)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/MarEcosystemApproaches/marea/graph/badge.svg?token=93afkFJUVL)](https://codecov.io/gh/MarEcosystemApproaches/marea)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15706086.svg)](https://doi.org/10.5281/zenodo.15706086)
 <!-- badges: end -->
+
+# marea <img src="man/figures/marea_virdis_logo.png" align="right" height="138" /></a>
 
 **UNDER DEVELOPMENT**
 
@@ -84,11 +88,11 @@ Detailed vignettes with examples and methodology:
 
 # Citation
 
-If you use marea in your work, please cite:
+If you use `marea` in your work, please cite:
 
-“Maritime Ecosystem Approaches (2024). marea: Maritime Ecosystem
-Approach R Package. Version 0.1.0.
-<https://github.com/MarEcosystemApproaches/marea>”
+“Edwards, A.M. et al. (2024). marea: Maritime Ecosystem Approach R
+Package. R package version 1.0.0.
+<https://doi.org/10.5281/zenodo.15706086>”
 
 Use `citation("marea")` for BibTeX format.
 

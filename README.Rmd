@@ -21,15 +21,18 @@ library(marea)
 
 
 <!-- badges: start -->
-`r badge_lifecycle("under development", "orange")`
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/MarEcosystemApproaches/marea/graph/badge.svg?token=93afkFJUVL)](https://codecov.io/gh/MarEcosystemApproaches/marea)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15706086.svg)](https://doi.org/10.5281/zenodo.15706086)
 <!-- badges: end -->
 
+# marea <img src="man/figures/marea_virdis_logo.png" align="right" height="138" /></a>
 
 **UNDER DEVELOPMENT**
 
 # Overview
+
 
 The marea package provides curated maritime ecosystem data and model outputs to support ecosystem approaches to fisheries management in Atlantic Canada. The package standardizes access to environmental variables, oceanographic indices, and biological data from multiple sources.
 
@@ -101,10 +104,10 @@ knitr::include_graphics("man/figures/README-grey-seals.png")
 
 # Citation
 
-If you use marea in your work, please cite:
+If you use `marea` in your work, please cite:
 
-"Maritime Ecosystem Approaches (2024). marea: Maritime Ecosystem Approach R Package.
-Version 0.1.0. https://github.com/MarEcosystemApproaches/marea"
+"Edwards, A.M. et al. (2024). marea: Maritime Ecosystem Approach R Package. 
+R package version 1.0.0. https://doi.org/10.5281/zenodo.15706086"
 
 Use `citation("marea")` for BibTeX format.
 
