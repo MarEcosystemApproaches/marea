@@ -55,10 +55,14 @@ LazyDataCompression: xz
 Depends:
     R (>= 4.0.0)
 Imports:
-    tidyverse,
+    dplyr,
+    ggplot2,
+    tidyr,
     pals,
     reticulate,
     sf,
+    lubridate,
+    pacea
 RoxygenNote: 7.3.2
 Suggests:
   knitr,
