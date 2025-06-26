@@ -33,7 +33,7 @@ test_that("index plotting works with various options", {
 
   suppressWarnings(expect_warning(
     plot(oni, not_an_option = "My nice plot"),
-    regexp = NA # Accept any warning, as this is a nonsensical ... option
+    regexp = "is not a graphical parameter" 
   ))
 
   expect_invisible(plot(oni, style = "goa")) # not implemented yet, should not error

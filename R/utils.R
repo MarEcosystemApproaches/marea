@@ -295,4 +295,7 @@ marea_metadata <- function() {
 #' @param y Value to return if x is NULL.
 #' @return x if not NULL, otherwise y.
 #' @keywords internal
+#' @name null-coalesce
+#' @aliases %||% grapes-or-or-grapes
+#' @export
 `%||%` <- function(x, y) if (is.null(x)) y else x

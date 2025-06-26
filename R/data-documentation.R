@@ -29,43 +29,47 @@
 # --- TODOs for developers ---
 # TODO: Review and update ONI description if NOAA methodology changes.
 
-##' Estimated Abundance of Grey Seals on the Scotian Shelf
-##'
-##' The grey seal population in Canadian waters is assessed as a single stock. Coastwide abundance estimates are based on aerial surveys conducted over multiple years, corrected for survey timing, area covered, and proportion of seals hauled out. Estimates are provided for seven regions and for the coastwide total.
-##'
-##' Abundance estimates use Generalised Additive Models (GAMs). The final year of data for each region is saved in `harbour_seals_data_final_year`.
-##'
-##' The `grey_seals` object represents the most recent assessment results. The `grey_seals_2021` object contains results from the 2021 assessment, allowing for reproducibility.
-##'
-##' For further details, see Hammill et al. (2023).
-##'
-##' @format A tibble of class `marea_grey_seals` with columns:
-##' \describe{
-##'   \item{year}{Year of the estimate}
-##'   \item{low}{Lower 95\% credible interval}
-##'   \item{median}{Median estimate of abundance}
-##'   \item{high}{Upper 95\% credible interval}
-##' }
-##' @examples
-##' \dontrun{
-##' grey_seals
-##' plot(grey_seals)
-##' }
-##' @docType data
-##' @name grey_seals
-##' @author Andrew Edwards and Nell den Heyer
-##' @source Estimates provided by Nell den Heyer, processed using `data-raw/grey-seals/grey-seals/grey-seals.R`.
-##' @references
-##' Hammill, M.O., Rossi, S.P., Mosnier, A., den Heyer, C.E., Bowen, W.D., & Stenson, G.B. (2023). Grey Seal Abundance and Harvest Advice in Canadian Waters. DFO Can. Sci. Advis. Sec. Res. Doc. 2023/053. vi + 40 p.
+#' Estimated Abundance of Grey Seals on the Scotian Shelf
+#'
+#' Estimates of the abundance of grey seals in Canadian waters, assessed as a single stock.
+#' Coastwide abundance is based on aerial surveys conducted over multiple years and corrected for survey timing, area coverage,
+#' and the proportion of seals hauled out. Estimates are provided for seven regions as well as the coastwide total.
+#'
+#' Abundance estimates use Generalized Additive Models (GAMs). The final year of data for each region is saved in
+#' \code{harbour_seals_data_final_year}. The \code{grey_seals} object represents the most recent assessment results.
+#' The \code{grey_seals_2021} object contains results from the 2021 assessment, allowing for reproducibility.
+#'
+#' For further details, see Hammill et al. (2023).
+#'
+#' @format A tibble of class \code{pacea_index} with columns:
+#' \describe{
+#'   \item{year}{Year of the estimate}
+#'   \item{low}{Lower 95\% credible interval}
+#'   \item{median}{Median estimate of abundance}
+#'   \item{high}{Upper 95\% credible interval}
+#' }
+#' @examples
+#' grey_seals
+#' plot(grey_seals)
+#'
+#' @docType data
+#' @name grey_seals
+#' @author Andrew Edwards, Nell den Heyer
+#' @source Estimates provided by Nell den Heyer. Processed using \code{data-raw/grey-seals/grey-seals/grey-seals.R}.
+#' @references
+#' Hammill, M.O., Rossi, S.P., Mosnier, A., den Heyer, C.E., Bowen, W.D., & Stenson, G.B. (2023).
+#' Grey Seal Abundance and Harvest Advice in Canadian Waters.
+#' DFO Can. Sci. Advis. Sec. Res. Doc. 2023/053. vi + 40 p.
 "grey_seals"
 
 ##' @rdname grey_seals
 "grey_seals_2021"
 
-# --- TODOs for developers (not part of user documentation) ---
+# --- TODOs for developers  ---
 # TODO: Replace placeholder text about Pacific Harbour Seal with correct grey seal information.
 # TODO: Clarify calculation of coastwide 'low' and 'high' values.
 # TODO: Review and update text adapted from Hammill et al. (2023).
+# TODO: Confirm that class is correct, was listed as 'marea_grey_seals' in original code.
 
 ##' North Atlantic Oscillation (NAO) Index
 ##'
@@ -89,7 +93,7 @@
 ##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
 "nao"
 
-# --- TODOs for developers (not part of user documentation) ---
+# --- TODOs for developers  ---
 # TODO: Review and clarify if additional NAO indices (e.g., seasonal) should be included.
 
 ##' AZMP Scotian Shelf Bottom Temperature
@@ -113,7 +117,7 @@
 ##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
 "azmp_bottom_temperature"
 
-# --- TODOs for developers (not part of user documentation) ---
+# --- TODOs for developers ---
 # TODO: Complete region and anomaly descriptions in @format.
 
 ##' Food Habits Metadata
@@ -193,6 +197,28 @@
 ##' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`.
 "food_habits"
 
-# --- TODOs for developers (not part of user documentation) ---
+# --- TODOs for developers ---
 # TODO: Complete DATASOURCE and PREYSPECCD descriptions.
 # TODO: Review and update SDSPEC list reference.
+
+##' GLORYS Bottom Temperature
+##'
+##' Monthly bottom temperature estimates from the GLORYS reanalysis for the Maritimes region.
+##'
+##' @format A tibble of class `marea_st` with columns:
+##'   \describe{
+##'     \item{year}{Year of observation}
+##'     \item{month}{Month of observation}
+##'     \item{temperature}{Bottom temperature (°C)}
+##'     \item{geometry}{Spatial geometry (sf object)}
+##'   }
+##' @examples
+##' \dontrun{
+##' glorys_bottom_temperature
+##' plot(glorys_bottom_temperature)
+##' }
+##' @docType data
+##' @name glorys_bottom_temperature
+##' @author Your Name
+##' @source Copernicus Marine Service (GLORYS)
+"glorys_bottom_temperature"

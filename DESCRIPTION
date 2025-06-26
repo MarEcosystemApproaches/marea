@@ -1,77 +1,83 @@
 Package: marea
 Type: Package
-Title: Maritime ecosystem information to help facilitate an ecosystem approach to fisheries management
+Title: Maritime Ecosystem Information for Ecosystem Approach to Fisheries Management
 Version: 1.0.0
 Authors@R: c(
-    person("J. C.", "Tam",
+    person("Jamie C.", "Tam",
         email = "jamie.tam@dfo-mpo.gc.ca",
         role = c("aut", "cre"),
         comment = c(ORCID = "0009-0006-3462-8981")),
-    person("B.", "Casault",
+    person("Benoit", "Casault",
         email = "benoit.casault@dfo-mpo.gc.ca",
-      	role = c("aut")),
-    person("S.", "Clay",
-      	role = c("aut"),
-      	email = "stephanie.clay@dfo-mpo.gc.ca",
+        role = "aut"),
+    person("Stephanie", "Clay",
+        email = "stephanie.clay@dfo-mpo.gc.ca",
+        role = "aut",
         comment = c(ORCID = "0000-0001-5113-2378")),
-    person( "A.", "Cook",
+    person("Adam", "Cook",
         email = "adam.cook@dfo-mpo.gc.ca",
-      	role = c("aut"),
+        role = "aut",
         comment = c(ORCID = "0000-0003-3852-2421")),
-    person(c("R."), "Daigle",
+    person("Remi", "Daigle",
         email = "remi.daigle@dfo-mpo.gc.ca",
-      	role = c("aut"),
+        role = "aut",
         comment = c(ORCID = "0000-0001-8832-4189")),
-    person(c("A.", "M."), "Edwards",
+    person("Andrew M.", "Edwards",
         email = "andrew.edwards@dfo-mpo.gc.ca",
-      	role = c("aut"),
+        role = "aut",
         comment = c(ORCID = "0000-0003-2749-8198")),
-    person("J.", "Harbin",
+    person("Jaimie", "Harbin",
         email = "jaimie.harbin@dfo-mpo.gc.ca",
-      	role = c("aut"),
+        role = "aut",
         comment = c(ORCID = "0000-0003-3774-3732")),
-    person("B.", "Hubley",
+    person("Brad", "Hubley",
         email = "brad.hubley@dfo-mpo.gc.ca",
-      	role = c("aut")),
-    person("K.", "David",
+        role = "aut"),
+    person("Keith", "David",
         email = "keith.david@dfo-mpo.gc.ca",
-      	role = c("aut")),
-    person("M.", "McMahon",
+        role = "aut"),
+    person("Mike", "McMahon",
         email = "mike.mcmahon@dfo-mpo.gc.ca",
-      	role = c("aut")),
-      person(c("E.", "A."), "O'Grady",
+        role = "aut"),
+    person("Emily A.", "O'Grady",
         email = "emily.ogrady@dfo-mpo.gc.ca",
-      	role = c("aut"),
+        role = "aut",
         comment = c(ORCID = "0000-0002-1072-5879")))
+Description: Provides access to maritime ecosystem data and model outputs from 
+    Atlantic Canada. Includes oceanographic indices, species abundance data, 
+    and environmental time series. The package wrangles data into standardized 
+    formats and provides visualization functions to support ecosystem approach 
+    to fisheries management.
+License: MIT + file LICENSE
 URL: https://github.com/MarEcosystemApproaches/marea
 BugReports: https://github.com/MarEcosystemApproaches/marea/issues
-Maintainer: Jamie Tam <jamie.tam@dfo-mpo.gc.ca>
-Description: Contains a variety of data sets and model output. We wrangle the data sets behind the scenes to get them into usable formats in R, and provide helpful plotting functions. All data sets include documentation regarding the original sources and authors, who should be cited and consulted as appropriate.
 DOI: 10.5281/zenodo.15706086
-License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
-LazyDataCompression: xz
 Depends:
     R (>= 4.0.0)
 Imports:
-    dplyr,
-    ggplot2,
-    tidyr,
-    pals,
-    reticulate,
-    sf,
-    lubridate,
-    pacea
-RoxygenNote: 7.3.2
+    dplyr (>= 1.0.0),
+    lubridate (>= 1.8.0),
+    pacea (>= 0.1.0),
+    reticulate (>= 1.20),
+    rlang (>= 0.4.0),
+    stats,
+    utils,
+    magrittr,
+    tibble
 Suggests:
-  knitr,
-  devtools,
-  usethis,
-  testthat,
-  rmarkdown,
-  doParallel,
-  foreach,
-  raster
+    devtools,
+    doParallel,
+    foreach,
+    knitr,
+    raster,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Remotes: 
+    pbs-assess/pacea
+Encoding: UTF-8
+LazyData: true
+LazyDataCompression: xz
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Config/testthat/edition: 3
