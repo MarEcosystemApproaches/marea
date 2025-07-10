@@ -1,15 +1,11 @@
 ideas/
 lib/
-
 *.html
 *.docx
 *.nc
 *.RData
-
 *.csv
 *.xlsx
-
 .Rproj.user
-
-
 /data-raw/
+.Rhistory
