@@ -44,9 +44,9 @@
 #' @format A tibble of class \code{pacea_index} with columns:
 #' \describe{
 #'   \item{year}{Year of the estimate}
-#'   \item{low}{Lower 95\% credible interval}
+#'   \item{low}{Lower 95 percent credible interval}
 #'   \item{median}{Median estimate of abundance}
-#'   \item{high}{Upper 95\% credible interval}
+#'   \item{high}{Upper 95 percent credible interval}
 #' }
 #' @examples
 #' grey_seals

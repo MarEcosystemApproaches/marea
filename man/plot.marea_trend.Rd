@@ -5,10 +5,10 @@
 \title{Plot a time series for one or all regions}
 \usage{
 \method{plot}{marea_trend}(
-  obj,
+  x,
   region = NULL,
   x_lab = "Year",
-  y_lab = attr(obj, "axis_name"),
+  y_lab = attr(x, "axis_name"),
   mar_all_regions = c(3, 3, 2, 0),
   oma_all_regions = c(2, 1, 1, 1),
   y_tick_by = 5,
@@ -17,7 +17,7 @@
 )
 }
 \arguments{
-\item{obj}{A \code{marea_herring} object.}
+\item{x}{A \code{marea_herring} object.}
 
 \item{region}{The region(s) to plot. If \code{NULL}, all regions are plotted.}
 
@@ -29,7 +29,7 @@
 
 \item{oma_all_regions}{Outer margin settings for \code{par()} when plotting all regions.}
 
-\item{y_tick_by}{Increment for y-axis ticks.}
+\item{y_tick_by}{Spacing for y-axis ticks (default is 5).}
 
 \item{title}{If \code{NULL}, no figure title is shown. If \code{"full"} (default), the full region name is used. If \code{"short"}, only the acronym is used.}
 

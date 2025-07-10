@@ -9,9 +9,9 @@
 A tibble of class \code{pacea_index} with columns:
 \describe{
 \item{year}{Year of the estimate}
-\item{low}{Lower 95\\% credible interval}
+\item{low}{Lower 95 percent credible interval}
 \item{median}{Median estimate of abundance}
-\item{high}{Upper 95\\% credible interval}
+\item{high}{Upper 95 percent credible interval}
 }
 
 An object of class \code{pacea_biomass} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 62 rows and 4 columns.

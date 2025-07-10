@@ -8,7 +8,7 @@ year/month column, and smooth over a year if required TODO copying over for now.
 lubridate_pacea_series(obj, smooth_over_year = FALSE)
 }
 \arguments{
-\item{obj}{A \code{pacea_index} object (a time series).}
+\item{obj}{A \code{pacea_index} or similar object with a \code{year} column, and optionally a \code{month} column.}
 
 \item{smooth_over_year}{Logical. If TRUE, average monthly values over each year.}
 }

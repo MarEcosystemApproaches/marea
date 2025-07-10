@@ -59,7 +59,6 @@ Imports:
     lubridate (>= 1.8.0),
     pacea (>= 0.1.0),
     reticulate (>= 1.20),
-    rlang (>= 0.4.0),
     stats,
     utils,
     magrittr,
