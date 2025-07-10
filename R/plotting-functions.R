@@ -48,7 +48,8 @@ plot.marea_st <- function(x,
 #' @author Jaimie Harbin and Benoit Casault
 #' @examples
 #' \dontrun{
-#' # plot(marea_herring_object)
+#' data(azmp_bottom_temperature)
+#' # plot(azmp_bottom_temperature)
 #' }
 plot.marea_trend <- function(x,
                              region = NULL,
