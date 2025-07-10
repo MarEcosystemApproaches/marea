@@ -183,7 +183,7 @@ get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod
 ##' Called from `plot.pacea_index()` and others to give a lubrdiate column for
 ##' easier plotting.
 ##'
-##' @inherit plot.pacea_index
+##' @param obj A `pacea_index` or similar object with a `year` column, and optionally a `month` column.
 ##' @param smooth_over_year Logical. If TRUE, average monthly values over each year.
 ##' @return original object with month values smoothed (averaged) over the year if
 ##'   requested, and a new `date` column in lubridate format. Sets a resulting
@@ -202,6 +202,8 @@ get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod
 ##' }
 lubridate_pacea_series <- function(obj,
                                    smooth_over_year = FALSE){
+  # Store the axis_name attribute
+  axis_name <- attr(obj, "axis_name")
 
   if(smooth_over_year){
     stopifnot("to smooth over year you need monthly data (if you have daily we can adapt the code
@@ -242,6 +244,10 @@ lubridate_pacea_series <- function(obj,
                                                      truncated = 2))
     }
   }
+  # Restore the axis_name attribute before returning
+  attr(obj_lub, "axis_name") <- axis_name
+  
+  
   return(obj_lub)
 }
 
@@ -299,3 +305,18 @@ marea_metadata <- function() {
 #' @aliases %||% grapes-or-or-grapes
 #' @export
 `%||%` <- function(x, y) if (is.null(x)) y else x
+
+
+# Helper function to filter while preserving attributes
+filter_preserve_attrs <- function(data, ...) {
+  orig_attrs <- attributes(data)
+  filtered <- dplyr::filter(data, ...)
+  
+  # Restore non-standard attributes (keep names, row.names, class from filtered)
+  attrs_to_restore <- setdiff(names(orig_attrs), c("names", "row.names", "class"))
+  for(attr_name in attrs_to_restore) {
+    attr(filtered, attr_name) <- orig_attrs[[attr_name]]
+  }
+  
+  return(filtered)
+}
