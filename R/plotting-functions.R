@@ -104,14 +104,10 @@ plot.marea_trend <- function(x,
     # Restore important attributes
     attr(x_region, "axis_name") <- orig_attrs$axis_name
     
-    # Set the class to ensure proper dispatch
-    class(x_region) <- c("pacea_biomass", "data.frame")
-    
-    
-    plot(x_region,
-         y_tick_by = y_tick_by,
-         main = title_text,
-         ...)
+    .plot_pacea_biomass(x_region,
+                        y_tick_by = y_tick_by,
+                        main = title_text,
+                        ...)
   } else {
     # Plot all regions
     old_par <- par(no.readonly = TRUE)
@@ -128,19 +124,13 @@ plot.marea_trend <- function(x,
     }
     
     for(i in 1:length(regions_all)){
-      x_filtered <- filter_preserve_attrs(x, region == regions_all[i])
-      
-      
-      # Set the class to ensure proper dispatch
-      class(x_filtered) <- c("pacea_biomass", "data.frame")
-      cat("DEBUG: axis_name after filter:", attr(x_filtered, "axis_name"), "\n")
-      
-      plot(x_filtered,
-           main = regions_all[i],
-           xlab = "",
-           ylab = "",
-           y_tick_by = y_tick_by,
-           ...)
+      .plot_pacea_biomass(dplyr::filter(x, region == regions_all[i]),
+                          main = regions_all[i],
+                          xlab = "",
+                          ylab = "",
+                          y_tick_by = y_tick_by,
+                          ...)
+     
     }
   }
   

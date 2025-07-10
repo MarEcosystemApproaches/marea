@@ -44,7 +44,8 @@ This function is adapted from \code{plot.pacea_recruitment_herring()}.
 }
 \examples{
 \dontrun{
-# plot(marea_herring_object)
+data(azmp_bottom_temperature)
+# plot(azmp_bottom_temperature)
 }
 }
 \author{
