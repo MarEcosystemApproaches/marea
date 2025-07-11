@@ -22,12 +22,12 @@ test_that("ea_data constructor and basic print/summary/plot work", {
   
   expect_s3_class(obj, "ea_data")
   expect_true(is.data.frame(obj$data))
-  expect_s3_class(obj$meta, "list")
+  expect_true(class(obj$meta)[1] == "list")
   expect_true("value" %in% names(obj$data))
   expect_equal(obj$meta$data_type, "Synthetic Test Index")
   
   # Print/summary should not error
-  expect_output(print(obj), "EA Data Object")
+  expect_output(print(obj), "Ecosystem Approach \\(EA\\) Data Object", fixed = FALSE)
   expect_output(summary(obj), "Summary of ea_data")
 })
 
@@ -91,7 +91,7 @@ test_that("ea_st constructor and plot/print/summary work", {
   expect_s3_class(est, "ea_st")
   expect_true(is.data.frame(est))
   expect_true("value" %in% names(est))
-  expect_output(print(est), "ea_st Object")
+  expect_output(print(est), "Ecosystem Approach Spatio-Temporal")
   expect_output(summary(est), "Summary of ea_st Object")
   
   # All plot styles
@@ -107,7 +107,7 @@ test_that("as_ea_data and as_ea_st adapters work on pacea-like objects", {
   attr(d, "axis_name") <- "Another Index Name"
   class(d) <- c("pacea_index","tbl_df","tbl","data.frame")
   
-  out <- as_ea_data(d)
+  out <- as_ea_data(d, value = 'val')
   expect_s3_class(out, "ea_data")
   expect_equal(out$meta$data_type, "Fake PACEA Index")
   expect_true("value" %in% names(out$data))
