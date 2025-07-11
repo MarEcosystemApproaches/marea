@@ -7,10 +7,10 @@
 marea_metadata()
 }
 \value{
-A data frame with columns: Dataset, Temporal Coverage, Source, and Update Frequency.
+A data.frame with columns: Dataset, Region, TimeSpan, Source
 }
 \description{
-Returns a summary table with information about each dataset in the marea package, including temporal coverage, data source, and update frequency.
+Returns a summary data frame including region, time span, and source information for each dataset.
 }
 \examples{
 marea_metadata()
