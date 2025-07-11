@@ -1,224 +1,375 @@
-##' Oceanic Niño Index (ONI)
-##'
-##' The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern Oscillation. It is calculated as a 3-month running mean of sea surface temperature (SST) anomalies in the Niño 3.4 region (5°N–5°S, 120°W–170°W), using 30-year base periods updated every 5 years. ONI values may change for up to two months after initial posting due to data filtering.
-##'
-##' For more information, see [NOAA ONI](http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml) and [NOAA ENSO SST](https://www.ncei.noaa.gov/access/monitoring/enso/sst).
-##'
-##' Associated code adapted from code generously shared by Chris Rooper.
-##'
-##' @format A tibble of class `pacea_index` with columns:
-##' \describe{
-##'   \item{year}{Year of value}
-##'   \item{month}{Month (1–12) of value}
-##'   \item{val}{Three-month average SST (°C); recent values may change in subsequent updates}
-##'   \item{anom}{SST anomaly (°C); recent values may change in subsequent updates}
-##' }
-##' @examples
-##' \dontrun{
-##' oni
-##' plot(oni)
-##' }
-##' @docType data
-##' @name oni
-##' @author Andrew Edwards
-##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
-##' @references
-##' Ross, T., & Robert, M. (2022). Normal temperatures despite strong cool climate indices and an emerging freshening trend. In Boldt, J.L. et al. (Eds.), State of the physical, biological and selected fishery resources of Pacific Canadian marine ecosystems in 2021. Canadian Technical Report of Fisheries and Aquatic Sciences, 3482, vii+242 p.
-"oni"
-
-# --- TODOs for developers ---
-# TODO: Review and update ONI description if NOAA methodology changes.
-
-#' Estimated Abundance of Grey Seals on the Scotian Shelf
+#' Oceanic Niño Index (ONI)
 #'
-#' Estimates of the abundance of grey seals in Canadian waters, assessed as a single stock.
-#' Coastwide abundance is based on aerial surveys conducted over multiple years and corrected for survey timing, area coverage,
-#' and the proportion of seals hauled out. Estimates are provided for seven regions as well as the coastwide total.
+#' The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern Oscillation. It is calculated as a 3-month running mean of sea surface temperature (SST) anomalies in the Niño 3.4 region (5°N–5°S, 120°W–170°W), using 30-year base periods updated every 5 years. ONI values may change for up to two months after initial posting due to data filtering.
 #'
-#' Abundance estimates use Generalized Additive Models (GAMs). The final year of data for each region is saved in
-#' \code{harbour_seals_data_final_year}. The \code{grey_seals} object represents the most recent assessment results.
-#' The \code{grey_seals_2021} object contains results from the 2021 assessment, allowing for reproducibility.
+#' For more information, see \href{http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml}{NOAA ONI} and \href{https://www.ncei.noaa.gov/access/monitoring/enso/sst}{NOAA ENSO SST}.
 #'
-#' For further details, see Hammill et al. (2023).
-#'
-#' @format A tibble of class \code{pacea_index} with columns:
+#' @format An `ea_data` object with:
 #' \describe{
-#'   \item{year}{Year of the estimate}
-#'   \item{low}{Lower 95 percent credible interval}
-#'   \item{median}{Median estimate of abundance}
-#'   \item{high}{Upper 95 percent credible interval}
+#'   \item{data}{A tibble with columns:
+#'     \describe{
+#'       \item{year}{Year (numeric)}
+#'       \item{month}{Month (numeric, 1–12)}
+#'       \item{value}{Three-month average sea surface temperature (SST, °C)}
+#'       \item{anomaly}{SST anomaly (°C)}
+#'     }
+#'   }
+#'   \item{meta}{A named list with:
+#'     \describe{
+#'       \item{data_type}{Character. "Oceanic Niño Index (ONI)"}
+#'       \item{region}{Character. "Pacific"}
+#'       \item{location_descriptor}{Character. "Niño 3.4 region"}
+#'       \item{units}{Character. "°C"}
+#'       \item{species}{Character. \code{NA_character_} (not applicable)}
+#'       \item{source_citation}{Character. NOAA CPC, see links above}
+#'       \item{original_value_col}{Character. Name of value source column, e.g. "val"}
+#'     }
+#'   }
 #' }
 #' @examples
-#' grey_seals
-#' plot(grey_seals)
-#'
+#' print(oni)
+#' summary(oni)
+#' plot(oni, style="default")
+#' plot(oni, style="red_blue")
+#' @name oni
 #' @docType data
+#' @author Andrew Edwards
+#' @source Generated in data-raw/coastwide-indices/coastwide-indices.R
+#' @references Ross, T. & Robert, M. (2022). In Boldt, J.L. et al. Canadian Technical Report of Fisheries and Aquatic Sciences, 3482.
+"oni"
+
+#' Estimated Grey Seal Abundance (ea_data)
+#'
+#' Abundance of grey seals in Canadian waters, assessed as a single stock. Derived from aerial surveys, corrected for survey timing, coverage, and haul-out proportion.
+#'
+#' @format An `ea_data` object with:
+#' \describe{
+#'   \item{data}{A tibble:
+#'     \describe{
+#'       \item{year}{Year (numeric)}
+#'       \item{value}{Median estimate (count)}
+#'       \item{low}{Lower 95\% credible interval}
+#'       \item{high}{Upper 95\% credible interval}
+#'     }
+#'   }
+#'   \item{meta}{A named list with:
+#'     \describe{
+#'       \item{data_type}{Character. "Grey Seal Abundance"}
+#'       \item{region}{Character. "Scotian Shelf"}
+#'       \item{location_descriptor}{Character. "Sable Island / Scotian Shelf"}
+#'       \item{units}{Character. "count"}
+#'       \item{species}{Character. "Halichoerus grypus"}
+#'       \item{source_citation}{Character. See details, Hammill et al. (2023)}
+#'       \item{original_value_col}{Character. "median"}
+#'     }
+#'   }
+#' }
+#' @examples
+#' print(grey_seals)
+#' summary(grey_seals)
+#' plot(grey_seals, style="ribbon")
 #' @name grey_seals
+#' @docType data
 #' @author Andrew Edwards, Nell den Heyer
-#' @source Estimates provided by Nell den Heyer. Processed using \code{data-raw/grey-seals/grey-seals/grey-seals.R}.
-#' @references
-#' Hammill, M.O., Rossi, S.P., Mosnier, A., den Heyer, C.E., Bowen, W.D., & Stenson, G.B. (2023).
-#' Grey Seal Abundance and Harvest Advice in Canadian Waters.
-#' DFO Can. Sci. Advis. Sec. Res. Doc. 2023/053. vi + 40 p.
+#' @source Hammill et al. (2023), see data-raw/grey-seals/grey-seals.R
 "grey_seals"
 
 ##' @rdname grey_seals
 "grey_seals_2021"
 
-# --- TODOs for developers  ---
-# TODO: Replace placeholder text about Pacific Harbour Seal with correct grey seal information.
-# TODO: Clarify calculation of coastwide 'low' and 'high' values.
-# TODO: Review and update text adapted from Hammill et al. (2023).
-# TODO: Confirm that class is correct, was listed as 'marea_grey_seals' in original code.
-
-##' North Atlantic Oscillation (NAO) Index
-##'
-##' The NAO Index measures the strength of westerly winds over the North Atlantic, based on the difference in sea-level atmospheric pressures between the Azores and Iceland. It is calculated using a rotated principal component analysis of monthly standardized 500 mb height anomalies, averaged over December to March.
-##'
-##' Data are from the [NOAA NAO monitoring site](https://www.ncei.noaa.gov/access/monitoring/nao/).
-##'
-##' @format A tibble of class `pacea_index` with columns:
-##' \describe{
-##'   \item{year}{Year of value}
-##'   \item{anomaly}{Index value (strength of westerly winds)}
-##' }
-##' @examples
-##' \dontrun{
-##' nao
-##' plot(nao)
-##' }
-##' @docType data
-##' @name nao
-##' @author Jamie C. Tam; Chantelle Layton
-##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
+#' North Atlantic Oscillation (NAO) Index (ea_data)
+#'
+#' The NAO Index represents the difference in sea-level atmospheric pressures between the Azores and Iceland, calculated by PCA of 500 mb height anomalies.
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble: \describe{
+#'     \item{year}{Year}
+#'     \item{value}{NAO anomaly value}
+#'   }}
+#'   \item{meta}{A named list. Keys include:
+#'     \itemize{
+#'       \item{\code{data_type}:} "NAO Index"
+#'       \item{\code{region}:} "North Atlantic"
+#'       \item{\code{location_descriptor}:} "Azores-Iceland"
+#'       \item{\code{units}:} "index"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "NOAA, see source"
+#'       \item{\code{original_value_col}:} e.g. "anomaly"
+#'     }
+#'   }
+#' }
+#' @examples
+#' data(nao)
+#' print(nao)
+#' plot(nao)
+#' @name nao
+#' @docType data
+#' @author Jamie C. Tam; Chantelle Layton
+#' @source \url{https://www.ncei.noaa.gov/access/monitoring/nao/}
 "nao"
 
-# --- TODOs for developers  ---
-# TODO: Review and clarify if additional NAO indices (e.g., seasonal) should be included.
+#' GLORYS Bottom Temperature (ea_st)
+#'
+#' Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.
+#'
+#' @format An `ea_st` (sf) object:
+#' \describe{
+#'   \item{value}{Bottom temperature value (°C)}
+#'   \item{month}{Month of observation}
+#'   \item{geometry}{Spatial geometry (sf object)}
+#' }
+#' \strong{Metadata (\code{attr(obj, "meta")})}:
+#' \describe{
+#'   \item{data_type}{Character. "GLORYS Bottom Temperature"}
+#'   \item{region}{Character. "Maritimes"}
+#'   \item{time_descriptor}{Character. Month, year, or period}
+#'   \item{units}{Character. "°C"}
+#'   \item{source_citation}{Character. "Copernicus Marine Service"}
+#'   \item{original_value_col}{Character. The original col used for value}
+#' }
+#' @examples
+#' data(glorys_bottom_temperature)
+#' print(glorys_bottom_temperature)
+#' plot(glorys_bottom_temperature, style = "fill")
+#' @name glorys_bottom_temperature
+#' @docType data
+#' @author marea/DFO
+#' @source Copernicus Marine Service (GLORYS), see data-raw/glorys/glorys-bottom-temperature.R
+"glorys_bottom_temperature"
 
-##' AZMP Scotian Shelf Bottom Temperature
-##'
-##' Average water temperatures at the sea floor, over NAFO areas 4X, 4V, and 4W, as part of the Atlantic Zone Monitoring Program (AZMP).
-##'
-##' @format A tibble of class `pacea_index` with columns:
-##' \describe{
-##'   \item{year}{Year of value}
-##'   \item{region}{Region identifier}
-##'   \item{value}{Temperature value (°C)}
-##' }
-##' @examples
-##' \dontrun{
-##' azmp_bottom_temperature
-##' plot(azmp_bottom_temperature)
-##' }
-##' @docType data
-##' @name azmp_bottom_temperature
-##' @author Jaimie Harbin and Benoit Casault
-##' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`.
+#' AZMP Scotian Shelf Bottom Temperature (ea_data)
+#'
+#' Bottom water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character NAFO division or area name
+#'       \item{\code{value}:} Numeric temperature at sea floor (°C)
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "Annual Bottom Temperature"
+#'       \item{\code{region}:} "Scotian Shelf"
+#'       \item{\code{location_descriptor}:} "NAFO 4X-4W"
+#'       \item{\code{units}:} "°C"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' @examples
+#' print(azmp_bottom_temperature)
+#' plot(azmp_bottom_temperature)
+#' @docType data
+#' @name azmp_bottom_temperature
+#' @author Jaimie Harbin and Benoit Casault
+#' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`
 "azmp_bottom_temperature"
 
-# --- TODOs for developers ---
-# TODO: Complete region and anomaly descriptions in @format.
-
-##' Food Habits Metadata
-##'
-##' Metadata for food habits data collected during ecosystem surveys.
-##'
-##' @format A data frame with columns:
-##' \describe{
-##'   \item{DATASOURCE}{Data source}
-##'   \item{MISSION}{Trip identifier}
-##'   \item{SETNO}{Set number}
-##'   \item{SDATE}{Set date}
-##'   \item{STIME}{Set time (24 hr)}
-##'   \item{STRAT}{Stratum}
-##'   \item{BOTTOM_TEMPERATURE}{Water temperature (°C)}
-##'   \item{DEPTH}{Bottom depth (m)}
-##'   \item{GEAR}{Gear type. Codes:
-##'     \describe{
-##'       \item{3}{Yankee #36 otter trawl}
-##'       \item{4}{#41.5 otter trawl}
-##'       \item{5}{Longline}
-##'       \item{7}{Midwater trawl}
-##'       \item{9}{Western IIA trawl}
-##'       \item{11}{Recreational angling}
-##'       \item{14}{Campelen trawl}
-##'       \item{15}{Nephrops trawl}
-##'       \item{16}{NEST trawl}
-##'       \item{17}{Balloon 280 trawl}
-##'       \item{18}{Balloon 300 trawl}
-##'     }
-##'   }
-##'   \item{SLATDD}{Set latitude (decimal degrees)}
-##'   \item{SLONGDD}{Set longitude (decimal degrees, negative for west)}
-##'   \item{NAFO_ZONE}{NAFO zone}
-##'   \item{NAFO_SUBUNIT}{NAFO subunit}
-##'   \item{SPEC}{Species code (see SDSPEC list)}
-##'   \item{FSHNO}{Individual fish number}
-##'   \item{FWT}{Fish length (cm)}
-##'   \item{FLEN}{Fish weight (g)}
-##'   \item{STOWGT}{Full stomach weight (g)}
-##'   \item{EMPTYWGT}{Empty stomach weight (g)}
-##'   \item{FULLNESS}{Stomach fullness. Codes:
-##'     \describe{
-##'       \item{0}{Empty}
-##'       \item{1}{< ¼ full}
-##'       \item{2}{¼–½ full}
-##'       \item{3}{½–¾ full}
-##'       \item{4}{¾–full}
-##'       \item{5}{Everted}
-##'       \item{6}{Regurgitated}
-##'     }
-##'   }
-##'   \item{FGEN}{Fish gender. Codes:
-##'     \describe{
-##'       \item{0}{Unknown}
-##'       \item{1}{Male}
-##'       \item{2}{Female}
-##'     }
-##'   }
-##'   \item{PREYSPECCD}{Prey species code}
-##'   \item{PWT}{Prey weight (g)}
-##'   \item{PLEN}{Prey length (cm)}
-##'   \item{PNUM}{Number of prey}
-##'   \item{DIGESTION}{Digestion state. Codes:
-##'     \describe{
-##'       \item{1}{Good condition}
-##'       \item{2}{Partly digested}
-##'       \item{3}{Well digested}
-##'       \item{4}{Unidentifiable}
-##'       \item{9}{Not recorded}
-##'     }
-##'   }
-##' }
-##' @docType data
-##' @name food_habits
-##' @author Manon Cassista Da Ros; Mike McMahon
-##' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`.
+#' Food Habits Metadata
+#'
+#' Stomach content and food habits data collected during DFO ecosystem surveys in the Maritimes region. Contains trawl set, fish, and prey item information.
+#'
+#' @format A data.frame with columns:
+#' \describe{
+#'   \item{DATASOURCE}{Data source}
+#'   \item{MISSION}{Cruise/mission identifier}
+#'   \item{SETNO}{Set number}
+#'   \item{SDATE}{Date of set}
+#'   \item{STIME}{Time of set (24 hr)}
+#'   \item{STRAT}{Stratum code}
+#'   \item{BOTTOM_TEMPERATURE}{Water temperature at bottom (°C)}
+#'   \item{DEPTH}{Bottom depth (m)}
+#'   \item{GEAR}{Gear code}
+#'   \item{SLATDD}{Latitude (decimal degrees)}
+#'   \item{SLONGDD}{Longitude (decimal degrees, negative=west)}
+#'   \item{NAFO_ZONE}{NAFO zone}
+#'   \item{NAFO_SUBUNIT}{NAFO subunit}
+#'   \item{SPEC}{Species code}
+#'   \item{FSHNO}{Fish ID}
+#'   \item{FWT}{Fish weight (g)}
+#'   \item{FLEN}{Fish length (cm)}
+#'   \item{STOWGT}{Stomach weight (g)}
+#'   \item{EMPTYWGT}{Empty stomach weight (g)}
+#'   \item{FULLNESS}{Stomach fullness (coded)}
+#'   \item{FGEN}{Fish sex}
+#'   \item{PREYSPECCD}{Prey species code}
+#'   \item{PWT}{Prey weight (g)}
+#'   \item{PLEN}{Prey length (cm)}
+#'   \item{PNUM}{Number of prey}
+#'   \item{DIGESTION}{Digestive state (coded)}
+#' }
+#' @examples
+#' str(food_habits)
+#' @docType data
+#' @name food_habits
+#' @author Manon Cassista Da Ros; Mike McMahon
+#' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`
 "food_habits"
 
-# --- TODOs for developers ---
-# TODO: Complete DATASOURCE and PREYSPECCD descriptions.
-# TODO: Review and update SDSPEC list reference.
+#' Pacific Decadal Oscillation (PDO) Index (ea_data)
+#'
+#' The PDO Index is a monthly index describing long-term sea surface temperature variability in the North Pacific (poleward of 20°N).
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{Tibble with:
+#'     \itemize{
+#'       \item{\code{year}:} Year
+#'       \item{\code{month}:} Month (1–12)
+#'       \item{\code{value}:} PDO anomaly (unitless)
+#'     }
+#'   }
+#'   \item{meta}{List includes:
+#'     \itemize{
+#'       \item{\code{data_type}:} "Pacific Decadal Oscillation Index"
+#'       \item{\code{region}:} "North Pacific"
+#'       \item{\code{location_descriptor}:} "poleward 20°N North Pacific"
+#'       \item{\code{units}:} ""
+#'       \item{\code{source_citation}:} "NOAA NCEI; see data-raw"
+#'       \item{\code{original_value_col}:} "anomaly"
+#'     }
+#'   }
+#' }
+#' @examples
+#' plot(pdo)
+#' @docType data
+#' @name pdo
+#' @author Andrew Edwards
+#' @source \url{https://www.ncei.noaa.gov/access/monitoring/pdo/}
+"pdo"
 
-##' GLORYS Bottom Temperature
-##'
-##' Monthly bottom temperature estimates from the GLORYS reanalysis for the Maritimes region.
-##'
-##' @format A tibble of class `marea_st` with columns:
-##'   \describe{
-##'     \item{year}{Year of observation}
-##'     \item{month}{Month of observation}
-##'     \item{temperature}{Bottom temperature (°C)}
-##'     \item{geometry}{Spatial geometry (sf object)}
-##'   }
-##' @examples
-##' \dontrun{
-##' glorys_bottom_temperature
-##' plot(glorys_bottom_temperature)
-##' }
-##' @docType data
-##' @name glorys_bottom_temperature
-##' @author Your Name
-##' @source Copernicus Marine Service (GLORYS)
-"glorys_bottom_temperature"
+#' Southern Oscillation Index (SOI) (ea_data)
+#'
+#' The SOI is a monthly measure of the seasonal atmospheric pressure differences between Tahiti and Darwin, a leading indicator of El Niño/La Niña conditions.
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{Tibble with:
+#'     \itemize{
+#'       \item{\code{year}:} Year
+#'       \item{\code{month}:} Month (1–12)
+#'       \item{\code{value}:} SOI value (unitless index)
+#'     }
+#'   }
+#'   \item{meta}{Metadata includes
+#'     \itemize{
+#'       \item{\code{data_type}:} "Southern Oscillation Index"
+#'       \item{\code{region}:} "South Pacific"
+#'       \item{\code{location_descriptor}:} "Tahiti-Darwin"
+#'       \item{\code{units}:} "index"
+#'       \item{\code{source_citation}:} "NOAA CPC"
+#'       \item{\code{original_value_col}:} "anomaly"
+#'     }
+#'   }
+#' }
+#' @examples
+#' plot(soi)
+#' @docType data
+#' @name soi
+#' @author Andrew Edwards
+#' @source \url{https://www.cpc.ncep.noaa.gov/data/indices/soi}
+"soi"
+
+#' North Pacific Gyre Oscillation (NPGO) Index (ea_data)
+#'
+#' The NPGO is the second dominant mode of sea-surface height anomaly variability in the northeast Pacific, correlating with nutrient/chlorophyll fluctuations.
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{Tibble:
+#'     \itemize{
+#'       \item{\code{year}:} Year
+#'       \item{\code{month}:} Month
+#'       \item{\code{value}:} NPGO anomaly (index, unitless)
+#'     }
+#'   }
+#'   \item{meta}{Includes:
+#'     \itemize{
+#'       \item{\code{data_type}:} "North Pacific Gyre Oscillation Index"
+#'       \item{\code{region}:} "North Pacific"
+#'       \item{\code{location_descriptor}:} "NPGO region"
+#'       \item{\code{units}:} ""
+#'       \item{\code{source_citation}:} "UCSD/SIO; see data-raw"
+#'       \item{\code{original_value_col}:} "anomaly"
+#'     }
+#'   }
+#' }
+#' @examples
+#' plot(npgo)
+#' @docType data
+#' @name npgo
+#' @author Andrew Edwards
+#' @source \url{http://www.o3d.org/npgo/}
+"npgo"
+
+#' Multivariate ENSO Index (MEI) (ea_data)
+#'
+#' The MEI is a bimonthly index formed by combining multiple atmospheric and oceanic variables, quantifying ENSO state in the tropical Pacific.
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{Tibble with:
+#'     \itemize{
+#'       \item{\code{year}:} Year
+#'       \item{\code{month}:} Month (1–12, for bimonthly periods)
+#'       \item{\code{value}:} MEI anomaly (unitless)
+#'     }
+#'   }
+#'   \item{meta}{Includes:
+#'     \itemize{
+#'       \item{\code{data_type}:} "Multivariate ENSO Index"
+#'       \item{\code{region}:} "Tropical Pacific"
+#'       \item{\code{location_descriptor}:} "ENSO Basin"
+#'       \item{\code{units}:} "index"
+#'       \item{\code{source_citation}:} "NOAA PSL"
+#'       \item{\code{original_value_col}:} "anomaly"
+#'     }
+#'   }
+#' }
+#' @examples
+#' plot(mei)
+#' @docType data
+#' @name mei
+#' @author Andrew Edwards
+#' @source \url{https://psl.noaa.gov/enso/mei/}
+"mei"
+
+#' Arctic Oscillation (AO) Index (ea_data)
+#'
+#' The AO Index tracks the primary mode of atmospheric circulation variability in the Northern Hemisphere, calculated via PCA of 1000 hPa geopotential anomalies north of 20°N.
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{Tibble:
+#'     \itemize{
+#'       \item{\code{year}:} Year
+#'       \item{\code{month}:} Month (1–12)
+#'       \item{\code{value}:} AO anomaly (unitless index)
+#'     }
+#'   }
+#'   \item{meta}{Includes:
+#'     \itemize{
+#'       \item{\code{data_type}:} "Arctic Oscillation Index"
+#'       \item{\code{region}:} "Northern Hemisphere"
+#'       \item{\code{location_descriptor}:} "AO PCA"
+#'       \item{\code{units}:} ""
+#'       \item{\code{source_citation}:} "NOAA CPC"
+#'       \item{\code{original_value_col}:} "anomaly"
+#'     }
+#'   }
+#' }
+#' @examples
+#' plot(ao)
+#' @docType data
+#' @name ao
+#' @author Andrew Edwards
+#' @source \url{https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/}
+#' "ao"
+#' 
