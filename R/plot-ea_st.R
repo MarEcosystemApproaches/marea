@@ -28,17 +28,11 @@ plot.ea_st <- function(x,
              ggplot2::scale_fill_viridis_c(name = meta$units)
          },
          contour = {
-           # Convert to gridded data frame
-           coords <- sf::st_coordinates(sf::st_centroid(df))
-           df2 <- cbind(data.frame(coords), value = df$value)
-           p <- p +
-             ggplot2::geom_contour(data = df2,
-                                   ggplot2::aes(x = X, y = Y, z = value),
-                                   color = "grey30", ...) +
-             ggplot2::labs(color = meta$units)
+           # contour plot
          },
          bubble = {
            # Bubble size proportional to value
+           
            cent <- sf::st_centroid(df)
            coords <- sf::st_coordinates(cent)
            df3 <- cbind(data.frame(coords), value = df$value)

@@ -58,12 +58,7 @@ plot.ea_data <- function(x,
          },
          
          red_blue = {
-           df$col <- ifelse(df$value >= 0, "positive", "negative")
-           p <- p +
-             ggplot2::geom_line(ggplot2::aes(color = .data$col), linewidth = 1, ...) +
-             ggplot2::geom_point(ggplot2::aes(color = .data$col), size = 2, ...) +
-             ggplot2::scale_color_manual(values = c(positive = "red", negative = "blue"),
-                                         guide = "none")
+          # red blue plot code
          }
   )
   
