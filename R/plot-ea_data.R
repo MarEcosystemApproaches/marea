@@ -9,13 +9,13 @@
 #'   * "red_blue": color line segments & points red when value >= 0, blue when < 0
 #'
 #' @param x An `ea_data` object.
-#' @param style Character; one of "default", "ribbon", "plain", "pacea", or "red_blue".
+#' @param style Character; one of "default", "ribbon", "plain", "pacea_biomass", or "red_blue".
 #' @param ... Additional arguments passed to the underlying geoms
 #'   (`geom_line`, `geom_point`, `geom_ribbon`).
 #' @return A ggplot object.
 #' @export
 plot.ea_data <- function(x,
-                         style = c("default", "ribbon", "plain", "pacea", "red_blue"),
+                         style = c("default", "ribbon", "plain", "pacea_biomass", "red_blue"),
                          ...) {
   style <- match.arg(style)
   df <- x$data
@@ -24,7 +24,7 @@ plot.ea_data <- function(x,
   # Base ggplot mapping
   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value))
   labs <- list(
-    title    = paste(m$data_type, " for ", m$location_descriptor),
+    title    = paste(m$data_type, " for ", m$region),
     subtitle = paste("Source:", m$source_citation),
     x        = "Year",
     y        = paste0(m$data_type, " (", m$units, ")")
@@ -53,16 +53,8 @@ plot.ea_data <- function(x,
            p <- p + ggplot2::geom_line(linewidth = 1, ...)
          },
          
-         pacea = {
-           # pacea default ribbon colors & thicker line
-           if (!all(c("low","high") %in% names(df))) {
-             stop("Style 'pacea' requires 'low' and 'high' columns in data.", call. = FALSE)
-           }
-           p <- p +
-             ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$low, ymax = .data$high),
-                                  fill = "steelblue", alpha = 0.3, ...) +
-             ggplot2::geom_line(linewidth = 1.5, color = "steelblue4", ...) +
-             ggplot2::geom_point(size = 2, color = "steelblue4", ...)
+         pacea_biomass = {
+           # pacea_biomass code
          },
          
          red_blue = {

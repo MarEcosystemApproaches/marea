@@ -14,7 +14,7 @@ A tibble of class \code{pacea_index} with columns:
 \item{high}{Upper 95 percent credible interval}
 }
 
-An object of class \code{pacea_biomass} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 62 rows and 4 columns.
+An object of class \code{ea_data} (inherits from \code{list}) of length 2.
 }
 \source{
 Estimates provided by Nell den Heyer. Processed using \code{data-raw/grey-seals/grey-seals/grey-seals.R}.
