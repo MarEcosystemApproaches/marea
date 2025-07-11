@@ -41,7 +41,7 @@ as_ea_data <- function(pacea_obj, value_col = NULL, ...) {
   location    <- attrs$stock_name  %||% data_type
   units       <- attrs$units       %||% ""
   species     <- attrs$species     %||% NA_character_
-  citation    <- attrs$citation    %||% attrs$source %||% "pacea object (see ?object)"
+  citation    <- attrs$citation    %||% attrs$source %||% "pacea object"
   user_meta   <- list(...)
   
   marea::ea_data(
