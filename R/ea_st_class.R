@@ -105,13 +105,14 @@ ea_st <- function(data,
   )
   
   # --- Construct the Object ---
-  # Set the attributes on the data itself
-  attr(data, "meta") <- meta
-  
-  # Add the 'ea_st' class in front of the existing sf classes
-  class(data) <- c("ea_st", class(data))
-  
-  return(data)
+  # Create a list structure like ea_data, but with sf data
+  structure(
+    list(
+      data = data,
+      meta = meta
+    ),
+    class = c("ea_st", "list")
+  )
 }
 
 
@@ -121,70 +122,72 @@ ea_st <- function(data,
 
 #' @export
 print.ea_st <- function(x, ...) {
-  meta <- attr(x, "meta")
-  
   cat("--- Ecosystem Approach Spatio-Temporal (ea_st) Object ---\n")
-  cat("Data Type:      ", meta$data_type, "\n")
-  cat("Time:           ", meta$time_descriptor, "\n")
-  cat("Region:         ", meta$region, "\n")
-  cat("Units:          ", meta$units, " (in 'value' column, originally '", meta$original_value_col, "')\n", sep = "")
+  cat("Data Type:      ", x$meta$data_type, "\n")
+  cat("Time:           ", x$meta$time_descriptor, "\n")
+  cat("Region:         ", x$meta$region, "\n")
+  cat("Units:          ", x$meta$units, " (in 'value' column, originally '", x$meta$original_value_col, "')\n", sep = "")
   cat("-----------------------------------------------------------\n")
   
-  # Leverage the excellent default print method from sf
-  # To avoid recursion, temporarily remove the 'ea_st' class
-  class(x) <- setdiff(class(x), "ea_st")
-  print(x, ...)
+  # Print the sf data component
+  print(x$data, ...)
   
   invisible(x)
 }
 
 #' @export
 summary.ea_st <- function(object, ...) {
-  meta <- attr(object, "meta")
-  
   cat("--- Summary of ea_st Object ---\n")
   cat("Metadata:\n")
-  cat("  Data Type: ", meta$data_type, "\n")
-  cat("  Region:    ", meta$region, "\n")
-  cat("  Time:      ", meta$time_descriptor, "\n")
-  cat("  Source:    ", meta$source_citation, "\n\n")
+  cat("  Data Type: ", object$meta$data_type, "\n")
+  cat("  Region:    ", object$meta$region, "\n")
+  cat("  Time:      ", object$meta$time_descriptor, "\n")
+  cat("  Source:    ", object$meta$source_citation, "\n\n")
   
   cat("Spatial Information (from sf):\n")
   # Print the bounding box and CRS from the underlying sf object
-  print(sf::st_geometry(object))
+  print(sf::st_geometry(object$data))
   cat("\n")
   
-  cat("Summary of 'value' column (Units: ", meta$units, "):\n", sep = "")
-  print(summary(object$value))
+  # If there's a time_descriptor column, show unique values
+  if ("time_descriptor" %in% names(object$data)) {
+    unique_times <- unique(object$data$time_descriptor)
+    cat("Time periods: ", paste(unique_times, collapse = ", "), "\n")
+    cat("Number of time periods: ", length(unique_times), "\n\n")
+  }
   
-  invisible(list(meta = meta, value_summary = summary(object$value)))
+  cat("Summary of 'value' column (Units: ", object$meta$units, "):\n", sep = "")
+  print(summary(object$data$value))
+  
+  invisible(list(meta = object$meta, value_summary = summary(object$data$value)))
 }
-
-
 
 #' Subsetting for ea_st objects
 #'
 #' Ensures that subsetting operations preserve the `ea_st` class and its
-#' metadata attribute. It relies on the robust subsetting methods from `sf`.
+#' metadata. It handles subsetting of the sf data component while maintaining
+#' the list structure with data and meta components.
 #'
 #' @param x An object of class `ea_st`.
 #' @param i Row indices to subset.
 #' @param j Column indices to subset.
-#' @param ... Additional arguments passed to `sf`'s subsetting method.
+#' @param ... Additional arguments passed to sf's subsetting method.
 #' @return A new, subsetted `ea_st` object.
 #' @export
 `[.ea_st` <- function(x, i, j, ...) {
-  # Preserve the metadata attribute through subsetting
-  meta_attr <- attr(x, "meta")
+  # Subset the sf data component
+  if (missing(j)) {
+    subset_data <- x$data[i, , ...]
+  } else {
+    subset_data <- x$data[i, j, ...]
+  }
   
-  # Use the next method in the class hierarchy (sf's subsetting)
-  # This is the correct way to call the parent method
-  class(x) <- setdiff(class(x), "ea_st")
-  subset_obj <- NextMethod()
-  
-  # Re-apply the metadata and class to the result
-  attr(subset_obj, "meta") <- meta_attr
-  class(subset_obj) <- c("ea_st", class(subset_obj))
-  
-  return(subset_obj)
+  # Recreate the ea_st object with the same metadata but subsetted data
+  structure(
+    list(
+      data = subset_data,
+      meta = x$meta
+    ),
+    class = c("ea_st", "list")
+  )
 }

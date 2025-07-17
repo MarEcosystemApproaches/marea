@@ -20,22 +20,37 @@ as_ea_st <- function(spatial_obj, value_col = NULL, ...) {
     value_col <- poss
   }
   stopifnot(value_col %in% names(spatial_obj))
-  # Metadata from attributes
+  # Extract user-supplied arguments
+  user_args <- list(...)
+  
+  # Metadata from attributes with user overrides
   attrs <- attributes(spatial_obj)
-  data_type   <- attrs$long_name   %||% attrs$axis_name   %||% class(spatial_obj)[1]
-  region      <- attrs$region      %||% "Not specified"
-  time_desc   <- value_col
-  units       <- attrs$units       %||% ""
-  citation    <- attrs$citation    %||% attrs$source %||% "pacea object (see ?object)"
-  user_meta   <- list(...)
-  marea::ea_st(
-    data            = dplyr::rename(spatial_obj, value = !!value_col),
-    value_col       = "value",
-    data_type       = data_type,
-    region          = region,
+  
+  # Standard metadata fields with defaults and user overrides
+  data_type   <- user_args$data_type   %||% attrs$long_name   %||% attrs$axis_name   %||% class(spatial_obj)[1]
+  region      <- user_args$region      %||% attrs$region      %||% "Not specified"
+  time_desc   <- user_args$time_descriptor %||% value_col
+  units       <- user_args$units       %||% attrs$units       %||% ""
+  citation    <- user_args$source_citation %||% attrs$citation %||% attrs$source %||% "pacea object (see ?object)"
+  
+  # Remove standard arguments from user_args to avoid conflicts
+  standard_args <- c("data_type", "region", "time_descriptor", "units", "source_citation")
+  additional_meta <- user_args[!names(user_args) %in% standard_args]
+  
+  # Build the call arguments
+  call_args <- list(
+    data = dplyr::rename(spatial_obj, value = !!value_col),
+    value_col = "value",
+    data_type = data_type,
+    region = region,
     time_descriptor = time_desc,
-    units           = units,
-    source_citation = citation,
-    user_meta
+    units = units,
+    source_citation = citation
   )
+  
+  # Add any additional metadata
+  call_args <- c(call_args, additional_meta)
+  
+  # Call ea_st with the constructed arguments
+  do.call(marea::ea_st, call_args)
 }
