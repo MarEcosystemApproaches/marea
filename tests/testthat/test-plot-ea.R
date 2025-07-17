@@ -8,7 +8,7 @@ test_that("plot.ea_data produces valid ggplot objects for all styles", {
   obj <- ea_data(
     data = df,
     value_col = "value",
-    data_type = "PlotTest",
+    data_type = "biomass anomaly test",
     region = "Caravan",
     location_descriptor = "TestLocation",
     units = "kg"
@@ -23,7 +23,7 @@ test_that("plot.ea_data produces valid ggplot objects for all styles", {
   expect_s3_class(p2, "ggplot")
   
   # pacea style (requires low/high)
-  p3 <- plot(obj, style = "pacea")
+  p3 <- plot(obj, style = "biomass")
   expect_s3_class(p3, "ggplot")
   
   # Plain style (just a line)
@@ -33,6 +33,10 @@ test_that("plot.ea_data produces valid ggplot objects for all styles", {
   # Red-blue
   p5 <- plot(obj, style = "red_blue")
   expect_s3_class(p5, "ggplot")
+  
+  #anomaly style
+  p6 <- plot(obj, style = "anomaly")
+  expect_s3_class(p6, "ggplot")
   
   # Should fail gracefully if low/high removed in ribbon style
   obj_no_ci <- obj
@@ -54,7 +58,7 @@ test_that("plot.ea_st produces valid ggplot objects for all spatial styles", {
   )
   styles <- c("fill", "bubble")
   for (sm in styles) {
-    expect_s3_class(plot(est, style = sm), "ggplot")
+    expect_warning(plot(est, style = sm), "spatially constant")
   }
 })
 

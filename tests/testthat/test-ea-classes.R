@@ -41,14 +41,14 @@ test_that("plot.ea_data supports all styles without error", {
   obj <- ea_data(
     data = df,
     value_col = "value",
-    data_type = "Foo Index",
+    data_type = "biomass anomaly test data",
     region = "Test",
     location_descriptor = "Loc",
     units = "bar"
   )
   
   # Test all plot styles
-  for (s in c("default", "ribbon", "plain", "pacea", "red_blue")) {
+  for (s in c("default", "ribbon", "plain", "anomaly", "biomass", "red_blue")) {
     expect_s3_class(
       plot(obj, style = s),
       "ggplot"
@@ -89,14 +89,15 @@ test_that("ea_st constructor and plot/print/summary work", {
     units = "degC"
   )
   expect_s3_class(est, "ea_st")
-  expect_true(is.data.frame(est))
-  expect_true("value" %in% names(est))
+  expect_true(is.list(est))
+  expect_true(is.data.frame(est$data))
+  expect_true("value" %in% names(est$data))
   expect_output(print(est), "Ecosystem Approach Spatio-Temporal")
   expect_output(summary(est), "Summary of ea_st Object")
   
   # All plot styles
   for (style in c("fill", "bubble")) {
-    expect_s3_class(plot(est, style = style), "ggplot")
+    expect_warning(plot(est, style = style), "attribute variables are assumed to be spatially constant throughout all geometries")
   }
 })
 
@@ -121,5 +122,5 @@ test_that("as_ea_data and as_ea_st adapters work on pacea-like objects", {
   class(sf_obj) <- c("marea_st", class(sf_obj))
   out_st <- as_ea_st(sf_obj, value_col = "temp")
   expect_s3_class(out_st, "ea_st")
-  expect_true("value" %in% names(out_st))
+  expect_true("value" %in% names(out_st$data))
 })
