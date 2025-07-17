@@ -112,7 +112,12 @@
 #' GLORYS Bottom Temperature (ea_st)
 #'
 #' Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.
+#' The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and 
+#' interim monthly) for best data coverage.
 #'
+#' Dataset IDs: cmems_mod_glo_phy_my_0.083deg_P1M-m and cmems_mod_glo_phy_myint_0.083deg_P1M-m
+#' Pulled using marea::get_CMEMS_ncdf()
+#' 
 #' @format An `ea_st` (sf) object:
 #' \describe{
 #'   \item{value}{Bottom temperature value (°C)}
