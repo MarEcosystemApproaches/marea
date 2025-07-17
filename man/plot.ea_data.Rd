@@ -6,14 +6,14 @@
 \usage{
 \method{plot}{ea_data}(
   x,
-  style = c("default", "ribbon", "plain", "pacea_biomass", "red_blue"),
+  style = c("default", "ribbon", "plain", "biomass", "anomaly", "red_blue"),
   ...
 )
 }
 \arguments{
 \item{x}{An \code{ea_data} object.}
 
-\item{style}{Character; one of "default", "ribbon", "plain", "pacea_biomass", or "red_blue".}
+\item{style}{Character; one of "default", "ribbon", "plain", "biomass", or "red_blue".}
 
 \item{...}{Additional arguments passed to the underlying geoms
 (\code{geom_line}, \code{geom_point}, \code{geom_ribbon}).}
@@ -28,7 +28,8 @@ styles are available:
 \item "default": simple line + points (same as before)
 \item "ribbon": line + shaded confidence interval ribbon (requires \code{low} & \code{high})
 \item "plain": line only, no points or ribbon
-\item "pacea": mimic old pacea_biomass plot (ribbon + bold line + points)
+\item "biomass": mimic pacea biomass plot (ribbon + bold line + points)
+\item "anomaly": bar plot with red for positive values, blue for negative
 \item "red_blue": color line segments & points red when value >= 0, blue when < 0
 }
 }

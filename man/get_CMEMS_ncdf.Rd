@@ -25,7 +25,7 @@ get_CMEMS_ncdf(
 
 \item{dataset_id}{Dataset ID (default is "cmems_mod_glo_phy_my_0.083deg_P1M-m", the global ocean physics product).}
 
-\item{variables}{Character vector of variable names to download.}
+\item{variables}{list of variable names to download.}
 
 \item{minimum_longitude}{Minimum longitude for the data bounding box.}
 
@@ -49,6 +49,6 @@ Downloads data from the Copernicus Marine Environment Monitoring Service (\href{
 }
 \examples{
 \dontrun{
-get_CMEMS_ncdf(username = "your_username", password = "your_password", variables = c("thetao"))
+get_CMEMS_ncdf(username = "your_username", password = "your_password", variables = list("thetao"))
 }
 }

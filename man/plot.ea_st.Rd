@@ -4,12 +4,39 @@
 \alias{plot.ea_st}
 \title{Plot an ea_st object with multiple styles}
 \usage{
-\method{plot}{ea_st}(x, style = c("fill", "contour", "bubble"), ...)
+\method{plot}{ea_st}(
+  x,
+  style = c("fill", "contour", "bubble", "anomaly"),
+  months.plot = NULL,
+  years.plot = NULL,
+  clim.dat = NULL,
+  coastline = TRUE,
+  eez = TRUE,
+  coastline_data = NULL,
+  eez_data = NULL,
+  resolution = 6000,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{ea_st} object.}
 
-\item{style}{Character; one of "fill", "contour", or "bubble".}
+\item{style}{Character; one of "fill", "contour", or "bubble".
+#' @param months.plot For "anomaly" style: months to plot. Defaults to current month (if available)}
+
+\item{years.plot}{For "anomaly" style: years to plot. Defaults to most recent year available}
+
+\item{clim.dat}{For "anomaly" style: climatology data for contour overlay}
+
+\item{coastline}{For "anomaly" style: logical. Should coastline layer be plotted?}
+
+\item{eez}{For "anomaly" style: logical. Should EEZ layer be plotted?}
+
+\item{coastline_data}{For "anomaly" style: sf object with coastline data}
+
+\item{eez_data}{For "anomaly" style: sf object with EEZ data}
+
+\item{resolution}{For "anomaly" style: resolution for rasterization when creating contours}
 
 \item{...}{Additional args passed to the geoms.}
 }
@@ -22,5 +49,6 @@ Creates a spatial plot for an \code{ea_st} object. Styles:
 \item "fill": geom_sf fill by value
 \item "contour": contour lines of value
 \item "bubble": bubble plot (point size ∝ value)
+\item "anomaly": anomaly plot with specialized color schemes and optional climatology contours
 }
 }

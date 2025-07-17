@@ -13,12 +13,13 @@
 
 \item{j}{Column indices to subset.}
 
-\item{...}{Additional arguments passed to \code{sf}'s subsetting method.}
+\item{...}{Additional arguments passed to sf's subsetting method.}
 }
 \value{
 A new, subsetted \code{ea_st} object.
 }
 \description{
 Ensures that subsetting operations preserve the \code{ea_st} class and its
-metadata attribute. It relies on the robust subsetting methods from \code{sf}.
+metadata. It handles subsetting of the sf data component while maintaining
+the list structure with data and meta components.
 }

@@ -3,32 +3,39 @@
 \docType{data}
 \name{glorys_bottom_temperature}
 \alias{glorys_bottom_temperature}
-\title{GLORYS Bottom Temperature}
+\title{GLORYS Bottom Temperature (ea_st)}
 \format{
-A tibble of class \code{marea_st} with columns:
+An \code{ea_st} (sf) object:
 \describe{
-\item{year}{Year of observation}
+\item{value}{Bottom temperature value (°C)}
 \item{month}{Month of observation}
-\item{temperature}{Bottom temperature (°C)}
 \item{geometry}{Spatial geometry (sf object)}
+}
+\strong{Metadata (\code{attr(obj, "meta")})}:
+\describe{
+\item{data_type}{Character. "GLORYS Bottom Temperature"}
+\item{region}{Character. "Maritimes"}
+\item{time_descriptor}{Character. Month, year, or period}
+\item{units}{Character. "°C"}
+\item{source_citation}{Character. "Copernicus Marine Service"}
+\item{original_value_col}{Character. The original col used for value}
 }
 }
 \source{
-Copernicus Marine Service (GLORYS)
+Copernicus Marine Service (GLORYS), see data-raw/glorys/glorys-bottom-temperature.R
 }
 \usage{
 glorys_bottom_temperature
 }
 \description{
-Monthly bottom temperature estimates from the GLORYS reanalysis for the Maritimes region.
+Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.
 }
 \examples{
-\dontrun{
-glorys_bottom_temperature
-plot(glorys_bottom_temperature)
-}
+data(glorys_bottom_temperature)
+print(glorys_bottom_temperature)
+plot(glorys_bottom_temperature, style = "fill")
 }
 \author{
-Your Name
+marea/DFO
 }
 \keyword{datasets}

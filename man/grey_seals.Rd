@@ -4,20 +4,35 @@
 \name{grey_seals}
 \alias{grey_seals}
 \alias{grey_seals_2021}
-\title{Estimated Abundance of Grey Seals on the Scotian Shelf}
+\title{Estimated Grey Seal Abundance (ea_data)}
 \format{
-A tibble of class \code{pacea_index} with columns:
+An \code{ea_data} object with:
 \describe{
-\item{year}{Year of the estimate}
-\item{low}{Lower 95 percent credible interval}
-\item{median}{Median estimate of abundance}
-\item{high}{Upper 95 percent credible interval}
+\item{data}{A tibble:
+\describe{
+\item{year}{Year (numeric)}
+\item{value}{Median estimate (count)}
+\item{low}{Lower 95\\% credible interval}
+\item{high}{Upper 95\\% credible interval}
+}
+}
+\item{meta}{A named list with:
+\describe{
+\item{data_type}{Character. "Grey Seal Abundance"}
+\item{region}{Character. "Scotian Shelf"}
+\item{location_descriptor}{Character. "Sable Island / Scotian Shelf"}
+\item{units}{Character. "count"}
+\item{species}{Character. "Halichoerus grypus"}
+\item{source_citation}{Character. See details, Hammill et al. (2023)}
+\item{original_value_col}{Character. "median"}
+}
+}
 }
 
 An object of class \code{ea_data} (inherits from \code{list}) of length 2.
 }
 \source{
-Estimates provided by Nell den Heyer. Processed using \code{data-raw/grey-seals/grey-seals/grey-seals.R}.
+Hammill et al. (2023), see data-raw/grey-seals/grey-seals.R
 }
 \usage{
 grey_seals
@@ -25,26 +40,12 @@ grey_seals
 grey_seals_2021
 }
 \description{
-Estimates of the abundance of grey seals in Canadian waters, assessed as a single stock.
-Coastwide abundance is based on aerial surveys conducted over multiple years and corrected for survey timing, area coverage,
-and the proportion of seals hauled out. Estimates are provided for seven regions as well as the coastwide total.
-}
-\details{
-Abundance estimates use Generalized Additive Models (GAMs). The final year of data for each region is saved in
-\code{harbour_seals_data_final_year}. The \code{grey_seals} object represents the most recent assessment results.
-The \code{grey_seals_2021} object contains results from the 2021 assessment, allowing for reproducibility.
-
-For further details, see Hammill et al. (2023).
+Abundance of grey seals in Canadian waters, assessed as a single stock. Derived from aerial surveys, corrected for survey timing, coverage, and haul-out proportion.
 }
 \examples{
-grey_seals
-plot(grey_seals)
-
-}
-\references{
-Hammill, M.O., Rossi, S.P., Mosnier, A., den Heyer, C.E., Bowen, W.D., & Stenson, G.B. (2023).
-Grey Seal Abundance and Harvest Advice in Canadian Waters.
-DFO Can. Sci. Advis. Sec. Res. Doc. 2023/053. vi + 40 p.
+print(grey_seals)
+summary(grey_seals)
+plot(grey_seals, style="ribbon")
 }
 \author{
 Andrew Edwards, Nell den Heyer

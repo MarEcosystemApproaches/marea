@@ -5,16 +5,31 @@
 \alias{oni}
 \title{Oceanic Niño Index (ONI)}
 \format{
-A tibble of class \code{pacea_index} with columns:
+An \code{ea_data} object with:
 \describe{
-\item{year}{Year of value}
-\item{month}{Month (1–12) of value}
-\item{val}{Three-month average SST (°C); recent values may change in subsequent updates}
-\item{anom}{SST anomaly (°C); recent values may change in subsequent updates}
+\item{data}{A tibble with columns:
+\describe{
+\item{year}{Year (numeric)}
+\item{month}{Month (numeric, 1–12)}
+\item{value}{Three-month average sea surface temperature (SST, °C)}
+\item{anomaly}{SST anomaly (°C)}
+}
+}
+\item{meta}{A named list with:
+\describe{
+\item{data_type}{Character. "Oceanic Niño Index (ONI)"}
+\item{region}{Character. "Pacific"}
+\item{location_descriptor}{Character. "Niño 3.4 region"}
+\item{units}{Character. "°C"}
+\item{species}{Character. \code{NA_character_} (not applicable)}
+\item{source_citation}{Character. NOAA CPC, see links above}
+\item{original_value_col}{Character. Name of value source column, e.g. "val"}
+}
+}
 }
 }
 \source{
-Generated from running \code{data-raw/coastwide-indices/coastwide-indices.R}.
+Generated in data-raw/coastwide-indices/coastwide-indices.R
 }
 \usage{
 oni
@@ -24,17 +39,15 @@ The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern Osci
 }
 \details{
 For more information, see \href{http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml}{NOAA ONI} and \href{https://www.ncei.noaa.gov/access/monitoring/enso/sst}{NOAA ENSO SST}.
-
-Associated code adapted from code generously shared by Chris Rooper.
 }
 \examples{
-\dontrun{
-oni
-plot(oni)
-}
+print(oni)
+summary(oni)
+plot(oni, style="default")
+plot(oni, style="red_blue")
 }
 \references{
-Ross, T., & Robert, M. (2022). Normal temperatures despite strong cool climate indices and an emerging freshening trend. In Boldt, J.L. et al. (Eds.), State of the physical, biological and selected fishery resources of Pacific Canadian marine ecosystems in 2021. Canadian Technical Report of Fisheries and Aquatic Sciences, 3482, vii+242 p.
+Ross, T. & Robert, M. (2022). In Boldt, J.L. et al. Canadian Technical Report of Fisheries and Aquatic Sciences, 3482.
 }
 \author{
 Andrew Edwards

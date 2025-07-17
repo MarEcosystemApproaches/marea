@@ -3,31 +3,40 @@
 \docType{data}
 \name{nao}
 \alias{nao}
-\title{North Atlantic Oscillation (NAO) Index}
+\title{North Atlantic Oscillation (NAO) Index (ea_data)}
 \format{
-A tibble of class \code{pacea_index} with columns:
+An \code{ea_data} object:
 \describe{
-\item{year}{Year of value}
-\item{anomaly}{Index value (strength of westerly winds)}
+\item{data}{A tibble: \describe{
+\item{year}{Year}
+\item{value}{NAO anomaly value}
+}}
+\item{meta}{A named list. Keys include:
+\itemize{
+\item{\code{data_type}:} "NAO Index"
+\item{\code{region}:} "North Atlantic"
+\item{\code{location_descriptor}:} "Azores-Iceland"
+\item{\code{units}:} "index"
+\item{\code{species}:} \code{NA}
+\item{\code{source_citation}:} "NOAA, see source"
+\item{\code{original_value_col}:} e.g. "anomaly"
+}
+}
 }
 }
 \source{
-Generated from running \code{data-raw/coastwide-indices/coastwide-indices.R}.
+\url{https://www.ncei.noaa.gov/access/monitoring/nao/}
 }
 \usage{
 nao
 }
 \description{
-The NAO Index measures the strength of westerly winds over the North Atlantic, based on the difference in sea-level atmospheric pressures between the Azores and Iceland. It is calculated using a rotated principal component analysis of monthly standardized 500 mb height anomalies, averaged over December to March.
-}
-\details{
-Data are from the \href{https://www.ncei.noaa.gov/access/monitoring/nao/}{NOAA NAO monitoring site}.
+The NAO Index represents the difference in sea-level atmospheric pressures between the Azores and Iceland, calculated by PCA of 500 mb height anomalies.
 }
 \examples{
-\dontrun{
-nao
+data(nao)
+print(nao)
 plot(nao)
-}
 }
 \author{
 Jamie C. Tam; Chantelle Layton

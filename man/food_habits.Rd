@@ -5,82 +5,47 @@
 \alias{food_habits}
 \title{Food Habits Metadata}
 \format{
-A data frame with columns:
+A data.frame with columns:
 \describe{
 \item{DATASOURCE}{Data source}
-\item{MISSION}{Trip identifier}
+\item{MISSION}{Cruise/mission identifier}
 \item{SETNO}{Set number}
-\item{SDATE}{Set date}
-\item{STIME}{Set time (24 hr)}
-\item{STRAT}{Stratum}
-\item{BOTTOM_TEMPERATURE}{Water temperature (°C)}
+\item{SDATE}{Date of set}
+\item{STIME}{Time of set (24 hr)}
+\item{STRAT}{Stratum code}
+\item{BOTTOM_TEMPERATURE}{Water temperature at bottom (°C)}
 \item{DEPTH}{Bottom depth (m)}
-\item{GEAR}{Gear type. Codes:
-\describe{
-\item{3}{Yankee #36 otter trawl}
-\item{4}{#41.5 otter trawl}
-\item{5}{Longline}
-\item{7}{Midwater trawl}
-\item{9}{Western IIA trawl}
-\item{11}{Recreational angling}
-\item{14}{Campelen trawl}
-\item{15}{Nephrops trawl}
-\item{16}{NEST trawl}
-\item{17}{Balloon 280 trawl}
-\item{18}{Balloon 300 trawl}
-}
-}
-\item{SLATDD}{Set latitude (decimal degrees)}
-\item{SLONGDD}{Set longitude (decimal degrees, negative for west)}
+\item{GEAR}{Gear code}
+\item{SLATDD}{Latitude (decimal degrees)}
+\item{SLONGDD}{Longitude (decimal degrees, negative=west)}
 \item{NAFO_ZONE}{NAFO zone}
 \item{NAFO_SUBUNIT}{NAFO subunit}
-\item{SPEC}{Species code (see SDSPEC list)}
-\item{FSHNO}{Individual fish number}
-\item{FWT}{Fish length (cm)}
-\item{FLEN}{Fish weight (g)}
-\item{STOWGT}{Full stomach weight (g)}
+\item{SPEC}{Species code}
+\item{FSHNO}{Fish ID}
+\item{FWT}{Fish weight (g)}
+\item{FLEN}{Fish length (cm)}
+\item{STOWGT}{Stomach weight (g)}
 \item{EMPTYWGT}{Empty stomach weight (g)}
-\item{FULLNESS}{Stomach fullness. Codes:
-\describe{
-\item{0}{Empty}
-\item{1}{< ¼ full}
-\item{2}{¼–½ full}
-\item{3}{½–¾ full}
-\item{4}{¾–full}
-\item{5}{Everted}
-\item{6}{Regurgitated}
-}
-}
-\item{FGEN}{Fish gender. Codes:
-\describe{
-\item{0}{Unknown}
-\item{1}{Male}
-\item{2}{Female}
-}
-}
+\item{FULLNESS}{Stomach fullness (coded)}
+\item{FGEN}{Fish sex}
 \item{PREYSPECCD}{Prey species code}
 \item{PWT}{Prey weight (g)}
 \item{PLEN}{Prey length (cm)}
 \item{PNUM}{Number of prey}
-\item{DIGESTION}{Digestion state. Codes:
-\describe{
-\item{1}{Good condition}
-\item{2}{Partly digested}
-\item{3}{Well digested}
-\item{4}{Unidentifiable}
-\item{9}{Not recorded}
-}
-}
+\item{DIGESTION}{Digestive state (coded)}
 }
 }
 \source{
-Generated from running \code{data-raw/ecosystem-survey/food_habits.R}.
+Generated from running \code{data-raw/ecosystem-survey/food_habits.R}
 }
 \usage{
 food_habits
 }
 \description{
-Metadata for food habits data collected during ecosystem surveys.
+Stomach content and food habits data collected during DFO ecosystem surveys in the Maritimes region. Contains trawl set, fish, and prey item information.
+}
+\examples{
+str(food_habits)
 }
 \author{
 Manon Cassista Da Ros; Mike McMahon

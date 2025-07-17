@@ -3,29 +3,42 @@
 \docType{data}
 \name{azmp_bottom_temperature}
 \alias{azmp_bottom_temperature}
-\title{AZMP Scotian Shelf Bottom Temperature}
+\title{AZMP Scotian Shelf Bottom Temperature (ea_data)}
 \format{
-A tibble of class \code{pacea_index} with columns:
+An \code{ea_data} object:
 \describe{
-\item{year}{Year of value}
-\item{region}{Region identifier}
-\item{value}{Temperature value (°C)}
+\item{data}{A tibble with columns:
+\itemize{
+\item{\code{year}:} Numeric year
+\item{\code{region}:} Character NAFO division or area name
+\item{\code{value}:} Numeric temperature at sea floor (°C)
+}
+}
+\item{meta}{A named list, including:
+\itemize{
+\item{\code{data_type}:} "Annual Bottom Temperature"
+\item{\code{region}:} "Scotian Shelf"
+\item{\code{location_descriptor}:} "NAFO 4X-4W"
+\item{\code{units}:} "°C"
+\item{\code{species}:} \code{NA}
+\item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+\item{\code{original_value_col}:} "value"
+}
+}
 }
 }
 \source{
-Generated from running \code{data-raw/coastwide-indices/coastwide-indices.R}.
+Generated from running \code{data-raw/coastwide-indices/coastwide-indices.R}
 }
 \usage{
 azmp_bottom_temperature
 }
 \description{
-Average water temperatures at the sea floor, over NAFO areas 4X, 4V, and 4W, as part of the Atlantic Zone Monitoring Program (AZMP).
+Bottom water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
 }
 \examples{
-\dontrun{
-azmp_bottom_temperature
+print(azmp_bottom_temperature)
 plot(azmp_bottom_temperature)
-}
 }
 \author{
 Jaimie Harbin and Benoit Casault
