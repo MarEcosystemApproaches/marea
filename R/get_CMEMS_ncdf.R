@@ -5,7 +5,7 @@
 #' @param username Your CMEMS username.
 #' @param password Your CMEMS password.
 #' @param dataset_id Dataset ID (default is "cmems_mod_glo_phy_my_0.083deg_P1M-m", the global ocean physics product).
-#' @param variables Character vector of variable names to download.
+#' @param variables list of variable names to download.
 #' @param minimum_longitude Minimum longitude for the data bounding box.
 #' @param maximum_longitude Maximum longitude for the data bounding box.
 #' @param minimum_latitude Minimum latitude for the data bounding box.
@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' get_CMEMS_ncdf(username = "your_username", password = "your_password", variables = c("thetao"))
+#' get_CMEMS_ncdf(username = "your_username", password = "your_password", variables = list("thetao"))
 #' }
 get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod_glo_phy_my_0.083deg_P1M-m", variables, minimum_longitude = -67.74250, maximum_longitude = -54.90132, minimum_latitude = 40.04343, maximum_latitude = 47.83333, start_datetime = "1993-12-01T00:00:00", end_datetime = "1994-12-01T00:00:00", output_filename = tempfile(fileext = ".nc")) {
   # browser()
