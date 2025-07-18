@@ -32,27 +32,41 @@ as_ea_data <- function(pacea_obj, value_col = NULL, ...) {
     names(df)[names(df) == value_col] <- "value"
   }
   
-  # Now safe: only ONE 'value' column
-  # -- Metadata from attributes only
+  original_value_col <- value_col
+  
+  # Extract user-supplied arguments
+  user_args <- list(...)
+  # -- Metadata 
   attrs <- attributes(pacea_obj)
   `%||%` <- function(x, y) if (is.null(x)) y else x
-  data_type   <- attrs$long_name   %||% attrs$axis_name   %||% class(pacea_obj)[1]
-  region      <- attrs$region      %||% "Not specified"
-  location    <- attrs$stock_name  %||% data_type
-  units       <- attrs$units       %||% ""
-  species     <- attrs$species     %||% NA_character_
-  citation    <- attrs$citation    %||% attrs$source %||% "pacea object"
-  user_meta   <- list(...)
+  data_type   <- user_args$data_type %||% attrs$long_name   %||% attrs$axis_name   %||% class(pacea_obj)[1]
+  region      <- user_args$region %||% attrs$region      %||% "Not specified"
+  location    <- user_args$location %||% attrs$stock_name  %||% data_type
+  units       <- user_args$units %||% attrs$units       %||% ""
+  species     <- user_args$species %||% attrs$species     %||% NA_character_
+  citation    <- user_args$citation %||% attrs$citation    %||% attrs$source %||% "pacea object"
+  time_desc  <- user_args$time_descriptor %||% attrs$time_descriptor %||% "Not specified"
+   user_meta   <- list(...)
   
-  marea::ea_data(
-    data               = df,
-    value_col          = "value",
-    data_type          = data_type,
-    region             = region,
-    location_descriptor= location,
-    units              = units,
-    species            = species,
-    source_citation    = citation,
-    user_meta
+  # Remove standard arguments from user_args to avoid conflicts
+  standard_args <- c("data_type", "region", "time_descriptor", "units", "source_citation")
+  additional_meta <- user_args[!names(user_args) %in% standard_args]
+  
+  # Build the call arguments
+  call_args <- list(
+    data = df,
+    value_col = "value",
+    data_type = data_type,
+    region = region,
+    time_descriptor = time_desc,
+    units = units,
+    source_citation = citation,
+    original_value_col = original_value_col
   )
+  
+  # Add any additional metadata
+  call_args <- c(call_args, additional_meta)
+  
+  # Call ea_st with the constructed arguments
+  do.call(marea::ea_data, call_args)
 }

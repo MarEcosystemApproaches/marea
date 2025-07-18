@@ -154,7 +154,7 @@ print.ea_data <- function(x, ...) {
   }
   cat("Location:       ", x$meta$location_descriptor, " (", x$meta$region, " Region)\n", sep = "")
   cat("Time Range:     ", min(x$data$year, na.rm = TRUE), " - ", max(x$data$year, na.rm = TRUE), "\n")
-  cat("Units:          ", x$meta$units, " (in 'value' column, originally '", x$meta$original_value_col, "')\n", sep = "")
+  cat("Units:          ", x$meta$units, '\n', sep = "")
   cat("-------------------------------------------\n")
   cat("Data preview:\n")
   # Use print.data.frame to avoid potential recursion if data is another special class
