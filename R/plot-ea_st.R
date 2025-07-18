@@ -85,7 +85,10 @@ plot.ea_st <- function(x,
            p <- p +
              ggplot2::geom_point(data = df3,
                                  ggplot2::aes(x = X, y = Y, size = .data$value),
-                                 color = "steelblue", ...) +
+                                 fill = "steelblue",
+                                 colour = 'black',
+                                 pch = 21,
+                                 ...) +
              ggplot2::scale_size_continuous(name = meta$units)
          },
          
