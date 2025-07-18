@@ -33,7 +33,7 @@ jobs:
           
       - name: Install GitHub dependencies
         run: |
-          remotes::install_github("github_username/pacea")
+          remotes::install_github("pbs-assess/pacea")
         shell: Rscript {0}
 
       - name: Run tests
