@@ -1,33 +1,33 @@
-#' @title Coerce an sf-like pacea object to an ea_st object
+#' @title Coerce an sf object to an ea_st object
 #' @description
-#' Convert a spatial/class `pacea_st` or `marea_st` (simple features) object from pacea to generic `ea_st`.
-#' All metadata is extracted from attributes, not a meta slot.
+#' Convert a spatial/class `pacea_st` or `marea_st` (simple features) object or a generic sf object generic `ea_st`.
+#' All metadata is extracted from attributes.
 #'
-#' @param spatial_obj An `sf` or similar object, usually with class `pacea_st` 
+#' @param x An `sf` or similar object, usually with class `pacea_st` 
 #' @param value_col   Name of the column to use as value. If NULL, will auto-pick if only one candidate exists.
 #' @param ...         Additional metadata overrides (named elements).
 #' @return An `ea_st` object.
 #' @export
-as_ea_st <- function(spatial_obj, value_col = NULL, ...) {
-  if (inherits(spatial_obj, "ea_st")) return(spatial_obj)
-  if (!inherits(spatial_obj, "sf")) stop("Object must be of class 'sf' or similar.", call. = FALSE)
-  geom_col <- attr(spatial_obj, "sf_column")
-  candidate_cols <- setdiff(names(spatial_obj), geom_col)
+as_ea_st <- function(x, value_col = NULL, ...) {
+  if (inherits(x, "ea_st")) return(x)
+  if (!inherits(x, "sf")) stop("Object must be of class 'sf' or similar.", call. = FALSE)
+  geom_col <- attr(x, "sf_column")
+  candidate_cols <- setdiff(names(x), geom_col)
   if (is.null(value_col)) {
     poss <- candidate_cols
     if (length(poss) != 1)
       stop("Supply value_col (multiple possible data columns in sf object).", call. = FALSE)
     value_col <- poss
   }
-  stopifnot(value_col %in% names(spatial_obj))
+  stopifnot(value_col %in% names(x))
   # Extract user-supplied arguments
   user_args <- list(...)
   
   # Metadata from attributes with user overrides
-  attrs <- attributes(spatial_obj)
+  attrs <- attributes(x)
   
   # Standard metadata fields with defaults and user overrides
-  data_type   <- user_args$data_type   %||% attrs$long_name   %||% attrs$axis_name   %||% class(spatial_obj)[1]
+  data_type   <- user_args$data_type   %||% attrs$long_name   %||% attrs$axis_name   %||% class(x)[1]
   region      <- user_args$region      %||% attrs$region      %||% "Not specified"
   time_desc   <- user_args$time_descriptor %||% value_col
   units       <- user_args$units       %||% attrs$units       %||% ""
@@ -39,7 +39,7 @@ as_ea_st <- function(spatial_obj, value_col = NULL, ...) {
   
   # Build the call arguments
   call_args <- list(
-    data = dplyr::rename(spatial_obj, value = !!value_col),
+    data = dplyr::rename(x, value = !!value_col),
     value_col = "value",
     data_type = data_type,
     region = region,
