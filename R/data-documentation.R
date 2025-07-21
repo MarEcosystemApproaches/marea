@@ -26,11 +26,6 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' print(oni)
-#' summary(oni)
-#' plot(oni, style="default")
-#' plot(oni, style="red_blue")
 #' @name oni
 #' @docType data
 #' @author Andrew Edwards
@@ -44,12 +39,12 @@
 #'
 #' @format An `ea_data` object with:
 #' \describe{
-#'   \item{data}{A tibble:
+#'    \item{data}{A tibble:
 #'     \describe{
 #'       \item{year}{Year (numeric)}
 #'       \item{value}{Median estimate (count)}
-#'       \item{low}{Lower 95\% credible interval}
-#'       \item{high}{Upper 95\% credible interval}
+#'       \item{low}{Lower 95percent credible interval}
+#'       \item{high}{Upper 95percent credible interval}
 #'     }
 #'   }
 #'   \item{meta}{A named list with:
@@ -64,17 +59,14 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' print(grey_seals)
-#' summary(grey_seals)
-#' plot(grey_seals, style="ribbon")
+#' 
 #' @name grey_seals
 #' @docType data
 #' @author Andrew Edwards, Nell den Heyer
 #' @source Hammill et al. (2023), see data-raw/grey-seals/grey-seals.R
 "grey_seals"
 
-##' @rdname grey_seals
+#' @rdname grey_seals
 "grey_seals_2021"
 
 #' North Atlantic Oscillation (NAO) Index (ea_data)
@@ -99,10 +91,6 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' data(nao)
-#' print(nao)
-#' plot(nao)
 #' @name nao
 #' @docType data
 #' @author Jamie C. Tam; Chantelle Layton
@@ -133,10 +121,6 @@
 #'   \item{source_citation}{Character. "Copernicus Marine Service"}
 #'   \item{original_value_col}{Character. The original col used for value}
 #' }
-#' @examples
-#' data(glorys_bottom_temperature)
-#' print(glorys_bottom_temperature)
-#' plot(glorys_bottom_temperature, style = "fill")
 #' @name glorys_bottom_temperature
 #' @docType data
 #' @author marea/DFO
@@ -168,9 +152,6 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' print(azmp_bottom_temperature)
-#' plot(azmp_bottom_temperature)
 #' @docType data
 #' @name azmp_bottom_temperature
 #' @author Jaimie Harbin and Benoit Casault
@@ -210,8 +191,6 @@
 #'   \item{PNUM}{Number of prey}
 #'   \item{DIGESTION}{Digestive state (coded)}
 #' }
-#' @examples
-#' str(food_habits)
 #' @docType data
 #' @name food_habits
 #' @author Manon Cassista Da Ros; Mike McMahon
@@ -242,8 +221,6 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' plot(pdo)
 #' @docType data
 #' @name pdo
 #' @author Andrew Edwards
@@ -274,8 +251,6 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' plot(soi)
 #' @docType data
 #' @name soi
 #' @author Andrew Edwards
@@ -306,8 +281,6 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' plot(npgo)
 #' @docType data
 #' @name npgo
 #' @author Andrew Edwards
@@ -338,8 +311,6 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' plot(mei)
 #' @docType data
 #' @name mei
 #' @author Andrew Edwards
@@ -370,11 +341,11 @@
 #'     }
 #'   }
 #' }
-#' @examples
-#' plot(ao)
+#' 
 #' @docType data
 #' @name ao
 #' @author Andrew Edwards
 #' @source \url{https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/}
-#' "ao"
-#' 
+"ao"
+ 
+ 
