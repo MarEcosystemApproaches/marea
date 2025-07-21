@@ -57,15 +57,6 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 #'   source_citation = "Internal Simulation"
 #' )
 #'
-#' # Print the object to see the summary and structure
-#' print(temp_obj)
-#'
-#' # The primary data column is now consistently named 'value'
-#' head(temp_obj)
-#'
-#' # The plot method works without needing to know the original column name
-#' plot(temp_obj)
-
 ea_st <- function(data,
                   value_col,
                   data_type,
@@ -191,3 +182,4 @@ summary.ea_st <- function(object, ...) {
     class = c("ea_st", "list")
   )
 }
+
