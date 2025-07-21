@@ -6,4 +6,6 @@
 #' @importFrom stats approx 
 #' @importFrom utils citation data tail toBibtex
 #' @importFrom magrittr %>%
+#' @import ggplot2
+#' @importFrom vctrs s3_register
 NULL
