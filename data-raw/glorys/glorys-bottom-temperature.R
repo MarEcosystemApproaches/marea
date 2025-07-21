@@ -4,6 +4,7 @@ library(stars)
 library(sf)
 library(tidyr)
 library(lubridate)
+library(stringr)
 
 username <- Sys.getenv("CMEMS_USERNAME")
 password <- Sys.getenv("CMEMS_PASSWORD")
@@ -13,7 +14,7 @@ myint_ds <- "cmems_mod_glo_phy_myint_0.083deg_P1M-m"
 lonmin <- -67.74250; lonmax <- -54.90132
 latmin <- 40.04343;  latmax <- 47.83333
 
-start10 <- Sys.Date() - years(10)
+start10 <- Sys.Date() - years(5)
 end10   <- Sys.Date()
 
 reticulate::use_virtualenv("CopernicusMarine", required = TRUE)
@@ -112,9 +113,9 @@ attr(df,"region") <- "Northwest Atlantic"
 attr(df,"source") <- "Copernicus Marine Environment Monitoring Service (CMEMS)"
 attr(df,"time_descriptor") <- sprintf("Monthly data %s→%s", start10, end10)
 
-# as_ea_st is your custom/extra postprocessing step
+
 glorys_bottom_temperature <- as_ea_st(
-  spatial_obj = df,
+  x = df,
   value_col    = "value",
   data_type    = "Bottom Temperature",
   region       = "Northwest Atlantic",
@@ -126,5 +127,6 @@ glorys_bottom_temperature <- as_ea_st(
   dataset_id   = paste(my_ds, myint_ds, sep="; ")
 )
 
+
 usethis::use_data(glorys_bottom_temperature, overwrite=TRUE)
-message("Done: ", nrow(glorys_long), " records from ", length(all_long), " dataset(s).")
+message("Done: ", nrow(df), " records.")
