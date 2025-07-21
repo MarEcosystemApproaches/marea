@@ -68,9 +68,9 @@ print(grey_seals)
 #> 5  1966   410   395.   425.
 #> 6  1967   440   425.   455.
 
-# 3. Create a simple base plot
-base_plot <- plot(grey_seals)
-print(base_plot)
+# 3. Create a simple plot
+p <- plot(grey_seals)
+
 ```
 
 <img src="man/figures/README-grey-seals-base.png" width="70%" />
@@ -86,7 +86,7 @@ custom_plot <- base_plot +
   ) +
   theme_bw()
 
-print(custom_plot)
+
 ```
 
 ## Available Data
@@ -103,7 +103,8 @@ kable(marea_metadata())
 For detailed examples, data sources, and methodologies, please see our vignettes:
 
 *Understanding Generic EA Data Classes*: A guide to the ea classes and the package philosophy.
-*Plotting EA Classes*: Examples and deatils of how to plot ea class objects.
+
+*Plotting EA Classes*: Examples and details of how to plot ea class objects.
 
 ## Citation
 

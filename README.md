@@ -1,7 +1,6 @@
 
-<!--
-README.md is generated from README.Rmd. Please edit that file. Build with:
--->
+# marea: Curated Ecosystem Data for the Maritimes Region
+
 <!-- badges: start -->
 
 [![Lifecycle:
@@ -11,111 +10,148 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15706086.svg)](https://doi.org/10.5281/zenodo.15706086)
 <!-- badges: end -->
 
-# marea <img src="man/figures/marea_logo_3.png" align="right" height="138" /></a>
+<img src="marea_logo_jupijkam.png" align="right" height="138" />
 
-**UNDER DEVELOPMENT**
+`marea` provides curated data sets to support an Ecosystem Approach to
+Fisheries Management (EAFM) in Canada’s Maritimes Region. It offers
+standardized, analysis-ready time series of oceanographic,
+environmental, and biological data crucial for research and stock
+assessment.
 
-# Overview
+## Philosophy
 
-The marea package provides curated maritime ecosystem data and model
-outputs to support ecosystem approaches to fisheries management in
-Atlantic Canada. The package standardizes access to environmental
-variables, oceanographic indices, and biological data from multiple
-sources.
+1.  **A Single, Simple Data Structure**: All time series data in `marea`
+    are stored in simple and robust `ea`class objects. This provides a
+    consistent, predictable format, whether you are working with
+    temperature, survey indices, or commercial catch.
+2.  **User-Controlled Plotting**: We provide a basic, clean plot for
+    every dataset. From there, **you are in control**. Because our plots
+    are standard `ggplot2` objects, you can easily customize them, add
+    new layers, and create the exact visualization you need for your
+    analysis or report.
 
-# Installation
+## Installation
+
+You can install the development version of `marea` from GitHub:
 
 ``` r
-# Install development version from GitHub
-install.packages("remotes")
+# install.packages("remotes")
 remotes::install_github("MarEcosystemApproaches/marea")
 ```
 
-For DFO network users experiencing timeout errors:
+For users on the DFO network who may experience connection timeouts:
 
 ``` r
+# Set a longer timeout period
 options(timeout = 1200)
 remotes::install_github("MarEcosystemApproaches/marea")
 ```
 
-# Quick Start
+## Quick Start: A Simple Workflow
+
+The workflow for any dataset in marea is the same: load, inspect, plot,
+and customize.
 
 ``` r
 library(marea)
+library(ggplot2) # For customization
 
-# Plot bottom temperature patterns
-plot(glorys_bottom_temperature,
-     months = c("February", "October"),
-     years = c(2015, 2020))
+# 1. Load a dataset of interest (e.g., grey seal abundance)
+data("grey_seals")
 
-# Access North Atlantic Oscillation index
-plot(nao, lwd = 2)
+# 2. Inspect the object - it's a clean 'ea_data' object
+print(grey_seals)
+#> --- Ecosystem Approach (EA) Data Object ---
+#> Class:           ea_data 
+#> Data Type:       Abundance index 
+#> Species:         Grey Seal (Halichoerus grypus) 
+#> Location:        Sable Island (Maritimes Region)
+#> Time Range:      1962 - 2016 
+#> Data Dims:       55 rows x 4 cols 
+#> Units:           count 
+#> -------------------------------------------
+#> Data preview:
+#> # A tibble: 6 × 4
+#>    year value    low   high
+#>   <int> <dbl>  <dbl>  <dbl>
+#> 1  1962   363   348.   378.
+#> 2  1963   370   355.   385.
+#> 3  1964   380   365.   395.
+#> 4  1965   390   375.   405.
+#> 5  1966   410   395.   425.
+#> 6  1967   440   425.   455.
 
-# View grey seal population trends
-plot(grey_seals)
+# 3. Create a simple base plot
+base_plot <- plot(grey_seals)
+print(base_plot)
 ```
 
-# Data Products Available
+<img src="man/figures/README-grey-seals-base.png" width="70%" />
 
-The marea package includes a variety of datasets and model outputs,
-including:
+``` r
+# 4. Customize it! Add a confidence ribbon and improve the labels.
+# The 'low' and 'high' columns are right there in the data frame.
+custom_plot <- base_plot +
+  geom_ribbon(aes(ymin = low, ymax = high), fill = "skyblue", alpha = 0.5) +
+  labs(
+    title = "Grey Seal Abundance on Sable Island",
+    y = "Estimated Pup Production (count)"
+  ) +
+  theme_bw()
 
-| Dataset                   | Temporal.Coverage | Source  | Update.Frequency |
-|:--------------------------|:------------------|:--------|:-----------------|
-| azmp_bottom_temperature   | 1950-2022         | Unknown | Unknown          |
-| food_habits               | Inf–Inf           | Unknown | Unknown          |
-| glorys_bottom_temperature | Inf–Inf           | Unknown | Unknown          |
-| grey_seals                | 1960-2021         | Unknown | Unknown          |
-| grey_seals_2021           | 1960-2021         | Unknown | Unknown          |
-| nao                       | 1951-2024         | Unknown | Unknown          |
-| oni                       | 1950-2025         | Unknown | Unknown          |
+print(custom_plot)
+```
 
-# Documentation
+## Available Data
 
-Detailed vignettes with examples and methodology:
+marea includes a growing list of curated data products. Use
+marea_metadata() to see what’s available.
 
-*links to vignettes*
+``` r
+library(knitr)
+kable(marea_metadata())
+```
 
-# Example Visualizations
+## Documentation
 
-## Bottom Temperature Comparison
+For detailed examples, data sources, and methodologies, please see our
+vignettes:
 
-<img src="man/figures/README-glorys-temp.png" width="70%" />
+*Understanding Generic EA Data Classes*: A guide to the ea classes and
+the package philosophy.
 
-## Grey Seal Population Trends
+*Plotting EA Classes*: Examples and details of how to plot ea class
+objects.
 
-<img src="man/figures/README-grey-seals.png" width="70%" />
+## Citation
 
-# Citation
+If you use marea in a publication, please cite it. You can get the
+current citation information by running:
 
-If you use `marea` in your work, please cite:
+``` r
+citation("marea")
+```
 
-“Edwards, A.M. et al. (2024). marea: Maritime Ecosystem Approach R
-Package. R package version 1.0.0.
-<https://doi.org/10.5281/zenodo.15706086>”
+## Contributing
 
-Use `citation("marea")` for BibTeX format.
+We welcome contributions! If you have suggestions, find a bug, or would
+like to contribute a new dataset, please see our contribution guidelines
+and open an issue on GitHub.
 
-# Related Work
+## Related Work
 
-This package is part of a national effort to facilitate ecosystem
-approaches to fisheries management:
+This package is part of a coordinated effort across DFO regions to
+standardize access to ecosystem data for fisheries management:
 
 [pacea](https://github.com/pbs-assess/PACea/) - Pacific ecosystem data
 
 [gslea](https://github.com/duplisea/gslea/) - Gulf of St. Lawrence
 ecosystem data
 
-# Contributing
+## Acknowledgments
 
-Please see our contribution guidelines for information on reporting
-issues, suggesting enhancements, and contributing code.
-
-# Acknowledgments
-
-We acknowledge funding from Fisheries and Oceans Canada. We thank the
-data providers and contributors who have made this package possible.
-
-# Contact
-
-For questions or support, please open an issue on GitHub.
+We acknowledge that this work is done in the traditional and unceded
+territory of indigenous people who have cared for this land and water
+for time immemorial. We thank Fisheries and Oceans Canada for funding
+and acknowledge the many data providers and scientists whose work makes
+this package possible.
