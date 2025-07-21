@@ -40,12 +40,6 @@ The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern Osci
 \details{
 For more information, see \href{http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml}{NOAA ONI} and \href{https://www.ncei.noaa.gov/access/monitoring/enso/sst}{NOAA ENSO SST}.
 }
-\examples{
-print(oni)
-summary(oni)
-plot(oni, style="default")
-plot(oni, style="red_blue")
-}
 \references{
 Ross, T. & Robert, M. (2022). In Boldt, J.L. et al. Canadian Technical Report of Fisheries and Aquatic Sciences, 3482.
 }

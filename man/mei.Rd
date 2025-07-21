@@ -35,9 +35,6 @@ mei
 \description{
 The MEI is a bimonthly index formed by combining multiple atmospheric and oceanic variables, quantifying ENSO state in the tropical Pacific.
 }
-\examples{
-plot(mei)
-}
 \author{
 Andrew Edwards
 }

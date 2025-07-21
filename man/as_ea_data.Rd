@@ -2,10 +2,37 @@
 % Please edit documentation in R/as_ea_data.R
 \name{as_ea_data}
 \alias{as_ea_data}
-\title{Coerce a pacea object to ea_data (robust multiple-value handling)}
+\title{Coerce a  dataframe to ea_data (robust multiple-value handling)}
 \usage{
-as_ea_data(pacea_obj, value_col = NULL, ...)
+as_ea_data(x, value_col = NULL, ...)
+}
+\arguments{
+\item{x}{A data frame, or pacea object to convert.}
+
+\item{value_col}{The name of the column to use as the primary "value" column.
+If not specified, the function will attempt to determine the value column automatically.}
+
+\item{...}{Additional arguments to pass to the \code{ea_data} constructor.}
+}
+\value{
+An \code{ea_data} object.
 }
 \description{
-Coerce a pacea object to ea_data (robust multiple-value handling)
+This function converts a data frame or similar object into an \code{ea_data} object,
+handling multiple potential value columns robustly.
+}
+\details{
+The function first checks if the input is already an \code{ea_data} object. If so, it returns it unchanged.
+If not, it converts the input to a data frame and attempts to determine the primary value column.
+If multiple candidate columns are found, it uses the first one and issues a warning.
+If the specified value column is not "value", it renames the existing "value" column to "value_orig".
+Finally, it constructs an \code{ea_data} object with the specified metadata and returns it.
+}
+\examples{
+# Example usage:
+df <- data.frame(time = 1:10, median = rnorm(10), value = rnorm(10))
+ea_data_obj <- as_ea_data(df, value_col = "median")
+# Check the class of the resulting object
+class(ea_data_obj)
+
 }

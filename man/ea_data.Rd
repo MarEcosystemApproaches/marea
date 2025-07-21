@@ -32,7 +32,7 @@ that contains the primary numeric values to be analyzed.}
 \item{location_descriptor}{A character string. A specific identifier for the
 data's spatial context (e.g., "4X", "WCVI", "Station P").}
 
-\item{units}{A character string for the 'value' column (e.g., "tonnes", "kg/tow", "°C").}
+\item{units}{A character string for the 'value' column (e.g., "tonnes", "kg/tow", "degC").}
 
 \item{species}{A character string. The common or scientific name of the species.
 This is optional and should be omitted for non-biological data.}
@@ -54,38 +54,36 @@ user-specified value column to \code{value} internally.
 \examples{
 # Example 1: Environmental Data with a custom value column name 'avg_temp'
 temp_df <- data.frame(
-  year = 1995:2015,
-  avg_temp = 7.5 + cumsum(rnorm(21, 0, 0.1)),
-  month = "August"
+year = 1995:2015,
+avg_temp = 7.5 + cumsum(rnorm(21, 0, 0.1)),
+month = "August"
 )
 
 bottom_temp_obj <- ea_data(
-  data = temp_df,
-  value_col = "avg_temp",  # <-- Specify the value column here
-  data_type = "Annual Bottom Temperature",
-  region = "Scotian Shelf",
-  location_descriptor = "4X Survey Area",
-  units = "°C",
-  source_citation = "DFO RV Survey Database (2023)"
+data = temp_df,
+value_col = "avg_temp",  # <-- Specify the value column here
+data_type = "Annual Bottom Temperature",
+region = "Scotian Shelf",
+location_descriptor = "4X Survey Area",
+units = "degC",
+source_citation = "DFO RV Survey Database (2023)"
 )
-print(bottom_temp_obj) # Note the 'value' column was renamed from 'avg_temp'
 
 # Example 2: Fisheries Data where the value column is already named 'value'
 catch_df <- data.frame(
-  year = 2000:2010,
-  value = round(runif(11, 500, 800)),
-  area = "5A/B"
+year = 2000:2010,
+value = round(runif(11, 500, 800)),
+area = "5A/B"
 )
 
 rockfish_obj <- ea_data(
-  data = catch_df,
-  value_col = "value", # <-- Still specify it, even if it's the default name
-  data_type = "Commercial Catch",
-  region = "Pacific",
-  location_descriptor = "BC North Coast",
-  units = "tonnes",
-  species = "Yelloweye Rockfish",
-  source_citation = "DFO Catch Monitoring Program (2023)"
+data = catch_df,
+value_col = "value", # <-- Still specify it, even if it's the default name
+data_type = "Commercial Catch",
+region = "Pacific",
+location_descriptor = "BC North Coast",
+units = "tonnes",
+species = "Yelloweye Rockfish",
+source_citation = "DFO Catch Monitoring Program (2023)"
 )
-print(rockfish_obj)
 }

@@ -62,7 +62,9 @@ Imports:
     stats,
     utils,
     magrittr,
-    tibble
+    tibble,
+    vctrs,
+    ggplot2
 Suggests:
     devtools,
     doParallel,

@@ -33,11 +33,6 @@ nao
 \description{
 The NAO Index represents the difference in sea-level atmospheric pressures between the Azores and Iceland, calculated by PCA of 500 mb height anomalies.
 }
-\examples{
-data(nao)
-print(nao)
-plot(nao)
-}
 \author{
 Jamie C. Tam; Chantelle Layton
 }

@@ -35,9 +35,6 @@ npgo
 \description{
 The NPGO is the second dominant mode of sea-surface height anomaly variability in the northeast Pacific, correlating with nutrient/chlorophyll fluctuations.
 }
-\examples{
-plot(npgo)
-}
 \author{
 Andrew Edwards
 }

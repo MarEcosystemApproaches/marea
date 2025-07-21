@@ -44,9 +44,6 @@ food_habits
 \description{
 Stomach content and food habits data collected during DFO ecosystem surveys in the Maritimes region. Contains trawl set, fish, and prey item information.
 }
-\examples{
-str(food_habits)
-}
 \author{
 Manon Cassista Da Ros; Mike McMahon
 }

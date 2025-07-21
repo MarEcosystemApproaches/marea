@@ -12,8 +12,8 @@ An \code{ea_data} object with:
 \describe{
 \item{year}{Year (numeric)}
 \item{value}{Median estimate (count)}
-\item{low}{Lower 95\\% credible interval}
-\item{high}{Upper 95\\% credible interval}
+\item{low}{Lower 95percent credible interval}
+\item{high}{Upper 95percent credible interval}
 }
 }
 \item{meta}{A named list with:
@@ -41,11 +41,6 @@ grey_seals_2021
 }
 \description{
 Abundance of grey seals in Canadian waters, assessed as a single stock. Derived from aerial surveys, corrected for survey timing, coverage, and haul-out proportion.
-}
-\examples{
-print(grey_seals)
-summary(grey_seals)
-plot(grey_seals, style="ribbon")
 }
 \author{
 Andrew Edwards, Nell den Heyer

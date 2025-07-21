@@ -35,9 +35,6 @@ pdo
 \description{
 The PDO Index is a monthly index describing long-term sea surface temperature variability in the North Pacific (poleward of 20°N).
 }
-\examples{
-plot(pdo)
-}
 \author{
 Andrew Edwards
 }

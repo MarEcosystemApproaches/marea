@@ -29,11 +29,12 @@ glorys_bottom_temperature
 }
 \description{
 Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.
+The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and
+interim monthly) for best data coverage.
 }
-\examples{
-data(glorys_bottom_temperature)
-print(glorys_bottom_temperature)
-plot(glorys_bottom_temperature, style = "fill")
+\details{
+Dataset IDs: cmems_mod_glo_phy_my_0.083deg_P1M-m and cmems_mod_glo_phy_myint_0.083deg_P1M-m
+Pulled using marea::get_CMEMS_ncdf()
 }
 \author{
 marea/DFO

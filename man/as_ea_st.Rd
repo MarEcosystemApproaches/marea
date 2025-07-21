@@ -2,12 +2,12 @@
 % Please edit documentation in R/as_ea_st.R
 \name{as_ea_st}
 \alias{as_ea_st}
-\title{Coerce an sf-like pacea object to an ea_st object}
+\title{Coerce an sf object to an ea_st object}
 \usage{
-as_ea_st(spatial_obj, value_col = NULL, ...)
+as_ea_st(x, value_col = NULL, ...)
 }
 \arguments{
-\item{spatial_obj}{An \code{sf} or similar object, usually with class \code{pacea_st}}
+\item{x}{An \code{sf} or similar object, usually with class \code{pacea_st}}
 
 \item{value_col}{Name of the column to use as value. If NULL, will auto-pick if only one candidate exists.}
 
@@ -17,6 +17,6 @@ as_ea_st(spatial_obj, value_col = NULL, ...)
 An \code{ea_st} object.
 }
 \description{
-Convert a spatial/class \code{pacea_st} or \code{marea_st} (simple features) object from pacea to generic \code{ea_st}.
-All metadata is extracted from attributes, not a meta slot.
+Convert a spatial/class \code{pacea_st} or \code{marea_st} (simple features) object or a generic sf object generic \code{ea_st}.
+All metadata is extracted from attributes.
 }

@@ -35,9 +35,6 @@ soi
 \description{
 The SOI is a monthly measure of the seasonal atmospheric pressure differences between Tahiti and Darwin, a leading indicator of El Niño/La Niña conditions.
 }
-\examples{
-plot(soi)
-}
 \author{
 Andrew Edwards
 }
