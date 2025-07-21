@@ -1,8 +1,29 @@
-#' @title Coerce a pacea object to ea_data (robust multiple-value handling)
+#' @title Coerce a  dataframe to ea_data (robust multiple-value handling)
+#' @description
+#' This function converts a data frame or similar object into an `ea_data` object,
+#' handling multiple potential value columns robustly.
+#' @param x A data frame, or pacea object to convert.
+#' @param value_col The name of the column to use as the primary "value" column.
+#' If not specified, the function will attempt to determine the value column automatically.
+#' @param ... Additional arguments to pass to the `ea_data` constructor.
+#' @return An `ea_data` object.
+#' @details
+#' The function first checks if the input is already an `ea_data` object. If so, it returns it unchanged.
+#' If not, it converts the input to a data frame and attempts to determine the primary value column.
+#' If multiple candidate columns are found, it uses the first one and issues a warning.
+#' If the specified value column is not "value", it renames the existing "value" column to "value_orig".
+#' Finally, it constructs an `ea_data` object with the specified metadata and returns it.
+#' @examples
+#' # Example usage:
+#' df <- data.frame(time = 1:10, median = rnorm(10), value = rnorm(10))
+#' ea_data_obj <- as_ea_data(df, value_col = "median")
+#' # Check the class of the resulting object
+#' class(ea_data_obj)
+#' 
 #' @export
-as_ea_data <- function(pacea_obj, value_col = NULL, ...) {
-  if (inherits(pacea_obj, "ea_data")) return(pacea_obj)
-  df <- as.data.frame(pacea_obj)
+as_ea_data <- function(x, value_col = NULL, ...) {
+  if (inherits(x, "ea_data")) return(x)
+  df <- as.data.frame(x)
   
   # Step 1: figure out which column to use as primary "value"
   if (is.null(value_col)) {
@@ -37,9 +58,9 @@ as_ea_data <- function(pacea_obj, value_col = NULL, ...) {
   # Extract user-supplied arguments
   user_args <- list(...)
   # -- Metadata 
-  attrs <- attributes(pacea_obj)
+  attrs <- attributes(x)
   `%||%` <- function(x, y) if (is.null(x)) y else x
-  data_type   <- user_args$data_type %||% attrs$long_name   %||% attrs$axis_name   %||% class(pacea_obj)[1]
+  data_type   <- user_args$data_type %||% attrs$long_name   %||% attrs$axis_name   %||% class(x)[1]
   region      <- user_args$region %||% attrs$region      %||% "Not specified"
   location    <- user_args$location %||% attrs$stock_name  %||% data_type
   units       <- user_args$units %||% attrs$units       %||% ""
