@@ -1,46 +1,63 @@
-#' @title Coerce an sf object to an ea_spatial object
-#' @description
-#' Convert a spatial/class `pacea_spatial` or `marea_spatial` (simple features) object or a generic sf object generic `ea_spatial`.
-#' All metadata is extracted from attributes.
+#' @title Coerce a spatial object to an `ea_spatial` S4 object
 #'
-#' @param x An `sf` or similar object, usually with class `pacea_spatial` 
-#' @param value_col   Name of the column to use as value. If NULL, will auto-pick if only one candidate exists.
-#' @param ...         Additional metadata overrides (named elements).
-#' @return An `ea_spatial` object.
+#' @description
+#' Converts a spatial object (`sf`, `stars`, or `SpatRaster`) into a validated `ea_spatial` S4 object.
+#' Metadata is extracted from attributes and can be overridden via arguments.
+#'
+#' @param x A spatial object of class `sf`, `stars`, or `SpatRaster`.
+#' @param value_col Name of the column or layer to use as the primary value. If NULL, auto-selects if only one candidate exists.
+#' @param ... Additional metadata overrides passed to the `ea_spatial()` constructor.
+#'
+#' @return A validated `ea_spatial` S4 object.
+#'
 #' @export
 as_ea_spatial <- function(x, value_col = NULL, ...) {
-  if (inherits(x, "ea_spatial")) return(x)
-  if (!inherits(x, "sf")) stop("Object must be of class 'sf' or similar.", call. = FALSE)
-  geom_col <- attr(x, "sf_column")
-  candidate_cols <- setdiff(names(x), geom_col)
-  if (is.null(value_col)) {
-    poss <- candidate_cols
-    if (length(poss) != 1)
-      stop("Supply value_col (multiple possible data columns in sf object).", call. = FALSE)
-    value_col <- poss
-  }
-  stopifnot(value_col %in% names(x))
-  # Extract user-supplied arguments
-  user_args <- list(...)
+  # if (methods::is(x, "ea_spatial")) return(x)
   
-  # Metadata from attributes with user overrides
+  if (!inherits(x, c("sf", "stars", "SpatRaster"))) {
+    stop("Object must be of class 'sf', 'stars', or 'SpatRaster'.", call. = FALSE)
+  }
+  
+  # Determine candidate columns/layers
+  if (inherits(x, "sf")) {
+    geom_col <- attr(x, "sf_column")
+    candidate_cols <- setdiff(names(x), geom_col)
+  } else {
+    candidate_cols <- names(x)
+  }
+  
+  # Auto-select value_col if not provided
+  if (is.null(value_col)) {
+    if (length(candidate_cols) == 1) {
+      value_col <- candidate_cols[1]
+    } else {
+      stop("Multiple candidate columns/layers found. Please specify `value_col`.", call. = FALSE)
+    }
+  }
+  
+  if (!value_col %in% candidate_cols) {
+    stop(paste("Column or layer", value_col, "not found in object."), call. = FALSE)
+  }
+  
+  # Extract metadata from attributes and user input
+  user_args <- list(...)
+  `%||%` <- function(a, b) if (!is.null(a)) a else b
   attrs <- attributes(x)
   
-  # Standard metadata fields with defaults and user overrides
-  data_type   <- user_args$data_type   %||% attrs$long_name   %||% attrs$axis_name   %||% class(x)[1]
-  region      <- user_args$region      %||% attrs$region      %||% "Not specified"
-  time_desc   <- user_args$time_descriptor %||% value_col
-  units       <- user_args$units       %||% attrs$units       %||% ""
-  citation    <- user_args$source_citation %||% attrs$citation %||% attrs$source %||% "pacea object (see ?object)"
+  data_type   <- user_args$data_type        %||% attrs$long_name   %||% attrs$axis_name   %||% class(x)[1]
+  region      <- user_args$region           %||% attrs$region      %||% "Not specified"
+  time_desc   <- user_args$time_descriptor  %||% attrs$time_descriptor %||% value_col
+  units       <- user_args$units            %||% attrs$units       %||% ""
+  citation    <- user_args$source_citation  %||% attrs$citation    %||% attrs$source %||% "pacea object"
   
-  # Remove standard arguments from user_args to avoid conflicts
+  # Remove standard arguments from user_args to avoid duplication
   standard_args <- c("data_type", "region", "time_descriptor", "units", "source_citation")
   additional_meta <- user_args[!names(user_args) %in% standard_args]
   
-  # Build the call arguments
+  # Build constructor arguments
   call_args <- list(
-    data = dplyr::rename(x, value = !!value_col),
-    value_col = "value",
+    data = x,
+    value_col = value_col,
     data_type = data_type,
     region = region,
     time_descriptor = time_desc,
@@ -48,9 +65,11 @@ as_ea_spatial <- function(x, value_col = NULL, ...) {
     source_citation = citation
   )
   
-  # Add any additional metadata
+  # Add additional metadata
   call_args <- c(call_args, additional_meta)
   
-  # Call ea_spatial with the constructed arguments
-  do.call(marea::ea_spatial, call_args)
+  # Construct and validate the S4 object
+  obj <- do.call(ea_spatial, call_args)
+  validObject(obj)
+  obj
 }

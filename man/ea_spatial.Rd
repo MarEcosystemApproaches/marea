@@ -2,7 +2,7 @@
 % Please edit documentation in R/ea_spatial_class.R
 \name{ea_spatial}
 \alias{ea_spatial}
-\title{Create an Ecosystem Approach Spatio-Temporal (ea_spatial) object}
+\title{Create an \code{ea_spatial} S4 Object}
 \usage{
 ea_spatial(
   data,
@@ -16,59 +16,27 @@ ea_spatial(
 )
 }
 \arguments{
-\item{data}{An \code{sf} object. It must contain a geometry column.}
+\item{data}{A spatial object of class \code{sf}, \code{stars}, or \code{SpatRaster}.}
 
-\item{value_col}{A character string specifying the name of the column in
-\code{data} that contains the primary numeric values to be analyzed and plotted.}
+\item{value_col}{A character string naming the column or layer containing numeric values.}
 
-\item{data_type}{A character string describing the data (e.g., "Bottom Temperature",
-"Surface Salinity", "Chlorophyll-a Concentration").}
+\item{data_type}{A character string describing the type of data.}
 
-\item{region}{A character string. The DFO region or general ocean basin
-(e.g., "Maritimes", "Scotian Shelf", "Pacific").}
+\item{region}{A character string indicating the geographic region.}
 
-\item{time_descriptor}{A character string describing the temporal nature of the
-data (e.g., "January 2018 Monthly Mean", "Annual Climatology 1990-2020").}
+\item{time_descriptor}{A character string describing the temporal nature of the data.}
 
-\item{units}{A character string for the 'value' column (e.g., "°C", "PSU").}
+\item{units}{A character string indicating the units of measurement.}
 
-\item{source_citation}{A character string citing the data origin.}
+\item{source_citation}{A character string providing the data source citation.}
 
-\item{...}{Additional metadata fields to be stored in the \code{meta} list.}
+\item{...}{Additional metadata fields to include in the \code{meta} slot.}
 }
 \value{
-An object of class \code{ea_spatial}, which also inherits from \code{sf}, \code{tbl_df},
-\code{tbl}, and \code{data.frame}.
+An object of class \code{ea_spatial}.
 }
 \description{
-This function creates a standardized object for spatio-temporal data,
-typically gridded data like model outputs or interpolated observations.
-It builds upon the 'sf' class, ensuring compatibility with the entire
-spatial R ecosystem.
-}
-\details{
-The constructor standardizes the object by renaming the user-specified
-value column to \code{value} internally. This simplifies all other S3 methods.
-}
-\examples{
-# Create a sample sf object
-# A 3x3 grid over a fictional area
-grid_points <- expand.grid(x = seq(1, 3), y = seq(1, 3))
-sample_sf <- sf::st_as_sf(grid_points, coords = c("x", "y"), crs = 4326)
-
-# Add some fictional data, with a non-standard column name 'temp_c'
-sample_sf$temp_c <- c(5.1, 5.3, 5.4, 6.0, 6.2, 6.1, 5.8, 5.9, 5.7)
-sample_sf$month <- "January"
-
-# Create an ea_spatial object, mapping 'temp_c' to be the value column
-temp_obj <- ea_spatial(
-  data = sample_sf,
-  value_col = "temp_c",
-  data_type = "Simulated Bottom Temperature",
-  region = "Maritimes",
-  time_descriptor = "January Snapshot",
-  units = "°C",
-  source_citation = "Internal Simulation"
-)
-
+Constructs an \code{ea_spatial} object from a spatial object (\code{sf}, \code{stars}, or \code{SpatRaster})
+and associated metadata. The function validates the presence and type of required
+columns or layers, standardizes the value column (if applicable), and stores metadata.
 }

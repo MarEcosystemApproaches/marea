@@ -7,161 +7,230 @@ if (!requireNamespace("dplyr", quietly = TRUE)) {
 stop("The 'dplyr' package is required for the 'ea_data' constructor. Please install it.")
 }
 
-# -----------------------------------------------------------------------------
-# 1. Low-level Constructor (for internal use)
-# -----------------------------------------------------------------------------
-# This function creates the object without validation. It's fast and simple.
-new_ea_data <- function(data = tibble::tibble(), meta = list()) {
-  stopifnot(is.data.frame(data))
-  stopifnot(is.list(meta))
-  
-  structure(
-    list(
-      data = data,
-      meta = meta
-    ),
-    class = c("ea_data", "list")
-  )
-}
 
-# -----------------------------------------------------------------------------
-# 2. Helper/User-Facing Constructor with Validation
-# -----------------------------------------------------------------------------
-#' Create an Ecosystem Approach (EA) data object
+
+#' S4 Class for Environmental Assessment Data
 #'
-#' This is the main user-facing function to create a standardized data object
-#' for ecosystem time series. It combines a data frame of observations with a
-#' list of essential metadata and performs validation to ensure the object is
-#' well-formed. The constructor standardizes the object by renaming the
-#' user-specified value column to `value` internally.
+#' The `ea_data` class is designed to store and manage environmental assessment data,
+#' including both metadata and a structured data frame. It supports standardized
+#' column naming and includes validation to ensure required fields are present.
 #'
-#' @param data A data.frame or tibble containing the time series data. Must
-#' contain a 'year' column and the column specified by `value_col`.
-#' @param value_col A character string specifying the name of the column in `data`
-#' that contains the primary numeric values to be analyzed.
-#' @param data_type A character string describing the data (e.g., "Commercial Catch",
-#' "Survey Index", "Bottom Temperature", "Chlorophyll-a").
-#' @param region A character string. The DFO region or general ocean basin
-#' (e.g., "Pacific", "Maritimes", "Scotian Shelf").
-#' @param location_descriptor A character string. A specific identifier for the
-#' data's spatial context (e.g., "4X", "WCVI", "Station P").
-#' @param units A character string for the 'value' column (e.g., "tonnes", "kg/tow", "degC").
-#' @param species A character string. The common or scientific name of the species.
-#' This is optional and should be omitted for non-biological data.
-#' @param source_citation A character string citing the data origin.
-#' @param ... Additional metadata fields to be stored in the `meta` list.
+#' @slot meta A named list containing metadata such as data type, region, units, species, etc.
+#' @slot data A `data.frame` or `tibble` containing the actual data, including at minimum
+#'   a `year` column and a `value` column.
+#'
+#' @export
+setClass(
+  Class = "ea_data",
+  slots = list(
+    meta = "list",
+    data = "data.frame"
+  )
+)
+
+
+#' Create an `ea_data` S4 Object
+#'
+#' Constructs an `ea_data` object from a data frame and associated metadata.
+#' The function validates the presence and type of required columns, standardizes
+#' the value column, and stores metadata in a structured format.
+#'
+#' @param data A `data.frame` containing at least a `year` column and a numeric column
+#'   specified by `value_col`.
+#' @param value_col A character string naming the column in `data` that contains the numeric values.
+#' @param data_type A character string describing the type of data (e.g., "temperature").
+#' @param region A character string indicating the geographic region.
+#' @param location_descriptor A character string describing the location (e.g., "bottom", "surface").
+#' @param units A character string indicating the units of measurement.
+#' @param species Optional. A character string naming the species (default is `NA_character_`).
+#' @param source_citation Optional. A character string providing the data source citation.
+#' @param ... Additional metadata fields to include in the `meta` slot.
 #'
 #' @return An object of class `ea_data`.
-#' @export
+#'
 #' @examples
-#' # Example 1: Environmental Data with a custom value column name 'avg_temp'
-#' temp_df <- data.frame(
-#' year = 1995:2015,
-#' avg_temp = 7.5 + cumsum(rnorm(21, 0, 0.1)),
-#' month = "August"
-#' )
+#' \dontrun{
+#' df <- data.frame(year = 2000:2005, temp = rnorm(6))
+#' obj <- ea_data(df, value_col = "temp", data_type = "temperature",
+#'                region = "Scotian Shelf", location_descriptor = "bottom",
+#'                units = "°C")
+#' }
 #'
-#' bottom_temp_obj <- ea_data(
-#' data = temp_df,
-#' value_col = "avg_temp",  # <-- Specify the value column here
-#' data_type = "Annual Bottom Temperature",
-#' region = "Scotian Shelf",
-#' location_descriptor = "4X Survey Area",
-#' units = "degC",
-#' source_citation = "DFO RV Survey Database (2023)"
-#' )
+#' @export
+setGeneric("ea_data", function(data, value_col, data_type, region,
+                               location_descriptor, units, species = NA_character_,
+                               source_citation = "No citation provided", ...) {
+  standardGeneric("ea_data")
+})
+setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
+          function(data, value_col, data_type, region,
+                   location_descriptor, units, species = NA_character_,
+                   source_citation = "No citation provided", ...) {
+            
+            # --- Validation ---
+            if (!value_col %in% names(data)) {
+              stop(paste0("Column '", value_col, "' not found in the data."), call. = FALSE)
+            }
+            if (!"year" %in% names(data)) {
+              stop("`data` must contain a 'year' column.", call. = FALSE)
+            }
+            if (!is.numeric(data[[value_col]]) || !is.numeric(data$year)) {
+              stop(paste0("Columns 'year' and '", value_col, "' must be numeric."), call. = FALSE)
+            }
+          
+            
+            # --- Standardize ---
+            original_value_col <- value_col
+            data <- dplyr::rename(data, value = !!original_value_col)
+            
+            # --- Metadata ---
+            meta <- list(
+              data_type = as.character(data_type),
+              region = as.character(region),
+              location_descriptor = as.character(location_descriptor),
+              units = as.character(units),
+              species = as.character(species),
+              source_citation = as.character(source_citation),
+              original_value_col = original_value_col,
+              ...
+            )
+            
+            # --- Construct S4 object ---
+            new("ea_data", data = tibble::as_tibble(data), meta = meta)
+          })
+
+
+
+
+#' Access Elements of an `ea_data` Object
 #'
-#' # Example 2: Fisheries Data where the value column is already named 'value'
-#' catch_df <- data.frame(
-#' year = 2000:2010,
-#' value = round(runif(11, 500, 800)),
-#' area = "5A/B"
-#' )
+#' Provides access to metadata or data columns using `[[` syntax.
 #'
-#' rockfish_obj <- ea_data(
-#' data = catch_df,
-#' value_col = "value", # <-- Still specify it, even if it's the default name
-#' data_type = "Commercial Catch",
-#' region = "Pacific",
-#' location_descriptor = "BC North Coast",
-#' units = "tonnes",
-#' species = "Yelloweye Rockfish",
-#' source_citation = "DFO Catch Monitoring Program (2023)"
-#' )
-ea_data <- function(data,
-                    value_col,
-                    data_type,
-                    region,
-                    location_descriptor,
-                    units,
-                    species = NA_character_,
-                    source_citation = "No citation provided",
-                    ...) {
+#' @param x An `ea_data` object.
+#' @param i A character string naming an element in the `meta` or `data` slot.
+#' @param ... Additional arguments (ignored).
+#'
+#' @return The requested element from the `meta` or `data` slot.
+#'
+#' @export
+setMethod(
+  f = "[[",
+  signature(x = "ea_data", i = "ANY"),
+  definition = function(x, i, ...) {
+    metadataNames <- sort(names(x@meta))
+    dataNames <- sort(names(x@data))
+    
+    if (i == "meta") {
+      return(x@meta)
+    } else if (i == "data") {
+      return(x@data)
+    } else if (i %in% metadataNames) {
+      return(x@meta[[i]])
+    } else if (i %in% dataNames) {
+      return(x@data[[i]])
+    } else {
+      stop(sprintf("Element '%s' not found in 'meta' or 'data'", i))
+    }
+  }
+)
+
+
+#' Subset Rows of an `ea_data` Object
+#'
+#' Subsets the rows of the `data` slot while preserving the `meta` slot.
+#' Column subsetting is not supported and will be ignored.
+#'
+#' @param x An `ea_data` object.
+#' @param i Row indices or logical vector.
+#' @param j Ignored (column subsetting not supported).
+#' @param ... Additional arguments (ignored).
+#' @param drop Logical. Ignored to preserve object structure.
+#'
+#' @return A new `ea_data` object with subsetted rows.
+#'
+#' @export
+setMethod(
+  f = "[",
+  signature(x = "ea_data", i = "ANY", j = "ANY"),
+  definition = function(x, i, j, ..., drop = FALSE) {
+    warning("Column subsetting (`j`) is not supported and will be ignored to preserve object structure.")
+    subset_data <- x@data[i, , drop = FALSE]
+    new("ea_data", data = subset_data, meta = x@meta)
+  }
+)
+
+
+#' Subset an `ea_data` Object by Column and Value(s)
+#'
+#' Filters the `data` slot of an `ea_data` object based on a column and one or more values.
+#'
+#' @param x An `ea_data` object.
+#' @param column A character string naming the column in the `data` slot to filter by.
+#' @param value A value or vector of values to match in the specified column.
+#'
+#' @return A new `ea_data` object containing only the matching rows.
+#'
+#' @examples
+#' \dontrun{
+#' ea.subset(azmp_bottom_temperature, "year", 1953)
+#' ea.subset(azmp_bottom_temperature, "region", c("Scotian Shelf", "Gulf"))
+#' }
+#'
+#' @export
+ea.subset <- function(x, column, value) {
+  if (!inherits(x, "ea_data")) stop("x must be an ea_data object.")
+  if (!column %in% names(x@data)) stop(paste("Column", column, "not found in data."))
   
-  # --- Input Validation ---
-  if (!is.data.frame(data)) {
-    stop("`data` must be a data.frame or tibble.", call. = FALSE)
-  }
-  if (missing(value_col) || !is.character(value_col) || length(value_col) != 1) {
-    stop("`value_col` must be a single character string specifying the value column name.", call. = FALSE)
-  }
-  if (!value_col %in% names(data)) {
-    stop(paste0("Column '", value_col, "' not found in the data."), call. = FALSE)
-  }
-  if (!"year" %in% names(data)) {
-    stop("`data` must contain a 'year' column.", call. = FALSE)
-  }
-  if (!is.numeric(data[[value_col]]) || !is.numeric(data$year)) {
-    stop(paste0("Columns 'year' and '", value_col, "' must be numeric."), call. = FALSE)
-  }
+  # Subset rows where column matches value(s)
+  rows <- x[[column]] %in% value
   
-  # --- Standardize Data: Rename the value column ---
-  # This uses dplyr::rename and non-standard evaluation correctly.
-  # The original name is kept for the metadata.
-  original_value_col <- value_col
-  data <- dplyr::rename(data, value = !!original_value_col)
-  
-  # --- Assemble Metadata ---
-  meta <- list(
-    data_type = as.character(data_type),
-    region = as.character(region),
-    location_descriptor = as.character(location_descriptor),
-    units = as.character(units),
-    species = as.character(species),
-    source_citation = as.character(source_citation),
-    original_value_col = original_value_col, # Store original name for reference
-    ...
-  )
-  
-  # Use the low-level constructor to build the object
-  new_ea_data(data = tibble::as_tibble(data), meta = meta)
+  # Return new ea_data object
+  new("ea_data", data = x@data[rows, , drop = FALSE], meta = x@meta)
 }
 
 
 
-# 3. S3 methods
 
+#' @title Validity Method for ea_data
+#' @name ea_data-validity
+#' @description Ensures that the `data` slot contains both `year` and `value` columns.
+#' @param object An `ea_data` object.
+#' @return TRUE if valid, otherwise a character string describing the issue.
+#' @keywords internal
+setValidity("ea_data", function(object) {
+  if (!"year" %in% names(object@data)) return("Missing 'year' column in data")
+  if (!"value" %in% names(object@data)) return("Missing 'value' column in data")
+  TRUE
+})
 
-#' Subsetting for ea_data objects
+#' @title Replace a piece of an ea_data object
 #'
-#' Allows for row-based subsetting of the data component while preserving
-#' the metadata and class. Column subsetting is disabled to maintain integrity.
+#' @param x an `ea_data` object.
 #'
-#' @param x An object of class `ea_data`.
-#' @param i Row indices to subset.
-#' @param j Column indices (ignored).
-#' @param ... Additional arguments (ignored).
-#' @return A new, subsetted `ea_data` object.
-#' 
-#' 
-# `[.ea_data` <- function(x, i, j, ...) {
-#   if (!missing(j)) {
-#     warning("Column subsetting (`j`) is not supported and will be ignored to preserve object structure.")
-#   }
-#   
-#   # Subset the data frame by rows
-#   subset_data <- x$data[i, , drop = FALSE]
-#   
-#   # Re-create the object with the same metadata but subsetted data
-#   new_ea_data(data = subset_data, meta = x$meta)
-# }
+setMethod(
+  f = "[[<-",
+  signature(x = "ea_data", i = "ANY", j = "ANY"),
+  function(x, i, j, ..., value) {
+    if (i == "meta") {
+      x@meta <- value
+    } else if (i %in% names(x@meta)) {
+      x@meta[[i]] <- value
+    } else {
+      if (grepl("Unit$", i)) {
+        if (!("units" %in% names(x@meta))) {
+          x@meta$units <- list()
+        }
+        x@meta$units[[gsub("Unit$", "", i)]] <- value
+      } else if (grepl("Flag$", i)) {
+        if (!("flags" %in% names(x@meta))) {
+          x@meta$flags <- list()
+        }
+        x@meta$flags[[gsub("Flag$", "", i)]] <- value
+      } else {
+        x@data[[i]] <- value
+      }
+    }
+    validObject(x)
+    invisible(x)
+  }
+)

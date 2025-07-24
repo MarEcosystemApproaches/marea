@@ -2,7 +2,7 @@
 % Please edit documentation in R/ea_data_class.R
 \name{ea_data}
 \alias{ea_data}
-\title{Create an Ecosystem Approach (EA) data object}
+\title{Create an \code{ea_data} S4 Object}
 \usage{
 ea_data(
   data,
@@ -17,73 +17,39 @@ ea_data(
 )
 }
 \arguments{
-\item{data}{A data.frame or tibble containing the time series data. Must
-contain a 'year' column and the column specified by \code{value_col}.}
+\item{data}{A \code{data.frame} containing at least a \code{year} column and a numeric column
+specified by \code{value_col}.}
 
-\item{value_col}{A character string specifying the name of the column in \code{data}
-that contains the primary numeric values to be analyzed.}
+\item{value_col}{A character string naming the column in \code{data} that contains the numeric values.}
 
-\item{data_type}{A character string describing the data (e.g., "Commercial Catch",
-"Survey Index", "Bottom Temperature", "Chlorophyll-a").}
+\item{data_type}{A character string describing the type of data (e.g., "temperature").}
 
-\item{region}{A character string. The DFO region or general ocean basin
-(e.g., "Pacific", "Maritimes", "Scotian Shelf").}
+\item{region}{A character string indicating the geographic region.}
 
-\item{location_descriptor}{A character string. A specific identifier for the
-data's spatial context (e.g., "4X", "WCVI", "Station P").}
+\item{location_descriptor}{A character string describing the location (e.g., "bottom", "surface").}
 
-\item{units}{A character string for the 'value' column (e.g., "tonnes", "kg/tow", "degC").}
+\item{units}{A character string indicating the units of measurement.}
 
-\item{species}{A character string. The common or scientific name of the species.
-This is optional and should be omitted for non-biological data.}
+\item{species}{Optional. A character string naming the species (default is \code{NA_character_}).}
 
-\item{source_citation}{A character string citing the data origin.}
+\item{source_citation}{Optional. A character string providing the data source citation.}
 
-\item{...}{Additional metadata fields to be stored in the \code{meta} list.}
+\item{...}{Additional metadata fields to include in the \code{meta} slot.}
 }
 \value{
 An object of class \code{ea_data}.
 }
 \description{
-This is the main user-facing function to create a standardized data object
-for ecosystem time series. It combines a data frame of observations with a
-list of essential metadata and performs validation to ensure the object is
-well-formed. The constructor standardizes the object by renaming the
-user-specified value column to \code{value} internally.
+Constructs an \code{ea_data} object from a data frame and associated metadata.
+The function validates the presence and type of required columns, standardizes
+the value column, and stores metadata in a structured format.
 }
 \examples{
-# Example 1: Environmental Data with a custom value column name 'avg_temp'
-temp_df <- data.frame(
-year = 1995:2015,
-avg_temp = 7.5 + cumsum(rnorm(21, 0, 0.1)),
-month = "August"
-)
+\dontrun{
+df <- data.frame(year = 2000:2005, temp = rnorm(6))
+obj <- ea_data(df, value_col = "temp", data_type = "temperature",
+               region = "Scotian Shelf", location_descriptor = "bottom",
+               units = "°C")
+}
 
-bottom_temp_obj <- ea_data(
-data = temp_df,
-value_col = "avg_temp",  # <-- Specify the value column here
-data_type = "Annual Bottom Temperature",
-region = "Scotian Shelf",
-location_descriptor = "4X Survey Area",
-units = "degC",
-source_citation = "DFO RV Survey Database (2023)"
-)
-
-# Example 2: Fisheries Data where the value column is already named 'value'
-catch_df <- data.frame(
-year = 2000:2010,
-value = round(runif(11, 500, 800)),
-area = "5A/B"
-)
-
-rockfish_obj <- ea_data(
-data = catch_df,
-value_col = "value", # <-- Still specify it, even if it's the default name
-data_type = "Commercial Catch",
-region = "Pacific",
-location_descriptor = "BC North Coast",
-units = "tonnes",
-species = "Yelloweye Rockfish",
-source_citation = "DFO Catch Monitoring Program (2023)"
-)
 }
