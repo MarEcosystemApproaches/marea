@@ -137,55 +137,9 @@ ea_data <- function(data,
   new_ea_data(data = tibble::as_tibble(data), meta = meta)
 }
 
+
+
 # 3. S3 methods
-
-#' Print method for ea_data objects
-#' @param x An ea_data object
-#' @param ... Additional arguments passed to print
-#' @export
-#' 
-# print.ea_data <- function(x, ...) {
-#   cat("--- Ecosystem Approach (EA) Data Object --- \n")
-#   cat("Class:    ", class(x)[1], "\n")
-#   cat("Data Type:    ", x$meta$data_type, "\n")
-#   if (!is.na(x$meta$species) && !is.null(x$meta$species)) {
-#     cat("Species:    ", x$meta$species, "\n")
-#   }
-#   cat("Location:    ", x$meta$location_Descriptor, " (", x$meta$region, " Region ) \n")
-#   cat("Time Range:    ", min(x$data$year, na.rm = TRUE), " - ", max(x$data$year, na.rm = TRUE), "\n")
-#   cat("Units:    ", x$meta$units, "\n")
-#   cat("--------------------------------------------\n")
-#   cat("Data Preview:\n")
-#   print.data.frame(head(x$data), ...)
-#   invisible(x)
-# }
-
-# 
-# 
-# #' @export
-# summary.ea_data <- function(object, ...) {
-#   summary_stats <- summary(object$data$value)
-#   
-#   cat("--- Summary of ea_data ---\n")
-#   cat("Metadata:\n")
-#   cat("  Data Type: ", object$meta$data_type, "\n")
-#   if (!is.na(object$meta$species) && !is.null(object$meta$species) && object$meta$species != "") {
-#     cat("  Species: ", object$meta$species, "\n")
-#   }
-#   cat("  Location:  ", object$meta$location_descriptor, "\n")
-#   cat("  Region:  ", object$meta$region, "\n")
-#   cat("  Source:  ", object$meta$source_citation, "\n\n")
-#   
-#   cat("Data Overview:\n")
-#   cat("  Time range: ", min(object$data$year, na.rm = TRUE), " to ", max(object$data$year, na.rm = TRUE), "\n")
-#   cat("  Number of observations: ", nrow(object$data), "\n\n")
-#   
-#   cat("Summary of 'value' column (Units: ", object$meta$units, "):\n", sep = "")
-#   print(summary_stats)
-#   
-#   invisible(list(meta = object$meta, value_summary = summary_stats))
-# }
-
 
 
 #' Subsetting for ea_data objects
