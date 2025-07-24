@@ -3,9 +3,9 @@
 \docType{data}
 \name{glorys_bottom_temperature}
 \alias{glorys_bottom_temperature}
-\title{GLORYS Bottom Temperature (ea_st)}
+\title{GLORYS Bottom Temperature (ea_spatial)}
 \format{
-An \code{ea_st} (sf) object:
+An \code{ea_spatial} (sf) object:
 \describe{
 \item{value}{Bottom temperature value (°C)}
 \item{month}{Month of observation}

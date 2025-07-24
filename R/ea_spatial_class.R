@@ -110,48 +110,47 @@ ea_spatial <- function(data,
 # -----------------------------------------------------------------------------
 # 2. S3 Methods for the `ea_spatial` Class
 # -----------------------------------------------------------------------------
+# #' @export
+# print.ea_spatial <- function(x, ...) {
+#   cat("--- Ecosystem Approach Spatio-Temporal (ea_spatial) Object ---\n")
+#   cat("Data Type:      ", x$meta$data_type, "\n")
+#   cat("Time:           ", x$meta$time_descriptor, "\n")
+#   cat("Region:         ", x$meta$region, "\n")
+#   cat("Units:          ", x$meta$units, " (in 'value' column, originally '", x$meta$original_value_col, "')\n", sep = "")
+#   cat("-----------------------------------------------------------\n")
+#   
+#   # Print the sf data component
+#   print(head(x$data), ...)
+#   
+#   invisible(x)
+# }
 
-#' @export
-print.ea_spatial <- function(x, ...) {
-  cat("--- Ecosystem Approach Spatio-Temporal (ea_spatial) Object ---\n")
-  cat("Data Type:      ", x$meta$data_type, "\n")
-  cat("Time:           ", x$meta$time_descriptor, "\n")
-  cat("Region:         ", x$meta$region, "\n")
-  cat("Units:          ", x$meta$units, " (in 'value' column, originally '", x$meta$original_value_col, "')\n", sep = "")
-  cat("-----------------------------------------------------------\n")
-  
-  # Print the sf data component
-  print(x$data, ...)
-  
-  invisible(x)
-}
-
-#' @export
-summary.ea_spatial <- function(object, ...) {
-  cat("--- Summary of ea_spatial Object ---\n")
-  cat("Metadata:\n")
-  cat("  Data Type: ", object$meta$data_type, "\n")
-  cat("  Region:    ", object$meta$region, "\n")
-  cat("  Time:      ", object$meta$time_descriptor, "\n")
-  cat("  Source:    ", object$meta$source_citation, "\n\n")
-  
-  cat("Spatial Information (from sf):\n")
-  # Print the bounding box and CRS from the underlying sf object
-  print(sf::st_geometry(object$data))
-  cat("\n")
-  
-  # If there's a time_descriptor column, show unique values
-  if ("time_descriptor" %in% names(object$data)) {
-    unique_times <- unique(object$data$time_descriptor)
-    cat("Time periods: ", paste(unique_times, collapse = ", "), "\n")
-    cat("Number of time periods: ", length(unique_times), "\n\n")
-  }
-  
-  cat("Summary of 'value' column (Units: ", object$meta$units, "):\n", sep = "")
-  print(summary(object$data$value))
-  
-  invisible(list(meta = object$meta, value_summary = summary(object$data$value)))
-}
+# #' @export
+# summary.ea_spatial <- function(object, ...) {
+#   cat("--- Summary of ea_spatial Object ---\n")
+#   cat("Metadata:\n")
+#   cat("  Data Type: ", object$meta$data_type, "\n")
+#   cat("  Region:    ", object$meta$region, "\n")
+#   cat("  Time:      ", object$meta$time_descriptor, "\n")
+#   cat("  Source:    ", object$meta$source_citation, "\n\n")
+#   
+#   cat("Spatial Information (from sf):\n")
+#   # Print the bounding box and CRS from the underlying sf object
+#   print(sf::st_geometry(object$data))
+#   cat("\n")
+#   
+#   # If there's a time_descriptor column, show unique values
+#   if ("time_descriptor" %in% names(object$data)) {
+#     unique_times <- unique(object$data$time_descriptor)
+#     cat("Time periods: ", paste(unique_times, collapse = ", "), "\n")
+#     cat("Number of time periods: ", length(unique_times), "\n\n")
+#   }
+#   
+#   cat("Summary of 'value' column (Units: ", object$meta$units, "):\n", sep = "")
+#   print(summary(object$data$value))
+#   
+#   invisible(list(meta = object$meta, value_summary = summary(object$data$value)))
+#}
 
 #' Subsetting for ea_spatial objects
 #'
@@ -164,22 +163,22 @@ summary.ea_spatial <- function(object, ...) {
 #' @param j Column indices to subset.
 #' @param ... Additional arguments passed to sf's subsetting method.
 #' @return A new, subsetted `ea_spatial` object.
-#' @export
-`[.ea_spatial` <- function(x, i, j, ...) {
-  # Subset the sf data component
-  if (missing(j)) {
-    subset_data <- x$data[i, , ...]
-  } else {
-    subset_data <- x$data[i, j, ...]
-  }
-  
-  # Recreate the ea_spatial object with the same metadata but subsetted data
-  structure(
-    list(
-      data = subset_data,
-      meta = x$meta
-    ),
-    class = c("ea_spatial", "list")
-  )
-}
+#' 
+# `[.ea_spatial` <- function(x, i, j, ...) {
+#   # Subset the sf data component
+#   if (missing(j)) {
+#     subset_data <- x$data[i, , ...]
+#   } else {
+#     subset_data <- x$data[i, j, ...]
+#   }
+#   
+#   # Recreate the ea_spatial object with the same metadata but subsetted data
+#   structure(
+#     list(
+#       data = subset_data,
+#       meta = x$meta
+#     ),
+#     class = c("ea_spatial", "list")
+#   )
+# }
 
