@@ -1,7 +1,7 @@
 # Preamble: Ensure required packages are available
 # This class depends on 'sf' for its core structure and 'ggplot2' for plotting.
 if (!requireNamespace("sf", quietly = TRUE)) {
-  stop("The 'sf' package is required for the 'ea_st' class. Please install it.")
+  stop("The 'sf' package is required for the 'ea_spatial' class. Please install it.")
 }
 if (!requireNamespace("ggplot2", quietly = TRUE)) {
   message("The 'ggplot2' package is recommended for plotting. Please install it.")
@@ -10,7 +10,7 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 # -----------------------------------------------------------------------------
 # 1. Helper/User-Facing Constructor with Validation
 # -----------------------------------------------------------------------------
-#' Create an Ecosystem Approach Spatio-Temporal (ea_st) object
+#' Create an Ecosystem Approach Spatio-Temporal (ea_spatial) object
 #'
 #' This function creates a standardized object for spatio-temporal data,
 #' typically gridded data like model outputs or interpolated observations.
@@ -33,7 +33,7 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 #' @param source_citation A character string citing the data origin.
 #' @param ... Additional metadata fields to be stored in the `meta` list.
 #'
-#' @return An object of class `ea_st`, which also inherits from `sf`, `tbl_df`,
+#' @return An object of class `ea_spatial`, which also inherits from `sf`, `tbl_df`,
 #'   `tbl`, and `data.frame`.
 #' @export
 #' @examples
@@ -46,8 +46,8 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 #' sample_sf$temp_c <- c(5.1, 5.3, 5.4, 6.0, 6.2, 6.1, 5.8, 5.9, 5.7)
 #' sample_sf$month <- "January"
 #'
-#' # Create an ea_st object, mapping 'temp_c' to be the value column
-#' temp_obj <- ea_st(
+#' # Create an ea_spatial object, mapping 'temp_c' to be the value column
+#' temp_obj <- ea_spatial(
 #'   data = sample_sf,
 #'   value_col = "temp_c",
 #'   data_type = "Simulated Bottom Temperature",
@@ -57,7 +57,7 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 #'   source_citation = "Internal Simulation"
 #' )
 #'
-ea_st <- function(data,
+ea_spatial <- function(data,
                   value_col,
                   data_type,
                   region,
@@ -102,18 +102,18 @@ ea_st <- function(data,
       data = data,
       meta = meta
     ),
-    class = c("ea_st", "list")
+    class = c("ea_spatial", "list")
   )
 }
 
 
 # -----------------------------------------------------------------------------
-# 2. S3 Methods for the `ea_st` Class
+# 2. S3 Methods for the `ea_spatial` Class
 # -----------------------------------------------------------------------------
 
 #' @export
-print.ea_st <- function(x, ...) {
-  cat("--- Ecosystem Approach Spatio-Temporal (ea_st) Object ---\n")
+print.ea_spatial <- function(x, ...) {
+  cat("--- Ecosystem Approach Spatio-Temporal (ea_spatial) Object ---\n")
   cat("Data Type:      ", x$meta$data_type, "\n")
   cat("Time:           ", x$meta$time_descriptor, "\n")
   cat("Region:         ", x$meta$region, "\n")
@@ -127,8 +127,8 @@ print.ea_st <- function(x, ...) {
 }
 
 #' @export
-summary.ea_st <- function(object, ...) {
-  cat("--- Summary of ea_st Object ---\n")
+summary.ea_spatial <- function(object, ...) {
+  cat("--- Summary of ea_spatial Object ---\n")
   cat("Metadata:\n")
   cat("  Data Type: ", object$meta$data_type, "\n")
   cat("  Region:    ", object$meta$region, "\n")
@@ -153,19 +153,19 @@ summary.ea_st <- function(object, ...) {
   invisible(list(meta = object$meta, value_summary = summary(object$data$value)))
 }
 
-#' Subsetting for ea_st objects
+#' Subsetting for ea_spatial objects
 #'
-#' Ensures that subsetting operations preserve the `ea_st` class and its
+#' Ensures that subsetting operations preserve the `ea_spatial` class and its
 #' metadata. It handles subsetting of the sf data component while maintaining
 #' the list structure with data and meta components.
 #'
-#' @param x An object of class `ea_st`.
+#' @param x An object of class `ea_spatial`.
 #' @param i Row indices to subset.
 #' @param j Column indices to subset.
 #' @param ... Additional arguments passed to sf's subsetting method.
-#' @return A new, subsetted `ea_st` object.
+#' @return A new, subsetted `ea_spatial` object.
 #' @export
-`[.ea_st` <- function(x, i, j, ...) {
+`[.ea_spatial` <- function(x, i, j, ...) {
   # Subset the sf data component
   if (missing(j)) {
     subset_data <- x$data[i, , ...]
@@ -173,13 +173,13 @@ summary.ea_st <- function(object, ...) {
     subset_data <- x$data[i, j, ...]
   }
   
-  # Recreate the ea_st object with the same metadata but subsetted data
+  # Recreate the ea_spatial object with the same metadata but subsetted data
   structure(
     list(
       data = subset_data,
       meta = x$meta
     ),
-    class = c("ea_st", "list")
+    class = c("ea_spatial", "list")
   )
 }
 

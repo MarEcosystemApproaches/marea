@@ -1,15 +1,15 @@
-#' @title Coerce an sf object to an ea_st object
+#' @title Coerce an sf object to an ea_spatial object
 #' @description
-#' Convert a spatial/class `pacea_st` or `marea_st` (simple features) object or a generic sf object generic `ea_st`.
+#' Convert a spatial/class `pacea_spatial` or `marea_spatial` (simple features) object or a generic sf object generic `ea_spatial`.
 #' All metadata is extracted from attributes.
 #'
-#' @param x An `sf` or similar object, usually with class `pacea_st` 
+#' @param x An `sf` or similar object, usually with class `pacea_spatial` 
 #' @param value_col   Name of the column to use as value. If NULL, will auto-pick if only one candidate exists.
 #' @param ...         Additional metadata overrides (named elements).
-#' @return An `ea_st` object.
+#' @return An `ea_spatial` object.
 #' @export
-as_ea_st <- function(x, value_col = NULL, ...) {
-  if (inherits(x, "ea_st")) return(x)
+as_ea_spatial <- function(x, value_col = NULL, ...) {
+  if (inherits(x, "ea_spatial")) return(x)
   if (!inherits(x, "sf")) stop("Object must be of class 'sf' or similar.", call. = FALSE)
   geom_col <- attr(x, "sf_column")
   candidate_cols <- setdiff(names(x), geom_col)
@@ -51,6 +51,6 @@ as_ea_st <- function(x, value_col = NULL, ...) {
   # Add any additional metadata
   call_args <- c(call_args, additional_meta)
   
-  # Call ea_st with the constructed arguments
-  do.call(marea::ea_st, call_args)
+  # Call ea_spatial with the constructed arguments
+  do.call(marea::ea_spatial, call_args)
 }
