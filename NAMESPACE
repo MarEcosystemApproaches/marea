@@ -2,7 +2,6 @@
 
 export("%||%")
 export(as_ea_data)
-export(as_ea_harbour_seals)
 export(as_ea_spatial)
 export(cite_marea)
 export(ea.print)

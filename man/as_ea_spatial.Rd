@@ -2,21 +2,21 @@
 % Please edit documentation in R/as_ea_spatial.R
 \name{as_ea_spatial}
 \alias{as_ea_spatial}
-\title{Coerce an sf object to an ea_spatial object}
+\title{Coerce a spatial object to an \code{ea_spatial} S4 object}
 \usage{
 as_ea_spatial(x, value_col = NULL, ...)
 }
 \arguments{
-\item{x}{An \code{sf} or similar object, usually with class \code{pacea_spatial}}
+\item{x}{A spatial object of class \code{sf}, \code{stars}, or \code{SpatRaster}.}
 
-\item{value_col}{Name of the column to use as value. If NULL, will auto-pick if only one candidate exists.}
+\item{value_col}{Name of the column or layer to use as the primary value. If NULL, auto-selects if only one candidate exists.}
 
-\item{...}{Additional metadata overrides (named elements).}
+\item{...}{Additional metadata overrides passed to the \code{ea_spatial()} constructor.}
 }
 \value{
-An \code{ea_spatial} object.
+A validated \code{ea_spatial} S4 object.
 }
 \description{
-Convert a spatial/class \code{pacea_spatial} or \code{marea_spatial} (simple features) object or a generic sf object generic \code{ea_spatial}.
-All metadata is extracted from attributes.
+Converts a spatial object (\code{sf}, \code{stars}, or \code{SpatRaster}) into a validated \code{ea_spatial} S4 object.
+Metadata is extracted from attributes and can be overridden via arguments.
 }

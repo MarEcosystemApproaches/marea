@@ -29,7 +29,7 @@ An \code{ea_data} object with:
 }
 }
 
-An object of class \code{ea_data} (inherits from \code{list}) of length 2.
+An object of class \code{ea_data} of length 1.
 }
 \source{
 Hammill et al. (2023), see data-raw/grey-seals/grey-seals.R

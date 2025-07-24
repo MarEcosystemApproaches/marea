@@ -202,35 +202,3 @@ setValidity("ea_data", function(object) {
   if (!"value" %in% names(object@data)) return("Missing 'value' column in data")
   TRUE
 })
-
-#' @title Replace a piece of an ea_data object
-#'
-#' @param x an `ea_data` object.
-#'
-setMethod(
-  f = "[[<-",
-  signature(x = "ea_data", i = "ANY", j = "ANY"),
-  function(x, i, j, ..., value) {
-    if (i == "meta") {
-      x@meta <- value
-    } else if (i %in% names(x@meta)) {
-      x@meta[[i]] <- value
-    } else {
-      if (grepl("Unit$", i)) {
-        if (!("units" %in% names(x@meta))) {
-          x@meta$units <- list()
-        }
-        x@meta$units[[gsub("Unit$", "", i)]] <- value
-      } else if (grepl("Flag$", i)) {
-        if (!("flags" %in% names(x@meta))) {
-          x@meta$flags <- list()
-        }
-        x@meta$flags[[gsub("Flag$", "", i)]] <- value
-      } else {
-        x@data[[i]] <- value
-      }
-    }
-    validObject(x)
-    invisible(x)
-  }
-)
