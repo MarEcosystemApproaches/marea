@@ -13,8 +13,7 @@
 #'
 #' @export
 as_ea_data <- function(x, value_col = NULL, ...) {
-  if (methods::is(x, "ea_data")) return(x)
-  
+
   df <- as.data.frame(x)
   
   # Step 1: Determine value column
