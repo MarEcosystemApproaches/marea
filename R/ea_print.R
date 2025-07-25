@@ -27,7 +27,7 @@ ea.print <- function(x, ...) {
       cat("-----------------------------------------------------------\n")
 
       # Print the sf data component
-      print(head(x@data), ...)
+      print(x@data, ...)
 
       invisible(x)
   } else {
