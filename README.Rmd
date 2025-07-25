@@ -69,7 +69,7 @@ print(grey_seals)
 #> 6  1967   440   425.   455.
 
 # 3. Create a simple plot
-p <- plot(grey_seals)
+# p <- plot(grey_seals)
 
 ```
 
@@ -78,13 +78,13 @@ p <- plot(grey_seals)
 ```r
 # 4. Customize it! Add a confidence ribbon and improve the labels.
 # The 'low' and 'high' columns are right there in the data frame.
-custom_plot <- base_plot +
-  geom_ribbon(aes(ymin = low, ymax = high), fill = "skyblue", alpha = 0.5) +
-  labs(
-    title = "Grey Seal Abundance on Sable Island",
-    y = "Estimated Pup Production (count)"
-  ) +
-  theme_bw()
+#custom_plot <- base_plot +
+ # geom_ribbon(aes(ymin = low, ymax = high), fill = "skyblue", alpha = 0.5) +
+  #labs(
+   # title = "Grey Seal Abundance on Sable Island",
+    #y = "Estimated Pup Production (count)"
+  #) +
+  #theme_bw()
 
 
 ```
@@ -130,3 +130,7 @@ This package is part of a coordinated effort across DFO regions to standardize a
 ## Acknowledgments
 
 We acknowledge that this work is done in the traditional and unceded territory of indigenous people who have cared for this land and water for time immemorial. We thank Fisheries and Oceans Canada for funding and acknowledge the many data providers and scientists whose work makes this package possible. 
+
+Special thanks to the oce package team for inspiring the design of the `ea` class system.
+
+Kelley D, Richards C (2025). oce: Analysis of Oceanographic Data. R package version 1.8-4, https://dankelley.github.io/oce/.
