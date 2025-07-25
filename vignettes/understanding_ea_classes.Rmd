@@ -24,9 +24,9 @@ library(tidyverse)
 
 ## Introduction
 
-The `marea` package is built around robust S3 class objects:  
+The `marea` package is built around robust S4 class objects:  
 - **ea_data** for time series/tabular data  
-- **ea_st** for spatio-temporal or gridded data
+- **ea_spatial** for spatio-temporal or gridded data
 
 This makes all `marea` datasets work the same – easy for plotting, inspecting, and analysis.
 
@@ -42,7 +42,7 @@ Classes allow `marea` to automatically:
 
 The two core classes are:
 - `ea_data`: 1D/tabular/time series (e.g. abundances, environmental indices)
-- `ea_st`: gridded or spatial/time-varying fields (e.g. maps of temperature)
+- `ea_spatial`: gridded or spatial/time-varying fields (e.g. maps of temperature)
 
 ---
 
@@ -57,7 +57,7 @@ All tabular time-series data in `marea` use the `ea_data` class.
 data("grey_seals")
 
 # Print object summary (metadata, structure, preview)
-print(grey_seals)
+ea.print(grey_seals)
 ```
 
 **Example output:**  
@@ -77,7 +77,7 @@ year   low median  high
 ### Data summary
 
 ```{r}
-# summary(grey_seals)
+ea.summary(grey_seals)
 ```
 
 ---
@@ -87,7 +87,7 @@ year   low median  high
 Plotting works out-of-the-box and returns a `ggplot2` object:
 
 ```{r}
-plot(grey_seals)
+# plot(grey_seals)
 ```
 
 *Output:*
@@ -96,22 +96,29 @@ plot(grey_seals)
 If columns like `"low"` and `"high"` exist, add ribbons easily:
 
 ```{r}
-plot(grey_seals, style = "ribbon")
+# plot(grey_seals, style = "ribbon")
 ```
 
-Other styles: `"default"`, `"plain"`, `"red_blue"`, etc.
+The style argument can be specified to return different plot types, this can
+provide a range of reasonable defaults for different data sets.
+
+
+Other styles: `"default"`, `"plain"`, `"anomaly"`, etc.
+
+These are ggplot objects and are easy to add on to with the `+` syntax (See advanced examples)
+
 
 ---
 
-## ea_st: Spatio-Temporal/Gridded Data
+## ea_spatial: Spatio-Temporal/Gridded Data
 
-Spatial (or spatio-temporal) objects are stored as **ea_st**—an extension of the standard `sf` class.
+Spatial (or spatio-temporal) objects are stored as **ea_spatial**. These have some flexibility and the data slot can house an sf objects, a stars or terra object. 
 
 ### Example: Inspect a spatial object
 
 ```{r}
 data("glorys_bottom_temperature")
-print(glorys_bottom_temperature)
+ea.print(glorys_bottom_temperature)
 ```
 
 *Output includes metadata, spatial bounds, etc.*
@@ -119,9 +126,11 @@ print(glorys_bottom_temperature)
 ### Plot
 
 ```{r}
-plot(glorys_bottom_temperature)
+# plot(glorys_bottom_temperature)
 ```
 
+The style argument can be used to specify some reasonable spatial default styles.
+There are also many other arguments for specifying details about coastline objects, regions, and other considerations. See `?plot.ea_spatial` for more details.
 Other options:
 - `style = "contour"`   (contour lines)
 - `style = "bubble"`    (bubbles by value)
@@ -137,7 +146,8 @@ If you have a `pacea` time-series (pacea-index or pacea-biomass):
 ```{r}
 library(pacea)
 data(npgo) # Example: North Pacific Gyre Oscillation
-marea_npgo <- as_ea_data(npgo)
+marea_npgo <- as_ea_data(x = npgo, 
+                         value_col = "anomaly")
 class(marea_npgo)
 print(marea_npgo)
 ```
@@ -151,13 +161,9 @@ data("hake_total_biomass_age_1_2025")
 hake_biomass_ea <- as_ea_data(
   hake_total_biomass_age_1_2025,
   value_col = "median",
-  data_type = "Hake Total Biomass Age 1",
-  region = "North Pacific",
-  location_descriptor = "Pacific Ocean",
-  units = "tonnes",
   source = 'pacea',
   time_descriptor = "2025",
-  species = 'hake'
+  details = 'Converted using marea::as_ea_data() July 2025'
 )
 print(hake_biomass_ea)
 
@@ -165,9 +171,9 @@ print(hake_biomass_ea)
 
 ---
 
-## Creating your own ea class objects
+## Creating your own ea objects
 
-While marea provides many built-in datasets, you'll often want to create your own objects from scratch. This section demonstrates how to build ea_data and ea_st objects using the constructor functions.
+While marea provides many built-in datasets, you'll often want to create your own objects from scratch. This section demonstrates how to build ea_data and ea_spatial objects using the constructor functions.
 
 ###  Create an ea_data Object
 
@@ -192,7 +198,7 @@ halifax_temp <- ea_data(
   source_citation = "DFO Maritimes Region Monitoring Program"
 )
 
-print(halifax_temp)
+ea.print(halifax_temp)
 ```
 
 ### Advanced ea_data with additional metadata
@@ -221,13 +227,13 @@ lobster_catch <- ea_data(
   stock_status = "Healthy"
 )
 
-print(lobster_catch)
-summary(lobster_catch)
+ea.print(lobster_catch)
+ea.summary(lobster_catch)
 ```
 
-### Create an ea_st object
+### Create an ea_spatial object
 
-The `ea_st()` constructor creates spatial objects from sf data. Here's how to build one:
+The `ea_spatial()` constructor creates spatial objects from sf data. Here's how to build one:
 
 ```{r}
 library(sf)
@@ -246,7 +252,7 @@ spatial_data$chl_concentration <- runif(nrow(spatial_data), 0.5, 3.2)
 spatial_data$depth_zone <- "surface"
 
 # Create ea_st object
-chl_spatial <- ea_st(
+chl_spatial <- ea_spatial(
   data = spatial_data,
   value_col = "chl_concentration",
   data_type = "Chlorophyll-a Concentration",
@@ -256,7 +262,7 @@ chl_spatial <- ea_st(
   source_citation = "DFO Ecosystem Survey Program"
 )
 
-print(chl_spatial)
+ea.print(chl_spatial)
 ```
 
 
@@ -266,13 +272,13 @@ Both constructors share common metadata fields:
 
 ### Required parameters:
 
-- data: Your data frame (for ea_data) or sf object (for ea_st)
+- data: Your data frame (for ea_data) or sf/stars/terra spatraster object (for ea_spatial)
 
 - value_col: Name of the column containing the primary values
 
 - data_type: Description of what the data represents
 
-- region: Geographic region or DFO area
+- region: Geographic region or NAFO/DFO area name
 
 - units: Units for the value column
 
@@ -284,7 +290,7 @@ Both constructors share common metadata fields:
 
 - species: Species name (optional, for biological data)
 
-### ea_st specific:
+### ea_spatial specific:
 
 time_descriptor: Description of the temporal aspect
 
@@ -305,7 +311,7 @@ time_descriptor: Description of the temporal aspect
 
 ## Why Use These Classes?
 
-Using robust S3 classes brings multiple benefits:
+Using robust S4 classes brings multiple benefits:
 - All datasets behave the same way (easy to plot, inspect, or summarize)
 - Metadata (units, region, source, etc.) always travel with the data
 - You can use base R summary/print/plot methods or build your own analyses on top
@@ -315,7 +321,6 @@ Using robust S3 classes brings multiple benefits:
 ## Learn More
 
 - The main [README](../README.html) has a quick start
-- See "Working with Environmental Data": `vignettes/environmental-data.Rmd`
 - To list all built-in datasets and their metadata:
 
 ```{r}
@@ -334,6 +339,6 @@ citation("marea")
 
 ---
 
-*This vignette was generated using the `marea` source code (2025-07-11).*
+*This vignette was generated using the `marea` source code (2025-07-24).*
 
 ---
