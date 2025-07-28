@@ -35,6 +35,10 @@ jobs:
         run: |
           remotes::install_github("pbs-assess/pacea")
         shell: Rscript {0}
+        
+      - name: Install package
+        run: devtools::install()
+        shell: Rscript {0}
 
       - name: Run tests
         run: |
