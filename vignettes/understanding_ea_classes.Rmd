@@ -118,7 +118,7 @@ Spatial (or spatio-temporal) objects are stored as **ea_spatial**. These have so
 
 ```{r}
 data("glorys_bottom_temperature")
-ea.print(glorys_bottom_temperature)
+ea.summary(glorys_bottom_temperature)
 ```
 
 *Output includes metadata, spatial bounds, etc.*

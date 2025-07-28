@@ -64,7 +64,9 @@ Imports:
     magrittr,
     tibble,
     vctrs,
-    ggplot2
+    ggplot2,
+    sf,
+    tidyverse
 Suggests:
     devtools,
     doParallel,
