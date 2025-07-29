@@ -1,5 +1,5 @@
 library(testthat)
-library(marea)
+
 testthat::test_that("marea", {
   # Load the package
   library(marea)

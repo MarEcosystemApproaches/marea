@@ -39,11 +39,6 @@ jobs:
       - name: Install package
         run: devtools::install()
         shell: Rscript {0}
-
-      - name: Run tests
-        run: |
-          testthat::test_check("marea")
-        shell: Rscript {0}
         
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
