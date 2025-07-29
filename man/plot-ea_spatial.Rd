@@ -28,6 +28,8 @@ plot(x, y, ...)
 \arguments{
 \item{x}{An \code{ea_spatial} object.}
 
+\item{y}{Ignored. Included for S4 generic consistency.}
+
 \item{...}{Additional args passed to the geoms.}
 
 \item{style}{Character; one of "fill", "contour", "bubble", or "anomaly".}

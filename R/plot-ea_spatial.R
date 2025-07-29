@@ -8,6 +8,7 @@
 #'   * "anomaly": anomaly plot with specialized color schemes and optional climatology contours
 #'
 #' @param x An `ea_spatial` object.
+#' @param y Ignored. Included for S4 generic consistency.
 #' @param style Character; one of "fill", "contour", "bubble", or "anomaly".
 #' @param months.plot For "anomaly" style: months to plot. Defaults to current month (if available)
 #' @param years.plot For "anomaly" style: years to plot. Defaults to most recent year available
