@@ -74,7 +74,8 @@ Suggests:
     knitr,
     raster,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    covr
 Remotes: 
     pbs-assess/pacea
 Encoding: UTF-8
