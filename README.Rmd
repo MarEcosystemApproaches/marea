@@ -7,7 +7,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15706086.svg)](https://doi.org/10.5281/zenodo.15706086)
 <!-- badges: end -->
 
-<img src="marea_logo_jupijkam.png" align="right" height="138" />
+<img src="man/figures/marea_logo_jupijkam.png" align="right" height="90"/>
 
 `marea` provides curated data sets to support an Ecosystem Approach to Fisheries Management (EAFM) in Canada's Maritimes Region. It offers standardized, analysis-ready time series of oceanographic, environmental, and biological data crucial for research and stock assessment.
 
