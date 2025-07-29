@@ -43,7 +43,7 @@ remotes::install_github("MarEcosystemApproaches/marea")
 
 The workflow for any dataset in marea is the same: load, inspect, plot, and customize.
 
-```r
+```{r}
 library(marea)
 library(ggplot2) # For customization
 
@@ -51,53 +51,39 @@ library(ggplot2) # For customization
 data("grey_seals")
 
 # 2. Inspect the object - it's a clean 'ea_data' object
-print(grey_seals)
-#> --- Ecosystem Approach (EA) Data Object ---
-#> Class:           ea_data 
-#> Data Type:       Abundance index 
-#> Species:         Grey Seal (Halichoerus grypus) 
-#> Location:        Sable Island (Maritimes Region)
-#> Time Range:      1962 - 2016 
-#> Data Dims:       55 rows x 4 cols 
-#> Units:           count 
-#> -------------------------------------------
-#> Data preview:
-#> # A tibble: 6 × 4
-#>    year value    low   high
-#>   <int> <dbl>  <dbl>  <dbl>
-#> 1  1962   363   348.   378.
-#> 2  1963   370   355.   385.
-#> 3  1964   380   365.   395.
-#> 4  1965   390   375.   405.
-#> 5  1966   410   395.   425.
-#> 6  1967   440   425.   455.
+ea.print(grey_seals)
 
 # 3. Create a simple plot
-# p <- plot(grey_seals)
+ p <- plot(grey_seals)
 
 ```
 
-<img src="man/figures/README-grey-seals-base.png" width="70%" />
+<img src="man/figures/plot_grey_seals.png" width="70%" />
 
-```r
+You can use the style argument to create a default whichis an appropriate base for your 
+data, then customize it even further by chaining on ggplot graphics grammar.
+
+```{r}
 # 4. Customize it! Add a confidence ribbon and improve the labels.
 # The 'low' and 'high' columns are right there in the data frame.
-#custom_plot <- base_plot +
- # geom_ribbon(aes(ymin = low, ymax = high), fill = "skyblue", alpha = 0.5) +
-  #labs(
-   # title = "Grey Seal Abundance on Sable Island",
-    #y = "Estimated Pup Production (count)"
-  #) +
-  #theme_bw()
+custom_plot <- plot(grey_seals, style = 'ribbon') +
+  labs(
+   title = "Grey Seal Abundance on Sable Island",
+    y = "Estimated Pup Production (count)"
+  ) +
+  theme_bw()
 
 
 ```
+
+<img src="man/figures/README-grey-seals.png" width="70%" />
+
 
 ## Available Data
 
 marea includes a growing list of curated data products. Use marea_metadata() to see what's available.
 
-```r
+```{r}
 library(knitr)
 kable(marea_metadata())
 ```

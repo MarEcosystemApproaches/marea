@@ -54,51 +54,59 @@ and customize.
 
 ``` r
 library(marea)
+```
+
+    ## Thank you for using marea. Type citation('marea') for citation information.
+
+``` r
 library(ggplot2) # For customization
 
 # 1. Load a dataset of interest (e.g., grey seal abundance)
 data("grey_seals")
 
 # 2. Inspect the object - it's a clean 'ea_data' object
-print(grey_seals)
-#> --- Ecosystem Approach (EA) Data Object ---
-#> Class:           ea_data 
-#> Data Type:       Abundance index 
-#> Species:         Grey Seal (Halichoerus grypus) 
-#> Location:        Sable Island (Maritimes Region)
-#> Time Range:      1962 - 2016 
-#> Data Dims:       55 rows x 4 cols 
-#> Units:           count 
-#> -------------------------------------------
-#> Data preview:
-#> # A tibble: 6 × 4
-#>    year value    low   high
-#>   <int> <dbl>  <dbl>  <dbl>
-#> 1  1962   363   348.   378.
-#> 2  1963   370   355.   385.
-#> 3  1964   380   365.   395.
-#> 4  1965   390   375.   405.
-#> 5  1966   410   395.   425.
-#> 6  1967   440   425.   455.
-
-# 3. Create a simple plot
-# p <- plot(grey_seals)
+ea.print(grey_seals)
 ```
 
-<img src="man/figures/README-grey-seals-base.png" width="70%" />
+    ## --- Ecosystem Approach (EA) Data Object --- 
+    ## Class:  ea_data 
+    ## Data Type:  Estimated abundance (number of seals, 1000s) 
+    ## Location:    ( Maritimes  Region ) 
+    ## Time Range:   1960  -  2021 
+    ## Units:  Not specified 
+    ## --------------------------------------------
+    ## Data Preview:
+    ##   year      low    value     high
+    ## 1 1960 1.652570 1.860824 2.396134
+    ## 2 1961 2.032521 2.263192 2.809171
+    ## 3 1962 2.407304 2.659018 3.214911
+    ## 4 1963 2.700793 2.972982 3.541202
+    ## 5 1964 2.785795 3.088971 3.684344
+    ## 6 1965 3.126289 3.449040 4.053713
+
+``` r
+# 3. Create a simple plot
+ p <- plot(grey_seals)
+```
+
+<img src="man/figures/plot_grey_seals.png" width="70%" />
+
+You can use the style argument to create a default whichis an
+appropriate base for your data, then customize it even further by
+chaining on ggplot graphics grammar.
 
 ``` r
 # 4. Customize it! Add a confidence ribbon and improve the labels.
 # The 'low' and 'high' columns are right there in the data frame.
-#custom_plot <- base_plot +
- # geom_ribbon(aes(ymin = low, ymax = high), fill = "skyblue", alpha = 0.5) +
-  #labs(
-   # title = "Grey Seal Abundance on Sable Island",
-    #y = "Estimated Pup Production (count)"
-  #) +
-  #theme_bw()
-
+custom_plot <- plot(grey_seals, style = 'ribbon') +
+  labs(
+   title = "Grey Seal Abundance on Sable Island",
+    y = "Estimated Pup Production (count)"
+  ) +
+  theme_bw()
 ```
+
+<img src="man/figures/README-grey-seals.png" width="70%" />
 
 ## Available Data
 
@@ -109,6 +117,22 @@ marea_metadata() to see what’s available.
 library(knitr)
 kable(marea_metadata())
 ```
+
+| Dataset                   | Region                      | TimeSpan  | Source                                                                                           |
+|:--------------------------|:----------------------------|:----------|:-------------------------------------------------------------------------------------------------|
+| amo                       | Northern Hemisphere (0-60N) | 1854-2025 | NOAA , <https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat>                 |
+| ao                        | Northern Hemisphere         | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/>                 |
+| azmp_bottom_temperature   | Scotian Shelf (4X, 4V, 4W)  | 1950-2024 | DFO Atlantic Zone Monitoring Program via azmpdata                                                |
+| food_habits               | Not specified               | 1995-2016 | pacea object                                                                                     |
+| glorys_bottom_temperature | Northwest Atlantic          | Unknown   | CMEMS Global Ocean Physics Reanalysis                                                            |
+| grey_seals                | Maritimes                   | 1960-2021 | No citation provided                                                                             |
+| grey_seals_2021           | Maritimes                   | 1960-2021 | No citation provided                                                                             |
+| mei                       | Equatorial Pacific          | 1979-2025 | NOAA ESRL/PSL, <https://psl.noaa.gov/enso/mei/>                                                  |
+| nao                       | North Atlantic              | 1951-2024 | NOAA NCEP via azmpdata; <https://www.ncei.noaa.gov/access/monitoring/nao/>                       |
+| npgo                      | North Pacific Gyre          | 1950-2025 | Di Lorenzo et al., <http://www.o3d.org/npgo/>                                                    |
+| oni                       | Niño 3.4 Region (Pacific)   | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml> |
+| pdo                       | North Pacific               | 1854-2025 | NOAA ERSST, <https://www.ncei.noaa.gov/access/monitoring/pdo/>                                   |
+| soi                       | Equatorial Pacific          | 1951-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/data/indices/soi>                                       |
 
 ## Documentation
 
