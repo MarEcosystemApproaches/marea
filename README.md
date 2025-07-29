@@ -10,7 +10,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15706086.svg)](https://doi.org/10.5281/zenodo.15706086)
 <!-- badges: end -->
 
-<img src="marea_logo_jupijkam.png" align="right" height="138" />
+<img src="man/figures/marea_logo_jupijkam.png" align="right" height="90"/>
 
 `marea` provides curated data sets to support an Ecosystem Approach to
 Fisheries Management (EAFM) in Canada’s Maritimes Region. It offers
@@ -81,9 +81,8 @@ print(grey_seals)
 #> 5  1966   410   395.   425.
 #> 6  1967   440   425.   455.
 
-# 3. Create a simple base plot
-base_plot <- plot(grey_seals)
-print(base_plot)
+# 3. Create a simple plot
+# p <- plot(grey_seals)
 ```
 
 <img src="man/figures/README-grey-seals-base.png" width="70%" />
@@ -91,15 +90,14 @@ print(base_plot)
 ``` r
 # 4. Customize it! Add a confidence ribbon and improve the labels.
 # The 'low' and 'high' columns are right there in the data frame.
-custom_plot <- base_plot +
-  geom_ribbon(aes(ymin = low, ymax = high), fill = "skyblue", alpha = 0.5) +
-  labs(
-    title = "Grey Seal Abundance on Sable Island",
-    y = "Estimated Pup Production (count)"
-  ) +
-  theme_bw()
+#custom_plot <- base_plot +
+ # geom_ribbon(aes(ymin = low, ymax = high), fill = "skyblue", alpha = 0.5) +
+  #labs(
+   # title = "Grey Seal Abundance on Sable Island",
+    #y = "Estimated Pup Production (count)"
+  #) +
+  #theme_bw()
 
-print(custom_plot)
 ```
 
 ## Available Data
@@ -155,3 +153,9 @@ territory of indigenous people who have cared for this land and water
 for time immemorial. We thank Fisheries and Oceans Canada for funding
 and acknowledge the many data providers and scientists whose work makes
 this package possible.
+
+Special thanks to the oce package team for inspiring the design of the
+`ea` class system.
+
+Kelley D, Richards C (2025). oce: Analysis of Oceanographic Data. R
+package version 1.8-4, <https://dankelley.github.io/oce/>.

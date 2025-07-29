@@ -1,3 +1,7 @@
+---
+output: github_document
+---
+
 # marea: Curated Ecosystem Data for the Maritimes Region
 
 <!-- badges: start -->
