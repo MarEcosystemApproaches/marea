@@ -348,4 +348,34 @@
 #' @source \url{https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/}
 "ao"
  
+#' Atlantic MultiDecadal Oscillation (AMO) Index (ea_data)
+#'
+#' 
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{Tibble:
+#'     \itemize{
+#'       \item{\code{year}:} Year
+#'       \item{\code{month}:} Month (1–12)
+#'       \item{\code{value}:} SSTA (sea surafe temperture anomaly)
+#'     }
+#'   }
+#'   \item{meta}{Includes:
+#'     \itemize{
+#'       \item{\code{data_type}:} "Atlantic MultiDecadal Oscillation Index"
+#'       \item{\code{region}:} "Northern Hemisphere (0-60N)"
+#'       \item{\code{location_descriptor}:} "North Atlantic"
+#'       \item{\code{units}:} ""
+#'       \item{\code{source_citation}:} "NOAA , https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat"
+#'       \item{\code{original_value_col}:} "SSTA"
+#'     }
+#'   }
+#' }
+#' 
+#' @docType data
+#' @name amo
+#' @author Emily O'Grady
+#' @source \url{https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat}
+"amo"
  

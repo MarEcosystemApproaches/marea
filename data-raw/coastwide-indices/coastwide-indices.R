@@ -189,7 +189,22 @@ ao <- make_ea_index(
 )
 usethis::use_data(ao, overwrite = TRUE)
 
-# ---- Add more indices (npi_monthly, npi_annual, bi, etc.) as needed using this pattern ----
+# ---- AMO ----
+download.file("https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat",
+              destfile = "amo.txt", mode = "wb", quiet = FALSE)
+amo_raw <- read.table("amo.txt", header = TRUE, fill = TRUE, skip = 1)
+amo_p <- amo_raw %>%
+  rename('year' = 'Year')
+amo <- make_ea_index(
+  df = amo_p,
+  value_col = "SSTA",
+  data_type = "Atlantic MultiDecadal Oscillation Index",
+  region = "Northern Hemisphere (0-60N)",
+  location = "North Atlantic",
+  units = "",
+  source = "NOAA , https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat"
+)
+usethis::use_data(amo, overwrite = TRUE)
 
 # ---- END ----
 message("All coastwide indices updated using ea_data class and with full metadata.")
