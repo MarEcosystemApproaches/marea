@@ -2,14 +2,17 @@
 % Please edit documentation in R/ea_data_class.R
 \name{ea_data-validity}
 \alias{ea_data-validity}
-\title{Validity Method for ea_data}
+\title{Timeseries Data Validity}
 \arguments{
 \item{object}{An \code{ea_data} object.}
 }
 \value{
-TRUE if valid, otherwise a character string describing the issue.
+\code{TRUE} if the object is valid, otherwise a character string
+describing the validation failure.
 }
 \description{
-Ensures that the \code{data} slot contains both \code{year} and \code{value} columns.
+The validity method for the \code{ea_data} class ensures that the \code{data} slot
+contains the required \code{year} and \code{value} columns. This check is performed
+automatically upon object creation with \code{new()}.
 }
 \keyword{internal}

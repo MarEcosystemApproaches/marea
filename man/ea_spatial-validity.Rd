@@ -2,14 +2,18 @@
 % Please edit documentation in R/ea_spatial_class.R
 \name{ea_spatial-validity}
 \alias{ea_spatial-validity}
-\title{Validity Method for ea_spatial}
+\title{Spatial Data Validity}
 \arguments{
 \item{object}{An \code{ea_spatial} object.}
 }
 \value{
-TRUE if valid, otherwise a character string describing the issue.
+\code{TRUE} if valid, otherwise a character vector of error messages.
 }
 \description{
-Ensures that the \code{data} slot is a supported spatial object and contains a \code{value} layer or column.
+The validity method for the \code{ea_spatial} class ensures that:
+\enumerate{
+\item The \code{data} slot contains a supported spatial object (\code{sf}, \code{stars}, \code{SpatRaster}).
+\item The spatial object contains a \code{value} column or layer.
+}
 }
 \keyword{internal}

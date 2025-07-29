@@ -3,17 +3,30 @@
 \docType{class}
 \name{ea_spatial-class}
 \alias{ea_spatial-class}
-\title{S4 Class for Spatio-Temporal Environmental Assessment Data}
+\title{An S4 Class for Spatio-Temporal Environmental Assessment Data}
 \description{
-The \code{ea_spatial} class stores spatio-temporal environmental assessment data
-using spatial formats from the \code{sf}, \code{stars}, or \code{terra} packages. It includes
-metadata and a standardized \code{value} column for analysis and visualization.
+The \code{ea_spatial} class is a container for environmental assessment data that
+has a spatial component. It is designed to be flexible, supporting vector
+data via \code{sf} objects and raster data via \code{stars} or \code{terra::SpatRaster}
+objects.
+
+It standardizes the data by encapsulating a spatial object in the \code{data} slot
+and a list of descriptive information in the \code{meta} slot.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{meta}}{A named list containing metadata such as data type, region, units, etc.}
+\item{\code{meta}}{A named list containing metadata. Expected fields include
+\code{data_type}, \code{region}, \code{time_descriptor}, \code{units}, \code{source_citation},
+and \code{original_value_col}.}
 
-\item{\code{data}}{A spatial object of class \code{sf}, \code{stars}, or \code{SpatRaster}.}
+\item{\code{data}}{A spatial object. Must be of class \code{sf}, \code{stars}, or \code{SpatRaster}.
+The object is expected to have a column or layer named \code{value} containing
+the primary data.}
 }}
 
+\seealso{
+\code{\link{ea_spatial}} for the constructor function.
+
+\code{\link{ea.subset.spatial}} for a filtering helper function.
+}

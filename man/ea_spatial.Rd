@@ -2,9 +2,21 @@
 % Please edit documentation in R/ea_spatial_class.R
 \name{ea_spatial}
 \alias{ea_spatial}
-\title{Create an \code{ea_spatial} S4 Object}
+\alias{ea_spatial,ANY,character-method}
+\title{Constructor for \code{ea_spatial} Objects}
 \usage{
 ea_spatial(
+  data,
+  value_col,
+  data_type,
+  region,
+  time_descriptor,
+  units,
+  source_citation = "No citation provided",
+  ...
+)
+
+\S4method{ea_spatial}{ANY,character}(
   data,
   value_col,
   data_type,
@@ -18,25 +30,59 @@ ea_spatial(
 \arguments{
 \item{data}{A spatial object of class \code{sf}, \code{stars}, or \code{SpatRaster}.}
 
-\item{value_col}{A character string naming the column or layer containing numeric values.}
+\item{value_col}{\verb{[character(1)]} The name of the column (for \code{sf}) or
+layer/attribute (for \code{stars} or \code{SpatRaster}) that contains the primary
+numeric values. This column/layer will be renamed to \code{"value"}.}
 
-\item{data_type}{A character string describing the type of data.}
+\item{data_type}{\verb{[character(1)]} A description of the data
+(e.g., "sea surface temperature", "Chlorophyll-a concentration").}
 
-\item{region}{A character string indicating the geographic region.}
+\item{region}{\verb{[character(1)]} The geographic region the data represents.}
 
-\item{time_descriptor}{A character string describing the temporal nature of the data.}
+\item{time_descriptor}{\verb{[character(1)]} A description of the temporal aspect
+of the data (e.g., "July 2021 climatology", "Annual mean 2020").}
 
-\item{units}{A character string indicating the units of measurement.}
+\item{units}{\verb{[character(1)]} The units of the \code{value} column/layer.}
 
-\item{source_citation}{A character string providing the data source citation.}
+\item{source_citation}{\verb{[character(1)]} Optional. A citation for the data source.}
 
-\item{...}{Additional metadata fields to include in the \code{meta} slot.}
+\item{...}{Additional metadata fields to be stored in the \code{meta} slot.}
 }
 \value{
 An object of class \code{ea_spatial}.
 }
 \description{
-Constructs an \code{ea_spatial} object from a spatial object (\code{sf}, \code{stars}, or \code{SpatRaster})
-and associated metadata. The function validates the presence and type of required
-columns or layers, standardizes the value column (if applicable), and stores metadata.
+Creates an \code{ea_spatial} object from a spatial data object (\code{sf}, \code{stars}, or
+\code{SpatRaster}) and associated metadata.
+
+This function validates the input data, standardizes the primary data column
+or layer to be named \code{value}, and populates the \code{meta} slot. It is the
+primary constructor for the \code{\link{ea_spatial-class}}.
+}
+\examples{
+# Example with an 'sf' object (requires sf package)
+if (requireNamespace("sf", quietly = TRUE)) {
+  # Create a sample sf object
+  pts <- list(
+    sf::st_point(c(-63.5, 44.6)),
+    sf::st_point(c(-66.1, 44.9)),
+    sf::st_point(c(-64.0, 45.1))
+  )
+  sf_df <- sf::st_sf(
+    year = c(2001, 2001, 2002),
+    temp = c(12.1, 12.3, 13.0),
+    geometry = sf::st_sfc(pts, crs = 4326)
+  )
+
+  obj_sf <- ea_spatial(
+    data = sf_df,
+    value_col = "temp",
+    data_type = "Temperature",
+    region = "Scotian Shelf",
+    time_descriptor = "Point samples",
+    units = "degC"
+  )
+  print(obj_sf)
+}
+
 }

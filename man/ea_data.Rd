@@ -2,7 +2,8 @@
 % Please edit documentation in R/ea_data_class.R
 \name{ea_data}
 \alias{ea_data}
-\title{Create an \code{ea_data} S4 Object}
+\alias{ea_data,data.frame,character-method}
+\title{Constructor for \code{ea_data} Objects}
 \usage{
 ea_data(
   data,
@@ -15,41 +16,67 @@ ea_data(
   source_citation = "No citation provided",
   ...
 )
+
+\S4method{ea_data}{data.frame,character}(
+  data,
+  value_col,
+  data_type,
+  region,
+  location_descriptor,
+  units,
+  species = NA_character_,
+  source_citation = "No citation provided",
+  ...
+)
 }
 \arguments{
-\item{data}{A \code{data.frame} containing at least a \code{year} column and a numeric column
-specified by \code{value_col}.}
+\item{data}{A \code{data.frame} containing at least a \code{year} column and a numeric
+column specified by \code{value_col}.}
 
-\item{value_col}{A character string naming the column in \code{data} that contains the numeric values.}
+\item{value_col}{A character string naming the column in \code{data} that
+contains the numeric values to be standardized as \code{value}.}
 
 \item{data_type}{A character string describing the type of data (e.g., "temperature").}
 
 \item{region}{A character string indicating the geographic region.}
 
-\item{location_descriptor}{A character string describing the location (e.g., "bottom", "surface").}
+\item{location_descriptor}{A character string describing the location
+(e.g., "bottom", "surface").}
 
 \item{units}{A character string indicating the units of measurement.}
 
-\item{species}{Optional. A character string naming the species (default is \code{NA_character_}).}
+\item{species}{\verb{[character(1)]} Optional. A character string naming the species
+(default is \code{NA_character_}).}
 
-\item{source_citation}{Optional. A character string providing the data source citation.}
+\item{source_citation}{\verb{[character(1)]} Optional. A character string providing
+the data source citation.}
 
-\item{...}{Additional metadata fields to include in the \code{meta} slot.}
+\item{...}{Additional metadata fields to be stored in the \code{meta} slot as a
+named list.}
 }
 \value{
 An object of class \code{ea_data}.
 }
 \description{
-Constructs an \code{ea_data} object from a data frame and associated metadata.
-The function validates the presence and type of required columns, standardizes
-the value column, and stores metadata in a structured format.
+Creates an \code{ea_data} object from a data frame and associated metadata.
+This function serves as the primary constructor for the \code{\link{ea_data-class}}.
+It validates the presence and type of required columns, standardizes the
+value column name to \code{value}, and stores metadata in the \code{meta} slot.
 }
 \examples{
-\dontrun{
-df <- data.frame(year = 2000:2005, temp = rnorm(6))
-obj <- ea_data(df, value_col = "temp", data_type = "temperature",
-               region = "Scotian Shelf", location_descriptor = "bottom",
-               units = "°C")
-}
+df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
+obj <- ea_data(df,
+               value_col = "temp_c",
+               data_type = "temperature",
+               region = "Scotian Shelf",
+               location_descriptor = "bottom",
+               units = "°C",
+               project = "AZMP")
+
+# Access metadata
+obj[["region"]]
+
+# Access data
+obj[["data"]]
 
 }

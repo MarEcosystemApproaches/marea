@@ -3,18 +3,26 @@
 \docType{class}
 \name{ea_data-class}
 \alias{ea_data-class}
-\title{S4 Class for Environmental Assessment Data}
+\title{An S4 Class for Environmental Assessment Data}
 \description{
-The \code{ea_data} class is designed to store and manage environmental assessment data,
-including both metadata and a structured data frame. It supports standardized
-column naming and includes validation to ensure required fields are present.
+The \code{ea_data} class is a container for environmental assessment time series
+data. It encapsulates a data frame with the core data and a list of
+metadata, ensuring that essential columns (\code{year}, \code{value}) are present and
+providing a standardized interface for accessing and manipulating the data.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{meta}}{A named list containing metadata such as data type, region, units, species, etc.}
+\item{\code{meta}}{A named list containing metadata. Expected fields include
+\code{data_type}, \code{region}, \code{location_descriptor}, \code{units}, \code{species},
+\code{source_citation}, and \code{original_value_col}.}
 
-\item{\code{data}}{A \code{data.frame} or \code{tibble} containing the actual data, including at minimum
-a \code{year} column and a \code{value} column.}
+\item{\code{data}}{A \code{data.frame} or \code{tibble} containing the time series data. Must
+include at least a \code{year} column and a \code{value} column.}
 }}
 
+\seealso{
+\code{\link{ea_data}} for the constructor function.
+
+\code{\link{ea.subset}} for a filtering helper function.
+}
