@@ -64,7 +64,7 @@ Imports:
     magrittr,
     tibble,
     vctrs,
-    ggplot2,
+    ggplot2 (>= 3.3.0),
     sf,
     tidyverse
 Suggests:
