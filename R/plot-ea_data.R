@@ -142,7 +142,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 
                 # Create bar plot with red for positive, blue for negative
                 p <- p +
-                  ggplot2::geom_col(ggplot2::aes(fill = .data$bar_color), ...) +
+                  ggplot2::geom_col(ggplot2::aes(fill = df$bar_color), ...) +
                   ggplot2::scale_fill_manual(
                     values = c("positive" = "red", "negative" = "blue"),
                     guide = "none" # Hide legend

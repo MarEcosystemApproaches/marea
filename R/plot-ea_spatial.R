@@ -51,6 +51,8 @@ setMethod("plot", signature(x = "ea_spatial", y = "missing"),
                    resolution = 6000,
                    ...) {
             
+            df <- x@data
+            meta <- x@meta
             
             # --- Data validation and setup ---
             if (is.null(df)) stop("The data slot of the 'ea_spatial' object is empty.", call. = FALSE)

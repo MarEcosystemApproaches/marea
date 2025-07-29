@@ -316,13 +316,24 @@ ea.subset.spatial <- function(x, column, value) {
   data_obj <- x@data
   
   if (inherits(data_obj, c("sf", "stars"))) {
-    # Using dplyr::filter is robust for sf objects
-    rows <- data_obj[[column]] %in% value
-    subset_data <- data_obj[rows, ]
+
+    if (inherits(data_obj, "sf")) {
+      col_data <- sf::st_drop_geometry(data_obj)[[column]]
+    } else { # stars object
+      col_data <- data_obj[[column]] # stars object subsetting for an attribute directly gives a vector/array
+    }
+    
+    # Create the logical vector for subsetting rows
+    rows <- col_data %in% value
+    subset_data <- data_obj[rows, , drop = FALSE] # Pass the logical vector directly to sf/stars `[` method
+    
   } else if (inherits(data_obj, "SpatRaster")) {
+    # Get the layer to filter by
     mask_layer <- data_obj[[column]]
+    
+    # Create a logical raster mask
     mask <- mask_layer %in% value
-    # mask() will set non-matching cells to NA across all layers
+
     subset_data <- terra::mask(data_obj, mask)
   } else {
     stop("Unsupported spatial data type for subsetting.", call. = FALSE)
