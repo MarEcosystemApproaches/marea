@@ -220,7 +220,7 @@ lobster_catch <- ea_data(
   location_descriptor = "LFA 34",
   units = "tonnes",
   species = "American Lobster",
-  source_citation = "DFO Statistical Services",
+  source_citation = "DFO INTERNAL",
   # Additional custom metadata
   fishing_season = "November-May",
   assessment_year = 2023,
