@@ -1,6 +1,7 @@
 # Setup: Load necessary libraries
 library(testthat)
 library(methods) 
+library(sf)
 
 # --- Helper functions for test setup ---
 
@@ -315,7 +316,7 @@ test_that("[ operator subsets sf rows correctly (logical index)", {
 test_that("[ operator subsets stars objects correctly ", {
   obj_stars <- create_test_stars()
   subset_obj <- obj_stars[1:1, ] # Subset x-dimension
-  expect_equal(stars::st_dimensions(subset_obj@data)$X1$to, 2)
+  expect_equal(stars::st_dimensions(subset_obj@data)$x$to, 2)
   expect_equal(names(subset_obj@data), names(obj_stars@data)) # All layers retained
 })
 
