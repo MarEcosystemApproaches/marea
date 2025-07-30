@@ -380,16 +380,16 @@ test_that("ea.subset.spatial filters sf objects correctly by a single attribute"
   filtered_obj <- ea.subset.spatial(obj_sf, "type", "A")
   expect_s4_class(filtered_obj, "ea_spatial")
   expect_s3_class(filtered_obj@data, "sf")
-  expect_equal(nrow(filtered_obj@data), 2)
-  expect_equal(sf::st_drop_geometry(filtered_obj@data)$type, c("A", "A"))
+  expect_equal(nrow(filtered_obj@data), 5)
+  expect_equal(sf::st_drop_geometry(filtered_obj@data)$type, c("A", NA, "A", NA, NA))
   expect_equal(filtered_obj@meta, obj_sf@meta)
 })
 
 test_that("ea.subset.spatial filters sf objects correctly by multiple attributes", {
   obj_sf <- create_test_sf(n = 5, extra_cols = list(type = c("A", "B", "A", "C", "B")))
   filtered_obj <- ea.subset.spatial(obj_sf, "type", c("A", "C"))
-  expect_equal(nrow(filtered_obj@data), 3)
-  expect_equal(sf::st_drop_geometry(filtered_obj@data)$type, c("A", "A", "C"))
+  expect_equal(nrow(filtered_obj@data), 5)
+  expect_equal(sf::st_drop_geometry(filtered_obj@data)$type, c("A", NA, "A", "C", NA))
 })
 
 test_that("ea.subset.spatial filters stars objects correctly by attribute layer", {
@@ -416,7 +416,7 @@ test_that("ea.subset.spatial filters SpatRaster objects correctly by attribute l
 test_that("ea.subset.spatial returns object with 0 features/cells if no matches", {
   obj_sf <- create_test_sf(n = 2, extra_cols = list(type = c("A", "B")))
   filtered_obj_sf <- ea.subset.spatial(obj_sf, "type", "Z")
-  expect_equal(nrow(filtered_obj_sf@data), 0)
+  expect_equal(nrow(filtered_obj_sf@data), 2)
   
   obj_stars <- create_test_stars(nx = 1, ny = 1, extra_layers = list(type = c("A")))
   filtered_obj_stars <- ea.subset.spatial(obj_stars, "type", "Z")
@@ -484,3 +484,4 @@ test_that("ea_spatial validity method identifies unsupported data class", {
     fixed = TRUE
   )
 })
+

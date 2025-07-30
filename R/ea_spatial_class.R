@@ -294,10 +294,11 @@ setValidity("ea_spatial", function(object) {
 #' based on the values in a specified attribute column or layer.
 #'
 #' @details
-#' For `sf` and `stars` objects, this function subsets features (rows).
-#' For `SpatRaster` objects, it creates a mask from the specified layer and
-#' applies it to all layers in the raster, returning `NA` for cells that do not
-#' match the `value`.
+#' This masks the `data` slot of the `ea_spatial` object, setting the attributes
+#' to `NA` for features or cells that do not match the specified value(s).
+#' This is useful for subsetting spatial data based on specific criteria,
+#' such as filtering by region or time. It is different than the ea.subset method for 
+#' ea_data which removes features that do not match the criteria.
 #'
 #' @param x An `ea_spatial` object.
 #' @param column `[character(1)]` The name of the attribute column or layer to filter by.
@@ -327,12 +328,27 @@ ea.subset.spatial <- function(x, column, value) {
   data_obj <- x@data
   
   if (inherits(data_obj, "sf")) {
-    # For sf, we can use standard dplyr::filter or base subsetting.
-    # This finds the row indices and subsets.
+    # For sf, mask attribute data for features not matching the condition.
+    # Geometries are preserved, but attributes are set to NA.
     col_data <- sf::st_drop_geometry(data_obj)[[column]]
-    rows_to_keep <- col_data %in% value
-    subset_data <- data_obj[rows_to_keep, ]
+    # Identify rows where the condition is NOT met.
+    rows_to_mask <- !(col_data %in% value)
     
+    subset_data <- data_obj
+    
+    # Get all column names except for the geometry column.
+    geom_col_name <- attr(subset_data, "sf_column")
+    attr_cols <- setdiff(names(subset_data), geom_col_name)
+    
+    # Set the attributes of the masked rows to NA.
+    # A loop is used to safely handle different column data types.
+    for (col in attr_cols) {
+      # Coerce to vector to avoid issues with factors
+      if (is.factor(subset_data[[col]])) {
+        subset_data[[col]] <- as.character(subset_data[[col]])
+      }
+      subset_data[[col]][rows_to_mask] <- NA
+    }
   } else if (inherits(data_obj, "stars")) {
     # For stars, we create a logical mask and apply it.
     # The mask itself is a stars object.

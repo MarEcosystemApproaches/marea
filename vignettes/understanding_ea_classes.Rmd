@@ -149,7 +149,7 @@ data(npgo) # Example: North Pacific Gyre Oscillation
 marea_npgo <- as_ea_data(x = npgo, 
                          value_col = "anomaly")
 class(marea_npgo)
-print(marea_npgo)
+ea.print(marea_npgo)
 ```
 
 For spatial objects, use:
