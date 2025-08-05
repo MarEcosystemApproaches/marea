@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_CMEMS_ncdf.R
 \name{get_CMEMS_ncdf}
 \alias{get_CMEMS_ncdf}
-\title{Get CMEMS data}
+\title{Download Copernicus Marine (CMEMS) data}
 \usage{
 get_CMEMS_ncdf(
   username = NA,
@@ -19,28 +19,36 @@ get_CMEMS_ncdf(
 )
 }
 \arguments{
-\item{username}{character for your CMEMS username}
+\item{username}{Your CMEMS username.}
 
-\item{password}{character for your CMEMS password}
+\item{password}{Your CMEMS password.}
 
-\item{dataset_id}{character string with the dataset id. Defaults to "cmems_mod_glo_phy_my_0.083deg_P1M-m" which is the global ocean physics analysis and forecast product on a 1/12° grid. Additional products can be found in the [Copernicus Data Store](https://data.marine.copernicus.eu/products)}
+\item{dataset_id}{Dataset ID (default is "cmems_mod_glo_phy_my_0.083deg_P1M-m", the global ocean physics product).}
 
-\item{variables}{character vector with variable names}
+\item{variables}{list of variable names to download.}
 
-\item{minimum_longitude}{numeric minimum longitude of a bounding box for the data download. Defaults to -67.74250 which is for the Scotian Shelf and Bay of Fundy planning area.}
+\item{minimum_longitude}{Minimum longitude for the data bounding box.}
 
-\item{maximum_longitude}{numeric maximum longitude of a bounding box for the data download. Defaults to -54.90132 which is for the Scotian Shelf and Bay of Fundy planning area.}
+\item{maximum_longitude}{Maximum longitude for the data bounding box.}
 
-\item{minimum_latitude}{numeric minimum latitude of a bounding box for the data download. Defaults to 40.04343 which is for the Scotian Shelf and Bay of Fundy planning area.}
+\item{minimum_latitude}{Minimum latitude for the data bounding box.}
 
-\item{maximum_latitude}{numeric maximum latitude of a bounding box for the data download. Defaults to 47.83333 which is for the Scotian Shelf and Bay of Fundy planning area.}
+\item{maximum_latitude}{Maximum latitude for the data bounding box.}
 
-\item{start_datetime}{character string for the start date and time e.g. "1993-12-01T00:00:00"}
+\item{start_datetime}{Start date and time (e.g., "1993-12-01T00:00:00").}
 
-\item{end_datetime}{character string for the end date and time e.g. "1994-12-01T00:00:00"}
+\item{end_datetime}{End date and time (e.g., "1994-12-01T00:00:00").}
 
-\item{output_filename}{character string for the output filename}
+\item{output_filename}{Name of the output file (NetCDF format).}
+}
+\value{
+No return value. Downloads a NetCDF file to the specified location.
 }
 \description{
-This function downloads Copernicus Marine Environment Monitoring Service ([CMEMS](https://marine.copernicus.eu/)) data using the Copernicus Marine API and the python package copernicusmarine.
+Downloads data from the Copernicus Marine Environment Monitoring Service (\href{https://marine.copernicus.eu/}{CMEMS}) using the Copernicus Marine API and the Python package \code{copernicusmarine}.
+}
+\examples{
+\dontrun{
+get_CMEMS_ncdf(username = "your_username", password = "your_password", variables = list("thetao"))
+}
 }

@@ -1,396 +1,185 @@
 
-<!--
-README.md is generated from README.Rmd. Please edit that file. Build with:
--->
-<!--
-which builds the .html that can be viewed locally (but isn't pushed to GitHub;
-GitHub uses README.md to make the page you see on GitHub).
+# marea: Curated Ecosystem Data for the Maritimes Region
 
-Figures - to update a figure, manually run the piece of code that makes
-the .png file. See notes below (and pacea Issue #44). Make the png resolutions the same in
-each direction, at least for multi-panel plots, as seemed a bit blurry when I
-hadn't (primary production and hotssea at least). This is a little fiddly but
-does work.
--->
-<!-- # pacea <img src="man/figures/logo.png" align="right" height="138" /> -->
 <!-- badges: start -->
 
-[![](https://img.shields.io/badge/lifecycle-under%20development-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#under%20development)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MarEcosystemApproaches/marea/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/MarEcosystemApproaches/marea/graph/badge.svg?token=93afkFJUVL)](https://codecov.io/gh/MarEcosystemApproaches/marea)
-<!-- [![DOI](https://zenodo.org/badge/417554147.svg)](https://zenodo.org/doi/10.5281/zenodo.13840804) -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15706086.svg)](https://doi.org/10.5281/zenodo.15706086)
 <!-- badges: end -->
 
-**UNDER DEVELOPMENT**
+<img src="man/figures/marea_logo_jupijkam.png" align="right" height="90"/>
 
-An R package of Maritime ecosystem information to help facilitate an
-ecosystem approach to fisheries management.
+`marea` provides curated data sets to support an Ecosystem Approach to
+Fisheries Management (EAFM) in Canada’s Maritimes Region. It offers
+standardized, analysis-ready time series of oceanographic,
+environmental, and biological data crucial for research and stock
+assessment.
 
-*We wrangle the data so you don’t have to*
+## Philosophy
 
-marea stands for MARitimes Ecosystem Approach.
-
-marea is an R package containing a variety of data sets and model
-output. We wrangle the data sets behind the scenes to get them into
-usable formats in R, and provide helpful plotting functions. All data
-sets include documentation regarding the original sources and authors,
-who should be cited and consulted as appropriate.
-
-Please continue reading through this README file, and especially see the
-vignettes section get started.
-
-marea is motivated by, and shares functionality with, its sister package
-[pacea](https://github.com/pbs-assess/pacea?tab=readme-ov-file#pacea-)
-which similarly contains Pacific ecosystem information. pacea in turn
-was motivated the [GSLea](https://github.com/duplisea/gslea) R package
-developed by Dan Duplisea and colleagues for the Gulf of St Lawrence.
-
-## What is in marea?
-
-Currently, marea contains (though it is still in development and help
-files and vignettes have not been written yet)::
-
--   bottom temperatures from the Atlantic Zone Monitoring Program
-
--   bottom temperatures from GLORYS outputs
-
--   the North Atlantic Oscillation index
-
--   estimated abundances of grey seals
-
--   stomach content data.
-
-Plotting and helper functions are provided (TODO!), and demonstrated in
-the detailed vignettes. All data and model outputs are fully documented
-and referenced.
-
-## Brief examples of some questions that can be quickly visualised (see vignettes for full details)
-
-**How does the bottom temperature estimated from GLORYS differ between
-February and October in 2015 and in 2020?**
-
-``` r
-plot(glorys_bottom_temperature,
-     months = c("February", "October"),
-     years = c(2015, 2020))
-```
-
-<img src="man/figures/README-glorys-temp.png" style="width:80.0%" />
-
-**How does the North Atlantic Oscillation index look through time?**
-
-``` r
-plot(nao, lwd = 4)
-```
-
-<img src="man/figures/README-nao.png" style="width:80.0%" />
-
-TODO need to look into as clearly not normalised.
-
-**How has the estimated abundance of grey seals (TODO give area covered)
-changed through time?**
-
-``` r
-plot(grey_seals)
-```
-
-<img src="man/figures/README-grey-seals.png" style="width:80.0%" />
-
-<!-- **What climatic and oceanographic indices are currently available, and over what
-years?** Add in once have more -->
-
-``` r
-# knitr::kable(marea_indices)
-```
-
-## Vignettes
-
-For more detailed explanations of the data sets and functionality see
-the vignettes, which are already rendered here (note that we do not
-automatically update them when the data in marea are updated, so if you
-run them locally you may get more up-to-date values):
-
-TODO these are from pacea for now, and link to that GitHub site:
-
--   [indices.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/indices.html)
-    Climatic and oceanographic indices and associated plotting
-    functions.
--   [buoys.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/buoys.html)
-    Calculated daily mean sea surface temperatures and associated
-    plotting functions.
--   [populations.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/populations.html)
-    Estimates of animal populations and associated plotting functions.
--   [oisst.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/oisst.html)
-    OISST data and calculations and associated plotting functions.
--   [bccm.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/bccm.html)
-    BCCM model results restricted to Canada’s Exclusive Economic Zone,
-    calculations, and associated plotting functions.
--   [bccm_full.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/bccm_full.html)
-    BCCM model results over the full model domain, calculations, and
-    associated plotting functions.
--   [hotssea.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/hotssea.html)
-    HOTSSea model results and associated plotting functions.
--   [zooplankton.html](http://htmlpreview.github.io/?https://github.com/pbs-assess/pacea/blob/main/vignettes/zooplankton.html)
-    Zooplankton anomalies for the Strait of Georgia, calculations, and
-    associated plotting functions.
-
-The presentations where we introduced `pacea` are available as .pdf.
-[Here is the DFO version (10th November
-2023)](talks/pacea-release-talk-dfo.pdf) and [here is the UVic Ecostats
-version (21st November 2023)](talks/pacea-release-talk-uvic.pdf). The
-code to build them is [here as .Rmd](talks/pacea-release-talk.Rmd).
+1.  **A Single, Simple Data Structure**: All time series data in `marea`
+    are stored in simple and robust `ea`class objects. This provides a
+    consistent, predictable format, whether you are working with
+    temperature, survey indices, or commercial catch.
+2.  **User-Controlled Plotting**: We provide a basic, clean plot for
+    every dataset. From there, **you are in control**. Because our plots
+    are standard `ggplot2` objects, you can easily customize them, add
+    new layers, and create the exact visualization you need for your
+    analysis or report.
 
 ## Installation
 
-Okay, if you’re convinced this package might be useful for you, then to
-install the latest version just:
-
-    install.packages("remotes")    # If you do not already have the "remotes" package
-
-    remotes::install_github("MarEcosystemApproaches/marea")
-
-If you get an error like
-
-    Error in utils::download.file(....)
-
-then the connection may be timing out (happens to us on the DFO
-network). Try
-
-    options(timeout = 1200)
-
-and then try and install again. If you get a different error then post
-an Issue or contact ???TODO
-<a href="mailto:andrew.edwards@dfo-mpo.gc.ca">Andy</a>.
-
-## Updates
-
-We plan to continually enhance `marea` by updating current data sets and
-adding new ones, as well as adding functionality. To explain these, we
-will document them by date in the [NEWS](NEWS.md).
-
-TODO We plan to update the indices, buoy temperatures, and OISST values
-on the 20th of every month (or soon after), which should capture updates
-to those data.
-
-To check what date you installed `marea` locally on your machine, we
-have the helper command:
+You can install the development version of `marea` from GitHub:
 
 ``` r
-marea_installed()
-
-TODO You last locally installed marea on 2023-11-01 which is 8 days ago.
-
-Compare that with the updates in the NEWS file (and you can also check dates of the latest commits at
-https://github.com/MarEcosystemApproaches/marea/commits/main)
+# install.packages("remotes")
+remotes::install_github("MarEcosystemApproaches/marea")
 ```
 
-The commits tell you when we last changed something, while the
-[NEWS](NEWS.md) will give a more concise summary of changes by date.
-Then you may wish to update `marea` by running
-`remotes::install_github("MarEcosystemApproaches/marea")` again.
+For users on the DFO network who may experience connection timeouts:
 
-## Audience and motivation
+``` r
+# Set a longer timeout period
+options(timeout = 1200)
+remotes::install_github("MarEcosystemApproaches/marea")
+```
 
-The primary audience is stock assessment scientists who want to analyse
-environmental variables in the context of their stock assessment (but we
-anticipate other interested users). The Fisheries Act requires
-management of fisheries to take into account “[the biology of the fish
-and the environmental conditions affecting the
-stock](https://laws-lois.justice.gc.ca/eng/acts/f-14/page-3.html#h-1175547)”.
-Such an Ecosystem Approach to Fisheries Management requires data.
+## Quick Start: A Simple Workflow
 
-A comprehensive [2022 analysis of Canadian stock
-assessments](https://publications.gc.ca/collections/collection_2022/mpo-dfo/Fs97-6-3473-eng.pdf)
-found that availability of data on environmental variables was the
-leading cause of not integrating such information into assessments.
-marea aims to help make data availability more streamlined, and avoid
-each individual assessment scientist having to figure out themselves
-where to get appropriate data.
+The workflow for any dataset in marea is the same: load, inspect, plot,
+and customize.
 
-This work is strongly motivated by, and based on, the
-[pacea](https://github.com/pbs-assess/pacea?tab=readme-ov-file#pacea-) R
-package by Andrew Edwards and colleagues for Pacific ecosystem
-information, which in turn was inspired by the
-[GSLea](https://github.com/duplisea/gslea) R package by Dan Duplisea and
-colleagues for the Gulf of St Lawrence.
+``` r
+library(marea)
+```
+
+    ## Thank you for using marea. Type citation('marea') for citation information.
+
+``` r
+library(ggplot2) # For customization
+
+# 1. Load a dataset of interest (e.g., grey seal abundance)
+data("grey_seals")
+
+# 2. Inspect the object - it's a clean 'ea_data' object
+ea.print(grey_seals)
+```
+
+    ## --- Ecosystem Approach (EA) Data Object --- 
+    ## Class:  ea_data 
+    ## Data Type:  Estimated abundance (number of seals, 1000s) 
+    ## Location:    ( Maritimes  Region ) 
+    ## Time Range:   1960  -  2021 
+    ## Units:  Not specified 
+    ## --------------------------------------------
+    ## Data Preview:
+    ##   year      low    value     high
+    ## 1 1960 1.652570 1.860824 2.396134
+    ## 2 1961 2.032521 2.263192 2.809171
+    ## 3 1962 2.407304 2.659018 3.214911
+    ## 4 1963 2.700793 2.972982 3.541202
+    ## 5 1964 2.785795 3.088971 3.684344
+    ## 6 1965 3.126289 3.449040 4.053713
+
+``` r
+# 3. Create a simple plot
+ p <- plot(grey_seals)
+```
+
+<img src="man/figures/plot_grey_seals.png" width="70%" />
+
+You can use the style argument to create a default whichis an
+appropriate base for your data, then customize it even further by
+chaining on ggplot graphics grammar.
+
+``` r
+# 4. Customize it! Add a confidence ribbon and improve the labels.
+# The 'low' and 'high' columns are right there in the data frame.
+custom_plot <- plot(grey_seals, style = 'ribbon') +
+  labs(
+   title = "Grey Seal Abundance on Sable Island",
+    y = "Estimated Pup Production (count)"
+  ) +
+  theme_bw()
+```
+
+<img src="man/figures/README-grey-seals.png" width="70%" />
+
+## Available Data
+
+marea includes a growing list of curated data products. Use
+marea_metadata() to see what’s available.
+
+``` r
+library(knitr)
+kable(marea_metadata())
+```
+
+| Dataset                   | Region                      | TimeSpan  | Source                                                                                           |
+|:--------------------------|:----------------------------|:----------|:-------------------------------------------------------------------------------------------------|
+| amo                       | Northern Hemisphere (0-60N) | 1854-2025 | NOAA , <https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat>                 |
+| ao                        | Northern Hemisphere         | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/>                 |
+| azmp_bottom_temperature   | Scotian Shelf (4X, 4V, 4W)  | 1950-2024 | DFO Atlantic Zone Monitoring Program via azmpdata                                                |
+| food_habits               | Not specified               | 1995-2016 | pacea object                                                                                     |
+| glorys_bottom_temperature | Northwest Atlantic          | Unknown   | CMEMS Global Ocean Physics Reanalysis                                                            |
+| grey_seals                | Maritimes                   | 1960-2021 | No citation provided                                                                             |
+| grey_seals_2021           | Maritimes                   | 1960-2021 | No citation provided                                                                             |
+| mei                       | Equatorial Pacific          | 1979-2025 | NOAA ESRL/PSL, <https://psl.noaa.gov/enso/mei/>                                                  |
+| nao                       | North Atlantic              | 1951-2024 | NOAA NCEP via azmpdata; <https://www.ncei.noaa.gov/access/monitoring/nao/>                       |
+| npgo                      | North Pacific Gyre          | 1950-2025 | Di Lorenzo et al., <http://www.o3d.org/npgo/>                                                    |
+| oni                       | Niño 3.4 Region (Pacific)   | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml> |
+| pdo                       | North Pacific               | 1854-2025 | NOAA ERSST, <https://www.ncei.noaa.gov/access/monitoring/pdo/>                                   |
+| soi                       | Equatorial Pacific          | 1951-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/data/indices/soi>                                       |
+
+## Documentation
+
+For detailed examples, data sources, and methodologies, please see our
+vignettes:
+
+*Understanding Generic EA Data Classes*: A guide to the ea classes and
+the package philosophy.
+
+*Plotting EA Classes*: Examples and details of how to plot ea class
+objects.
 
 ## Citation
 
-If you use `marea` in your work then please cite it as (NOTE this has
-been updated since the original release):
+If you use marea in a publication, please cite it. You can get the
+current citation information by running:
 
-TODO
+``` r
+citation("marea")
+```
 
-<!-- Edwards A.M., Tai T.C., Watson J., Peña M.A., Hilborn A., Hannah C.G., Rooper
-  C.N., Flynn K.L., and Oldford, G.L. (2024). pacea: An R package of Pacific ecosystem information to
-  help facilitate an ecosystem approach to fisheries management.
-  <https://github.com/pbs-assess/pacea>, <https://zenodo.org/doi/10.5281/zenodo.13840804>
--->
+## Contributing
 
-TODO: You may wish to add the date you installed it (using
-`marea_installed()`). Use `citation("marea")` to get a version for LaTeX
-and R Markdown bibliographies. Although the DOI badge at the top of this
-page ends in …805, the …804 DOI is preferable because that will not
-change with any future updates to the GitHub tag. So …804 seems simpler
-and more consistent to use (thanks!).
+We welcome contributions! If you have suggestions, find a bug, or would
+like to contribute a new dataset, please see our contribution guidelines
+and open an issue on GitHub.
 
-Also let us know of any applications. This will help us devote effort
-into maintaining `marea`.
-<!-- For pacea this hasn't really happened unless we happen
-to talk to people! -->
+## Related Work
+
+This package is part of a coordinated effort across DFO regions to
+standardize access to ecosystem data for fisheries management:
+
+[pacea](https://github.com/pbs-assess/PACea/) - Pacific ecosystem data
+
+[gslea](https://github.com/duplisea/gslea/) - Gulf of St. Lawrence
+ecosystem data
 
 ## Acknowledgments
 
-TODO Funding?
+We acknowledge that this work is done in the traditional and unceded
+territory of indigenous people who have cared for this land and water
+for time immemorial. We thank Fisheries and Oceans Canada for funding
+and acknowledge the many data providers and scientists whose work makes
+this package possible.
 
-We thank the following for contributing ideas, example code for ROMS
-output, model output, and/or helping with ideas and coding issues:
+Special thanks to the oce package team for inspiring the design of the
+`ea` class system.
 
-TODO:
-
--   Jessica Nephin, Lindsay Davidson, Strahan Tucker, Brianna Wright,
-    Patrick Thompson, Matt Grinnell, Sean Anderson, Philina English,
-    Chris Grandin, Jennifer Boldt, Kelly Young, and others.
-
-## Notes for developers
-
-1.  Please work on your own development branch to ensure that the main
-    branch is never broken (so users can always download the package).
-    See below for details on branching.
-
-2.  Edit and render the README.Rmd file, not the README.Md file. If you
-    add any new figures then commit and push them (they will be in
-    man/figures/README-<chunk-name>) so they show up on the GitHub
-    README. Always render the .Rmd so that it and the rendered .Md stay
-    in sync (see
-    <https://github.com/pbs-assess/pacea/issues/44#issuecomment-1793235838>
-    for how to have Git check that README.Md is newer than README.Rmd).
-
-3.  Every data set is built using code in the `raw-data/` directory,
-    with documentation in `R/data.R`. Document everything!
-
-4.  If you add new functions please add tests as well so we retain good
-    code coverage (as indicated in the badge at the top of the README on
-    GitHub).
-
-5.  Use the standard `lower_case_and_underscores` for naming variables
-    and functions.
-
-6.  Citation information is in inst/CITATION, so if you update
-    DESCRIPTION file (e.g. add an author) then update that also and
-    update the citation info above.
-
-7.  TODO for marea: Logo included by running
-    `use_logo("inst/pacea-logo-from-carley.png")`. The .png was expertly
-    designed by Carley Colclough. There is also
-    `inst/pacea-logo-for-printing.jpg` for printing purposes.
-
-### Branching in Git
-
-To ensure the main branch is never broken (and so users can always
-download the package), when editing package code please work on your own
-branch and then merge it in. If just updating the README then we can
-stick with the main branch (because messing something up should not void
-the package being installable).
-
-Your own branch should be called `dev-yourname`, e.g. `dev-jamie`. If
-you don’t yet have a branch you need to:
-
--   create it locally (and ‘check it out’, i.e. move into it):
-    `git checkout -b dev-yourname`
--   tell Git where to push to:
-    `git push --set-upstream origin dev-yourname` (Git will tell you
-    this command if you do a `git push` without having run it)
--   update GitHub Actions so that pushes of your branch get properly
-    tested on GitHub. Just add your branch to **both** lists of branches
-    at the top of:
-    -   `.github/workflows/R-CMD-check.yaml`
-    -   `.github/workflows/test-coverage.yaml`
--   Do that as your first commit and push to check everything’s working.
-
-Once you have your branch set up then the workflow is:
-
-1.  Make sure you are all caught up on the main branch:
-
--   `git checkout main`
--   `git fetch`
--   `git rebase`
-
-2.  Switch to your development branch and merge the main branch into it
-
--   `git checkout dev-yourname`
--   `git merge main`
--   for magit users (probably just Andy), this is just `b b` and `m m`
-    (it recommends arguments)
-
-3.  Do some new commits in your branch and push them in the usual way.
-    GitHub Actions will work on your branch.
-
-So from a quick test, the `R-CMD-check` badge only refers to the main
-branch, which is great as it should never show as failing because we
-should only be breaking things on own branch. Always having the green
-passing badge should inspire consumer confidence. On GitHub you can
-select your branch and see the tickmark, which will tell you if the
-build has failed (or if your changes have caused the code coverage to
-decline), and you’ll probably get an automatic email also, just to drive
-home the message. So the badges on the README on your branch still
-relate to the main branch.
-
-You can click on the codecov badge on GitHub, and then on the codecov
-page you can select your branch. There are ways to check code coverage
-locally, but Andy found these all take a long time for pacea (and it’s
-easier to push and let GitHub check the coverage). See pacea commit
-6c872da for the commands Andy tried (now deleting to keep this README
-file cleaner).
-
-4.  When you are happy with your changes and ready to merge them into
-    the main branch, you need to
-
--   add any changes that users should be aware of to the [NEWS](NEWS.Md)
-    file.
-
-No need to mention things that are only of interest to developers (like
-the commiting of these instructions). We want the NEWS to be succinct
-and quickly readable so that people look at it.
-
-Then you need to double check that the main branch is up-to-date with
-the version on GitHub (someone may have pushed some changes since you
-last fetched), then merge any changes back into your branch. You could
-just check on GitHub (if you’re the last person to have pushed to main
-then you are probably fine), or do these:
-
--   `git checkout main`
-
--   `git fetch`
-
--   `git rebase`
-
--   `git checkout dev-yourname`
-
--   `git merge main`
-
-If that does merge in some new commits then you should
-
--   `git push` to run the GitHub Actions checks again on GitHub. If the
-    merge says something like you are all caught up, no merging is
-    needed (i.e. no-one committed anything to the main branch
-    recenetly), then no need for the `git push`, since this entire step
-    will not have added any new code.
-
-5.  Now you are ready to merge your changes into the main branch, so
-    that people will get them when they install/update `pacea`:
-
--   `git checkout main`
--   `git merge dev-yourname`
--   `git push`
-
-And you are done! If you want, we have some aliases (such as `git co`
-for `git checkout` and `git p` for `git push` listed in this example
-.gitconfig file:
-<https://raw.githubusercontent.com/quantitative-biology/module-1-git/main/misc/.gitconfig>
-from our e-book
-<https://www.quantitative-biology.ca/git-and-github.html#save-our-template-.gitconfig-file>
-You can put those into your `.gitconfig` file if you like.
-
-This can help understanding on branches:
-<https://www.atlassian.com/git/tutorials/using-branches/git-merge>
+Kelley D, Richards C (2025). oce: Analysis of Oceanographic Data. R
+package version 1.8-4, <https://dankelley.github.io/oce/>.

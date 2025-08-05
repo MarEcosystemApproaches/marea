@@ -1,19 +1,12 @@
 ideas/
 lib/
-
 *.html
 *.docx
 *.nc
 *.RData
-
 *.csv
 *.xlsx
-
 .Rproj.user
-
-# Example one:
-/data-raw/coastwide-indices/oni.txt
-
-data-raw/glorys/R_script_To_downloadData.r
-data-raw/glorys/roms-data-interpolation-full.R
-data-raw/glorys/settingUpRstudioToDownloadCMEMS.r
+/data-raw/
+.Rhistory
+inst/doc

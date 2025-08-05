@@ -1,0 +1,37 @@
+citHeader("To cite marea in publications use:")
+
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+authors <- eval(parse(text = meta$`Authors@R`))
+
+# Extract author names for text version
+author_names <- sapply(authors, function(a) {
+  paste(a$given, a$family)
+})
+
+# Format authors for text (first few + et al. if many)
+if (length(author_names) <= 3) {
+  author_text <- paste(author_names, collapse = ", ")
+} else {
+  author_text <- paste(paste(author_names[1:3], collapse = ", "), "et al.")
+}
+
+citEntry(
+  entry = "Manual",
+  title = "marea: Maritime Ecosystem Approach R Package",
+  author = authors,
+  year = year,
+  note = note,
+  url = "https://github.com/MarEcosystemApproaches/marea",
+  doi = "10.5281/zenodo.15706086",
+  
+  textVersion = paste(
+    author_text, " (", year, "). ",
+    "marea: Maritime Ecosystem Approach R Package. ",
+    note, ". ",
+    "https://doi.org/10.5281/zenodo.15706086",
+    sep = ""
+  )
+)
+
+citFooter("We appreciate citations as they help us secure funding for continued development.")
