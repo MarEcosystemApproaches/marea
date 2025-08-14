@@ -30,17 +30,14 @@ load(file.path(dat.dir, eco_indicators_nafo))
 eco_indicators_esswss<-"eco_indicators_esswss.Rdata"
 load(file.path(dat.dir, eco_indicators_esswss))
 
-# have to rename the esswss file, will change this in future iterations when saving from marinidicators.     
-eco_indicators_esswss<-allIndicators
-
 
 #join the 2 dataframes
 join_indicators<-bind_rows(eco_indicators_nafo, eco_indicators_esswss) 
 
-# filter years <2021 when the RV survey changed to the Jacques Cartier, still no conversion factors for all the species required for this analysis. 
+# filter years -2021, and only to 2022 when the RV survey changed to the Jacques Cartier, still no conversion factors for all the species required for this analysis. 
 
 eco_indicators<-join_indicators |>
-  filter(YEAR<2021) |> 
+  filter(YEAR!=2021) |> 
   rename(year=YEAR, region=ID)
 
 
