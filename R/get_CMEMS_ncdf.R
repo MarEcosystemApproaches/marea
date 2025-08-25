@@ -13,6 +13,8 @@
 #' @param start_datetime Start date and time (e.g., "1993-12-01T00:00:00").
 #' @param end_datetime End date and time (e.g., "1994-12-01T00:00:00").
 #' @param output_filename Name of the output file (NetCDF format).
+#' @param output Type of output: download on the "file" (default), or load as an object using "stars", or "terra" packages.
+#' @param ... Additional arguments passed to the `stars::read_ncdf` function or `terra::rast` for loading the data.
 #'
 #' @return No return value. Downloads a NetCDF file to the specified location.
 #' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import
@@ -22,9 +24,19 @@
 #' \dontrun{
 #' get_CMEMS_ncdf(username = "your_username", password = "your_password", variables = list("thetao"))
 #' }
-get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod_glo_phy_my_0.083deg_P1M-m", variables, minimum_longitude = -67.74250, maximum_longitude = -54.90132, minimum_latitude = 40.04343, maximum_latitude = 47.83333, start_datetime = "1993-12-01T00:00:00", end_datetime = "1994-12-01T00:00:00", output_filename = tempfile(fileext = ".nc")) {
-  # browser()
-  
+get_CMEMS_ncdf <- function(username = Sys.getenv("COPERNICUS_USERNAME"),
+                           password = Sys.getenv("COPERNICUS_PASSWORD"),
+                           dataset_id = "cmems_mod_glo_phy_my_0.083deg_P1M-m",
+                           variables, minimum_longitude = -67.74250,
+                           maximum_longitude = -54.90132,
+                           minimum_latitude = 40.04343,
+                           maximum_latitude = 47.83333,
+                           start_datetime = "1993-12-01T00:00:00",
+                           end_datetime = "1994-12-01T00:00:00",
+                           output_filename = tempfile(fileext = ".nc"),
+                           output = "file",
+                           ...) {
+
   pythonenv <- try(reticulate::use_virtualenv("CopernicusMarine", required = TRUE))
   
   if (inherits(pythonenv, "try-error")) {
@@ -35,11 +47,14 @@ get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod
   cmt <- try(import("copernicusmarine"))
   
   # Login function to create your configuration file
-  if(!is.na(username)|!is.na(password)){
-    cmt$login(username, password)
+  if (nzchar(username) && nzchar(password)) {
+    cmt$login(username, password, force_overwrite = TRUE)
+  } else {
+    stop("Please supply username and password arguments, 
+    use Sys.setenv() to set COPERNICUS_PASSWORD and COPERNICUS_USERNAME,
+    or set them in your .Renviron file.")
   }
-  tmpdirnc <- tempdir()
-  tmpnc <- tempfile(fileext = ".nc")
+
   cmt$subset(
     dataset_id=dataset_id,
     variables=variables,
@@ -52,5 +67,19 @@ get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod
     output_directory = dirname(output_filename),
     output_filename = basename(output_filename)
   )
+  
+  if (output == "file") {
+    message("Data downloaded to: ", output_filename)
+  } else if (output == "stars") {
+    nc_data <- stars::read_ncdf(output_filename, var = variables, ...)
+    message("Data downloaded to: ", output_filename, "and loaded as stars object.")
+    return(nc_data)
+  } else if (output == "terra") {
+    nc_data <- terra::rast(output_filename, ...)
+    message("Data downloaded to: ", output_filename, "and loaded as terra object.")
+    return(nc_data)
+  } else {
+    stop("Invalid output type. Use 'file', 'stars', or 'terra'.")
+  }
   
 }

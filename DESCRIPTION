@@ -62,6 +62,8 @@ Imports:
     stats,
     utils,
     magrittr,
+    stars,
+    terra,
     tibble,
     vctrs,
     ggplot2 (>= 3.3.0),
