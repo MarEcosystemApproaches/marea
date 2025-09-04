@@ -1,0 +1,393 @@
+---
+title: "Understanding Generic EA Data Classes"
+author: "Emily O'Grady"
+date: '`r Sys.Date()`'
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    theme: cerulean
+vignette: >
+  %\VignetteIndexEntry{Classes and Data Structures in marea}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Understanding Data Classes in `marea`
+
+```{r setup, echo = FALSE, warnings = FALSE, message = FALSE}
+library(marea)
+library(tidyverse)
+```
+
+
+## Introduction
+
+The `marea` package is built around robust S4 class objects:  
+- **ea_data** for time series/tabular data  
+- **ea_spatial** for spatio-temporal or gridded data
+
+This makes all `marea` datasets work the same – easy for plotting, inspecting, and analysis.
+
+---
+
+## What is a "Class" in `marea`?
+
+An R "class" defines _how_ an object behaves.  
+Classes allow `marea` to automatically:
+- Store rich metadata with each dataset
+- Print, summarize, or plot datasets using custom methods
+- Guarantee consistent, predictable structures (for you and collaborators)
+
+The two core classes are:
+- `ea_data`: 1D/tabular/time series (e.g. abundances, environmental indices)
+- `ea_spatial`: gridded or spatial/time-varying fields (e.g. maps of temperature)
+
+---
+
+## ea_data: Clean, Consistent Time Series
+
+All tabular time-series data in `marea` use the `ea_data` class.
+
+### Example: Load, Print, and Summarize
+
+```{r}
+# Load grey seal abundance data
+data("grey_seals")
+
+# Print object summary (metadata, structure, preview)
+ea.print(grey_seals)
+```
+
+**Example output:**  
+
+--- Ecosystem Approach (EA) Data Object ---
+Class:           ea_data 
+Data Type:       Estimated abundance (number of seals, 1000s) 
+
+Data preview:
+
+A tibble: 6 × 4
+year   low median  high
+<dbl> <dbl>  <dbl> <dbl>
+1  1960   ...   ...   ...
+2  ...    ...   ...   ...
+
+### Data summary
+
+```{r}
+ea.summary(grey_seals)
+```
+
+---
+
+## Plotting: One-line Visualization
+
+Plotting works out-of-the-box and returns a `ggplot2` object:
+
+```{r}
+# plot(grey_seals)
+```
+
+*Output:*
+<img src="man/figures/plot_grey_Seals.png" width="70%" />
+
+If columns like `"low"` and `"high"` exist, add ribbons easily:
+
+```{r}
+# plot(grey_seals, style = "ribbon")
+```
+
+The style argument can be specified to return different plot types, this can
+provide a range of reasonable defaults for different data sets.
+
+
+Other styles: `"default"`, `"plain"`, `"anomaly"`, etc.
+
+These are ggplot objects and are easy to add on to with the `+` syntax (See advanced examples)
+
+
+---
+
+## ea_spatial: Spatio-Temporal/Gridded Data
+
+Spatial (or spatio-temporal) objects are stored as **ea_spatial**. These have some flexibility and the data slot can house an sf objects, a stars or terra object. 
+
+### Example: Inspect a spatial object
+
+```{r}
+data("glorys_bottom_temperature")
+ea.summary(glorys_bottom_temperature)
+```
+
+*Output includes metadata, spatial bounds, etc.*
+
+### Plot
+
+```{r}
+# plot(glorys_bottom_temperature)
+```
+
+The style argument can be used to specify some reasonable spatial default styles.
+There are also many other arguments for specifying details about coastline objects, regions, and other considerations. See `?plot.ea_spatial` for more details.
+Other options:
+- `style = "contour"`   (contour lines)
+- `style = "bubble"`    (bubbles by value)
+
+---
+
+## Interoperability: Converting from `pacea` and Other Packages
+
+`marea` works great with external datasets such as those from `pacea` (Pacific ecosystem data).
+
+If you have a `pacea` time-series (pacea-index or pacea-biomass):
+
+```{r}
+library(pacea)
+data(npgo) # Example: North Pacific Gyre Oscillation
+marea_npgo <- as_ea_data(x = npgo, 
+                         value_col = "anomaly")
+class(marea_npgo)
+print(marea_npgo)
+```
+
+For spatial objects, use:
+
+```{r}
+library(pacea)
+data("hake_total_biomass_age_1_2025")
+
+hake_biomass_ea <- as_ea_data(
+  hake_total_biomass_age_1_2025,
+  value_col = "median",
+  source = 'pacea',
+  time_descriptor = "2025",
+  details = 'Converted using marea::as_ea_data() July 2025'
+)
+print(hake_biomass_ea)
+
+```
+
+---
+
+## Creating your own ea objects
+
+While marea provides many built-in datasets, you'll often want to create your own objects from scratch. This section demonstrates how to build ea_data and ea_spatial objects using the constructor functions.
+
+###  Create an ea_data Object
+
+The `ea_data()` constructor allows you to create time series objects from any data frame. Here's how:
+
+```{r}
+# Create a simple temperature dataset
+temp_data <- data.frame(
+  year = 2010:2020,
+  avg_temp = c(8.2, 8.5, 8.1, 8.9, 9.2, 8.8, 9.1, 8.7, 9.0, 8.6, 9.3),
+  station = "Halifax-2"
+)
+
+# Create ea_data object
+halifax_temp <- ea_data(
+  data = temp_data,
+  value_col = "avg_temp",  # Specify which column contains the values
+  data_type = "Bottom Temperature",
+  region = "Maritimes",
+  location_descriptor = "Halifax Line Station 2",
+  units = "°C",
+  source_citation = "DFO Maritimes Region Monitoring Program"
+)
+
+ea.print(halifax_temp)
+```
+
+### Advanced ea_data with additional metadata
+
+```{r}
+# Fisheries catch data with uncertainty
+catch_data <- data.frame(
+  year = 2015:2022,
+  landings = c(1250, 1180, 1320, 1450, 1280, 1390, 1220, 1310),
+  vessel_count = c(45, 42, 48, 51, 46, 49, 44, 47)
+)
+
+# Create object with additional metadata
+lobster_catch <- ea_data(
+  data = catch_data,
+  value_col = "landings",
+  data_type = "Commercial Landings",
+  region = "Maritimes",
+  location_descriptor = "LFA 34",
+  units = "tonnes",
+  species = "American Lobster",
+  source_citation = "DFO Statistical Services",
+  # Additional custom metadata
+  fishing_season = "November-May",
+  assessment_year = 2023,
+  stock_status = "Healthy"
+)
+
+ea.print(lobster_catch)
+ea.summary(lobster_catch)
+```
+
+### Create an ea_spatial object
+
+The `ea_spatial()` constructor creates spatial objects from sf data. Here's how to build one:
+
+```{r}
+library(sf)
+
+# Create a simple spatial grid
+grid_points <- expand.grid(
+  lon = seq(-66, -64, by = 0.5),
+  lat = seq(43, 45, by = 0.5)
+)
+
+# Convert to sf object
+spatial_data <- st_as_sf(grid_points, coords = c("lon", "lat"), crs = 4326)
+
+# Add some simulated chlorophyll data
+spatial_data$chl_concentration <- runif(nrow(spatial_data), 0.5, 3.2)
+spatial_data$depth_zone <- "surface"
+
+# Create ea_st object
+chl_spatial <- ea_spatial(
+  data = spatial_data,
+  value_col = "chl_concentration",
+  data_type = "Chlorophyll-a Concentration",
+  region = "Maritimes",
+  time_descriptor = "July 2023 Survey",
+  units = "mg/m³",
+  source_citation = "DFO Ecosystem Survey Program"
+)
+
+ea.print(chl_spatial)
+```
+
+
+## Accessing Data and Metadata: The S4 Structure
+
+Once you have an ea_data object, you might want to extract specific pieces of information, like the raw data frame or a single metadata value. Because ea_data is an S4 object, there are two primary ways to do this: the standard @ operator for direct slot access, and a custom [[ method for more flexible and convenient access.
+
+An ea_data object has two main "slots":
+
+ - meta: A list that holds all the metadata (e.g., region, units, source_citation).
+ 
+ - data: A tibble that contains the time series data (with year, value, and other columns).
+ 
+### Using the @ Operator (Direct Slot Access)
+
+The @ operator is the standard way to access slots in any S4 object. You can use it to pull out the entire meta list or the data tibble.
+
+
+```{r}
+# Use the halifax_temp object created earlier
+# Access the entire metadata list
+halifax_temp@meta
+
+# Access the entire data tibble
+halifax_temp@data
+```
+This method is direct and explicit but requires you to know the exact slot names. To get a single metadata item, you would need to chain operators, like `halifax_temp@meta$region`.
+
+### Using the [[ Method (Convenient Access)
+
+To make life easier, marea provides a custom [[ method. This powerful shortcut lets you access the entire meta or data slots, as well as individual items within them, using a single, consistent syntax.
+
+The [[ method first checks if you are asking for "meta" or "data". If not, it checks if the name you provided exists in the meta slot. If it's not there, it finally checks if it's a column name in` the data slot.
+
+```{r}
+# Get the entire meta list (same as @meta)
+halifax_temp[["meta"]]
+
+# Get a specific metadata item
+halifax_temp[["region"]]
+
+# Get the entire data tibble (same as @data)
+halifax_temp[["data"]]
+
+# Get a specific data column (vector)
+halifax_temp[["year"]]
+```
+
+This approach is generally recommended as it provides a single, intuitive interface for retrieving almost any piece of information from an ea_data object without needing to remember the underlying @ syntax.
+
+
+
+## Key Constructor Parameters
+
+Both constructors share common metadata fields:
+
+### Required parameters:
+
+- data: Your data frame (for ea_data) or sf/stars/terra spatraster object (for ea_spatial)
+
+- value_col: Name of the column containing the primary values
+
+- data_type: Description of what the data represents
+
+- region: Geographic region or NAFO/DFO area name
+
+- units: Units for the value column
+
+- source_citation: Where the data came from
+
+### ea_data specific:
+
+- location_descriptor: Specific location identifier
+
+- species: Species name (optional, for biological data)
+
+### ea_spatial specific:
+
+time_descriptor: Description of the temporal aspect
+
+### Additional metadata:
+
+- You can add any custom metadata fields as named arguments (e.g., fishing_season, assessment_year)
+
+
+## Tips for creating objects
+
+1. Value column naming: The constructor automatically renames your specified column to value internally, so all methods work consistently.
+
+2. Metadata travels: All metadata is preserved through subsetting and plotting operations.
+
+3. Validation: Constructors validate inputs and provide helpful error messages.
+
+4. Extensibility: Add custom metadata fields for your specific use case.
+
+## Why Use These Classes?
+
+Using robust S4 classes brings multiple benefits:
+- All datasets behave the same way (easy to plot, inspect, or summarize)
+- Metadata (units, region, source, etc.) always travel with the data
+- You can use base R summary/print/plot methods or build your own analyses on top
+
+---
+
+## Learn More
+
+- The main [README](../README.html) has a quick start
+- To list all built-in datasets and their metadata:
+
+```{r}
+marea_metadata()
+```
+
+---
+
+## Citing `marea`
+
+Please cite the package in your work. For citation text:
+
+```{r}
+citation("marea")
+```
+
+---
+
+*This vignette was generated using the `marea` source code (2025-07-24).*
+
+---
