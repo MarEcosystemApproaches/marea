@@ -80,14 +80,17 @@ setGeneric("ea_data", function(data, value_col, data_type, region,
 
 #' @rdname ea_data
 #' @export
-setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
+setMethod("ea_data", signature(data = "data.frame", value_col = "list"),
           function(data, value_col, data_type, region,
                    location_descriptor, units, species = NA_character_,
                    source_citation = "No citation provided", ...) {
             
             # --- Validation ---
-            if (!value_col %in% names(data)) {
-              stop(paste0("Column '", value_col, "' not found in the data."), call. = FALSE)
+            for (i in 1:length(value_col)) {
+              val <- value_col[[i]]
+                 if (!val %in% names(data)) {
+                  stop(paste0("Column '", val, "' not found in the data."), call. = FALSE)
+              }
             }
             if (!"year" %in% names(data)) {
               stop("`data` must contain a 'year' column.", call. = FALSE)
@@ -98,7 +101,12 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
             
             
             # --- Standardize ---
-            data <- dplyr::rename(data, value = .data[[value_col]])
+            # rename all columns from value_col (list) to originalname_value
+            for (i in 1:length(value_col)) {
+              val <- value_col[[i]]
+              new_name <- paste0(val, "_value")
+              data <- dplyr::rename(data, !!new_name := .data[[val]])
+            }
             
             # --- Metadata ---
             meta <- list(
@@ -108,7 +116,7 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
               units = as.character(units),
               species = as.character(species),
               source_citation = as.character(source_citation),
-              original_value_col = value_col,
+              original_value_col = value_col, # TODO check that this prints okay as a list
               ...
             )
             
@@ -281,7 +289,9 @@ setValidity("ea_data", function(object) {
   if (!"year" %in% names(object@data)) {
     errors <- c(errors, "Missing 'year' column in the data slot.")
   }
-  if (!"value" %in% names(object@data)) {
+  # check for at least one column that ends with _value
+  value_cols <- grep("_value$", names(object@data), value = TRUE)
+  if (length(value_cols) == 0) {
     errors <- c(errors, "Missing 'value' column in the data slot.")
   }
   
