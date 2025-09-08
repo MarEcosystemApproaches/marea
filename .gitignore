@@ -7,6 +7,6 @@ lib/
 *.csv
 *.xlsx
 .Rproj.user
-/data-raw/
+
 .Rhistory
 inst/doc
