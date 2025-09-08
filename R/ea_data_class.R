@@ -95,8 +95,8 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
             if (!"year" %in% names(data)) {
               stop("`data` must contain a 'year' column.", call. = FALSE)
             }
-            if (!is.numeric(data[[value_col]]) || !is.numeric(data$year)) {
-              stop(paste0("Columns 'year' and '", value_col, "' must be numeric."), call. = FALSE)
+            if (!is.numeric(data$year)) {
+              stop(paste0("Columns 'year' must be numeric."), call. = FALSE)
             }
             
             
