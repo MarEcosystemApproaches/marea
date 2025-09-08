@@ -24,11 +24,11 @@ library(here)
 
 # This is the raw data
 
-dat.dir<-here::here("data-raw/eco-indicators")
-eco_indicators_nafo<- "eco_indicators_nafo.Rdata"
-load(file.path(dat.dir, eco_indicators_nafo))
-eco_indicators_esswss<-"eco_indicators_esswss.Rdata"
-load(file.path(dat.dir, eco_indicators_esswss))
+data_dir <- 'R:/Science/BIODataSvc/SRC/marea'
+eco_indicators_nafo<- file.path(data_dir, "eco_indicators_nafo.csv")
+eco_indicators_nafo <- read_csv(eco_indicators_nafo)
+eco_indicators_esswss<-file.path(data_dir, "eco_indicators_esswss.csv")
+eco_indicators_esswss <- read_csv(eco_indicators_esswss)
 
 
 #join the 2 dataframes
@@ -42,11 +42,12 @@ eco_indicators<-join_indicators |>
 
 
 #create "ea_data" object
+val_col_list <- names(eco_indicators)[!(names(eco_indicators) %in% c("year", "region"))]
 
 # Create object with additional metadata
-eco_indicators<- ea_data(
+eco_indicators_ea<- ea_data(
   data = eco_indicators,
-  value_col = "SpeciesRichness_ALL", 
+  value_col = val_col_list, 
   data_type = "diversity",
   region = "Maritimes",
   location_descriptor = "NAFO",
