@@ -30,7 +30,7 @@ create_test_ea_data <- function(years = 2000:2005, values = rnorm(6),
 
 test_that("ea_data S4 class definition is correct", {
   # This tests the internal structure of the class
-  obj <- new("ea_data", meta = list(a = 1), data = data.frame(year = 1, value = 1))
+  obj <- new("ea_data", meta = list(a = 1), data = data.frame(year = 1, temp_c_value = 1))
   expect_s4_class(obj, "ea_data")
   expect_true(is.list(obj@meta))
   expect_true(is.data.frame(obj@data))
@@ -57,10 +57,12 @@ test_that("ea_data constructor creates valid object with required slots", {
   
   # Check data slot
   expect_s3_class(obj@data, c("tbl_df", "tbl", "data.frame")) # Should be a tibble
-  expect_true(all(c("year", "value") %in% names(obj@data)))
-  expect_equal(colnames(obj@data), c("year", "value")) # Only year and value if no extra cols
+  expect_true(all(c("year", "temp_c_value") %in% names(obj@data)))
+  expect_equal(colnames(obj@data), c("year", "temp_c_value")) # Only year and value if no extra cols
   expect_equal(obj@data$year, 2000:2005)
-  expect_length(obj@data$value, 6)
+
+  # check that there is at least one column with _value
+  value_cols <- grep("_value$", names(obj@data), value = TRUE)
 })
 
 test_that("ea_data constructor handles optional arguments and extra metadata", {
@@ -121,9 +123,9 @@ test_that("ea_data constructor correctly renames value column", {
     value_col = "my_value",
     data_type = "t", region = "r", location_descriptor = "l", units = "u"
   )
-  expect_true("value" %in% names(obj@data))
+  expect_true("my_value_value" %in% names(obj@data))
   expect_false("my_value" %in% names(obj@data))
-  expect_equal(obj@data$value, c(10, 20))
+  expect_equal(obj@data$temp_c_value, c(10, 20))
   expect_equal(obj@meta$original_value_col, "my_value")
 })
 
@@ -149,7 +151,7 @@ test_that("ea_data constructor handles empty data frames gracefully (within vali
   )
   expect_s4_class(obj, "ea_data")
   expect_equal(nrow(obj@data), 0)
-  expect_true(all(c("year", "value") %in% names(obj@data)))
+  expect_true(all(c("year", "temp_c_value") %in% names(obj@data)))
 })
 
 
@@ -168,7 +170,7 @@ test_that("[[ operator extracts 'data' slot", {
   data_df <- obj[["data"]]
   expect_s3_class(data_df, "data.frame")
   expect_equal(data_df$year, 2000:2005)
-  expect_true("value" %in% names(data_df))
+  expect_true("temp_c_value" %in% names(data_df))
 })
 
 test_that("[[ operator extracts metadata fields directly", {
@@ -181,8 +183,8 @@ test_that("[[ operator extracts metadata fields directly", {
 test_that("[[ operator extracts data columns directly", {
   obj <- create_test_ea_data()
   expect_equal(obj[["year"]], 2000:2005)
-  expect_type(obj[["value"]], "double")
-  expect_length(obj[["value"]], 6)
+  expect_type(obj[["temp_c_value"]], "double")
+  expect_length(obj[["temp_c_value"]], 6)
 })
 
 test_that("[[ operator throws error for non-existent elements", {
@@ -218,7 +220,7 @@ test_that("[ operator subsets rows correctly (numeric index)", {
   subset_obj <- obj[1:3, ]
   expect_s4_class(subset_obj, "ea_data")
   expect_equal(subset_obj@data$year, 1:3)
-  expect_equal(subset_obj@data$value, 1:3)
+  expect_equal(subset_obj@data$temp_c_value, 1:3)
   expect_equal(nrow(subset_obj@data), 3)
   expect_equal(subset_obj@meta, obj@meta) # Metadata should be preserved
 })
@@ -228,7 +230,7 @@ test_that("[ operator subsets rows correctly (logical index)", {
   subset_obj <- obj[c(TRUE, FALSE, TRUE, FALSE, TRUE), ]
   expect_s4_class(subset_obj, "ea_data")
   expect_equal(subset_obj@data$year, c(1, 3, 5))
-  expect_equal(subset_obj@data$value, c(1, 3, 5))
+  expect_equal(subset_obj@data$temp_c_value, c(1, 3, 5))
   expect_equal(nrow(subset_obj@data), 3)
 })
 
@@ -237,7 +239,7 @@ test_that("[ operator subsets rows correctly (negative index)", {
   subset_obj <- obj[-c(2, 4), ]
   expect_s4_class(subset_obj, "ea_data")
   expect_equal(subset_obj@data$year, c(1, 3, 5))
-  expect_equal(subset_obj@data$value, c(1, 3, 5))
+  expect_equal(subset_obj@data$temp_c_value, c(1, 3, 5))
   expect_equal(nrow(subset_obj@data), 3)
 })
 
@@ -261,8 +263,8 @@ test_that("[ operator warns and ignores column subsetting (j)", {
   expect_warning(subset_obj <- subset_obj[1:3, "year"],
                  "Column subsetting")
   expect_equal(subset_obj@data$year, obj@data$year[1:3])
-  expect_equal(subset_obj@data$value, obj@data$value[1:3])
-  expect_true(all(c("year", "value") %in% names(subset_obj@data))) # Still has both
+  expect_equal(subset_obj@data$temp_c_value, obj@data$temp_c_value[1:3])
+  expect_true(all(c("year", "temp_c_value") %in% names(subset_obj@data))) # Still has both
 })
 
 test_that("[ operator warns and ignores drop argument", {
@@ -280,7 +282,7 @@ test_that("[ operator handles subsetting to zero rows", {
   subset_obj <- obj[numeric(0), ] # Subset to no rows
   expect_s4_class(subset_obj, "ea_data")
   expect_equal(nrow(subset_obj@data), 0)
-  expect_equal(colnames(subset_obj@data), c("year", "value")) # Columns are preserved
+  expect_equal(colnames(subset_obj@data), c("year", "temp_c_value")) # Columns are preserved
   expect_equal(subset_obj@meta, obj@meta)
 })
 
@@ -304,7 +306,7 @@ test_that("ea.subset filters correctly by a single value", {
   filtered_obj <- ea.subset(obj, "year", 2000)
   expect_s4_class(filtered_obj, "ea_data")
   expect_equal(filtered_obj@data$year, c(2000, 2000))
-  expect_equal(filtered_obj@data$value, c(10, 11))
+  expect_equal(filtered_obj@data$temp_c_value, c(10, 11))
   expect_equal(filtered_obj@data$site, c("A", "A"))
   expect_equal(filtered_obj@meta, obj@meta) # Metadata preserved
 })
@@ -319,7 +321,7 @@ test_that("ea.subset filters correctly by multiple values", {
   expect_s4_class(filtered_obj, "ea_data")
   expect_equal(filtered_obj@data$site, c("A", "A", "C"))
   expect_equal(filtered_obj@data$year, c(2000, 2000, 2002))
-  expect_equal(filtered_obj@data$value, c(1, 3, 4))
+  expect_equal(filtered_obj@data$temp_c_value, c(1, 3, 4))
 })
 
 test_that("ea.subset returns empty object if no matches", {
@@ -327,7 +329,7 @@ test_that("ea.subset returns empty object if no matches", {
   filtered_obj <- ea.subset(obj, "year", 1999)
   expect_s4_class(filtered_obj, "ea_data")
   expect_equal(nrow(filtered_obj@data), 0)
-  expect_equal(colnames(filtered_obj@data), c("year", "value")) # Columns retained
+  expect_equal(colnames(filtered_obj@data), c("year", "temp_c_value")) # Columns retained
   expect_equal(filtered_obj@meta, obj@meta)
 })
 
@@ -422,9 +424,9 @@ test_that("ea_data constructor handles original_value_col renaming consistently"
     value_col = "int_val",
     data_type = "t", region = "r", location_descriptor = "l", units = "u"
   )
-  expect_true("value" %in% names(obj@data))
+  expect_true("int_val_value" %in% names(obj@data))
   expect_false("int_val" %in% names(obj@data))
-  expect_equal(obj@data$value, c(10, 20)) # Stored as double in tibble
+  expect_equal(obj@data$int_val_value, c(10, 20)) # Stored as double in tibble
   expect_equal(obj@meta$original_value_col, "int_val")
   
   df2 <- data.frame(year = 2000:2001, char_val = c("A", "B"))

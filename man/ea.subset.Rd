@@ -24,7 +24,7 @@ based on matching values in a specified column.
 df <- data.frame(year = rep(2000:2002, 2),
                  temp_c = rnorm(6),
                  group = rep(c("A", "B"), each = 3))
-obj <- ea_data(df, value_col = "temp_c", data_type = "temperature",
+obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
                region = "Test Region", location_descriptor = "surface",
                units = "°C")
 

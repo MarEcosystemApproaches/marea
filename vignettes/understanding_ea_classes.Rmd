@@ -147,7 +147,7 @@ If you have a `pacea` time-series (pacea-index or pacea-biomass):
 library(pacea)
 data(npgo) # Example: North Pacific Gyre Oscillation
 marea_npgo <- as_ea_data(x = npgo, 
-                         value_col = "anomaly")
+                         value_col = c("anomaly"))
 class(marea_npgo)
 ea.print(marea_npgo)
 ```
@@ -160,7 +160,7 @@ data("hake_total_biomass_age_1_2025")
 
 hake_biomass_ea <- as_ea_data(
   hake_total_biomass_age_1_2025,
-  value_col = "median",
+  value_col = c("median"),
   source = 'pacea',
   time_descriptor = "2025",
   details = 'Converted using marea::as_ea_data() July 2025'

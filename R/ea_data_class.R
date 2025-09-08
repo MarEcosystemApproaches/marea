@@ -39,8 +39,8 @@ setClass(
 #'
 #' @param data A `data.frame` containing at least a `year` column and a numeric
 #'   column specified by `value_col`.
-#' @param value_col A character string naming the column in `data` that
-#'   contains the numeric values to be standardized as `value`.
+#' @param value_col A list naming the column(s) in `data` that
+#'   contains the numeric values to be marked as columns with names appended '_value'
 #' @param data_type A character string describing the type of data (e.g., "temperature").
 #' @param region A character string indicating the geographic region.
 #' @param location_descriptor A character string describing the location
@@ -58,7 +58,7 @@ setClass(
 #' @examples
 #' df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
 #' obj <- ea_data(df,
-#'                value_col = "temp_c",
+#'                value_col = c("temp_c"),
 #'                data_type = "temperature",
 #'                region = "Scotian Shelf",
 #'                location_descriptor = "bottom",
@@ -80,7 +80,7 @@ setGeneric("ea_data", function(data, value_col, data_type, region,
 
 #' @rdname ea_data
 #' @export
-setMethod("ea_data", signature(data = "data.frame", value_col = "list"),
+setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
           function(data, value_col, data_type, region,
                    location_descriptor, units, species = NA_character_,
                    source_citation = "No citation provided", ...) {
@@ -149,7 +149,7 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "list"),
 #'
 #' @examples
 #' df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
-#' obj <- ea_data(df, value_col = "temp_c", data_type = "temperature",
+#' obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
 #'                region = "Scotian Shelf", location_descriptor = "bottom",
 #'                units = "°C")
 #'
@@ -250,7 +250,7 @@ setMethod(
 #' df <- data.frame(year = rep(2000:2002, 2),
 #'                  temp_c = rnorm(6),
 #'                  group = rep(c("A", "B"), each = 3))
-#' obj <- ea_data(df, value_col = "temp_c", data_type = "temperature",
+#' obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
 #'                region = "Test Region", location_descriptor = "surface",
 #'                units = "°C")
 #'
