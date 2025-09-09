@@ -116,6 +116,21 @@ p +
   theme_minimal()
 ```
 
+# Working with subset of time series data
+
+```{r, eval = FALSE}
+# Start with ea_data object
+marea::azmp_bottom_temperature #this data contains time series bottom temperature for multiple regions
+
+# filter bottom temperature for one region
+bottom_temp_cs <- azmp_bottom_temperature[azmp_bottom_temperature@data$region == 'Cabot Strait']
+
+# Add custom elements
+plot(bottom_temp_cs) +
+  labs(title="Bottom Temperature for the Cabot Strait")
+
+```
+
 # Working with Multiple Variables
 
 Compare different indices:
@@ -126,8 +141,8 @@ data(nao)
 data(oni)
 
 # Create comparison plot
-nao_recent <- nao@data[nao@data$year >= 2000, ]
-oni_recent <- oni@data[oni@data$year >= 2000 & oni@data$month == 1, ]  # January only
+nao_recent <- nao@data[nao@data$year >= 2000,]
+oni_recent <- oni@data[oni@data$year >= 2000 & oni@data$month == 1,]  # January only
 
 # Combine data
 combined_data <- data.frame(
@@ -299,6 +314,40 @@ if (exists("azmp_bottom_temperature")) {
 # Reset to single panel
 par(mfrow = c(1, 1))
 ```
+
+You can also use patchwork:
+
+```{r, eval = FALSE}
+
+# Panel 1: NAO
+p1<-plot(nao)+
+  labs(title="NAO")+
+    ylab("NAO")
+
+# Panel 2: Grey Seals
+p2<-plot(grey_seals)+
+  labs(title="Grey seals")+
+       ylab ("abundance")
+
+# Panel 3: ONI (subset)
+oni_subset <- oni[oni@data$month == 1]  # January only
+p3<-plot(oni_subset)+
+  labs(title="ONI")+
+       ylab ("ONI")
+
+# Panel 4: Bottom Temperature
+bottom_temp_eb <- azmp_bottom_temperature[azmp_bottom_temperature@data$region == 'Emerald Basin']
+p4<-plot(bottom_temp_eb)+
+  labs(title="Emerald Basin")+
+  ylab("bottom temp (degC)")
+
+# Reset to single panel
+require(patchwork)
+
+(p1+p2)/(p3+p4)
+
+```
+
 
 # Advanced Customization
 
