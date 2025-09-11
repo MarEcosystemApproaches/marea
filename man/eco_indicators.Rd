@@ -7,7 +7,7 @@
 \format{
 an \code{ea_data} object with multiple columns:
 \describe{
-\item{year{Year of data collection}
+\item{year}{Year of data collection}
 \item{region}{assessment of management area, NAFO, Scotian Shelf}
 \item{SpeciesRichness_ALL}{The number of species recorded in RV survey or commercial landings}
 \item{ShannonDiveristy_ALL}{Index considering species richness and evenness of abundances}

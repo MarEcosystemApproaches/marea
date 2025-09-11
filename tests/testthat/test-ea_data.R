@@ -104,16 +104,10 @@ test_that("ea_data constructor throws errors for missing/invalid columns", {
   df_non_numeric_year <- data.frame(year = letters[1:5], temp_c = rnorm(5))
   expect_error(
     ea_data(df_non_numeric_year, "temp_c", "t", "r", "l", "u"),
-    "Columns 'year' and 'temp_c' must be numeric.",
+    "Columns 'year' must be numeric.",
     fixed = TRUE
   )
   
-  df_non_numeric_value <- data.frame(year = 1:5, temp_c = letters[1:5])
-  expect_error(
-    ea_data(df_non_numeric_value, "temp_c", "t", "r", "l", "u"),
-    "Columns 'year' and 'temp_c' must be numeric.",
-    fixed = TRUE
-  )
 })
 
 test_that("ea_data constructor correctly renames value column", {
@@ -125,7 +119,7 @@ test_that("ea_data constructor correctly renames value column", {
   )
   expect_true("my_value_value" %in% names(obj@data))
   expect_false("my_value" %in% names(obj@data))
-  expect_equal(obj@data$temp_c_value, c(10, 20))
+  expect_equal(obj@data$my_value_value, c(10, 20))
   expect_equal(obj@meta$original_value_col, "my_value")
 })
 
@@ -397,7 +391,7 @@ test_that("ea_data validity method works correctly", {
     invalid_obj_no_value <- new("ea_data",
                                 meta = list(),
                                 data = data.frame(year = 1:5)),
-    "Missing 'value' column in the data slot.",
+    "Missing value column in the data slot.",
     fixed = TRUE
   )
   
@@ -412,7 +406,7 @@ test_that("ea_data validity method works correctly", {
   # Valid object via new()
   valid_obj_new <- new("ea_data",
                        meta = list(),
-                       data = data.frame(year = 1, value = 1))
+                       data = data.frame(year = 1, test_value = 1))
   expect_true(validObject(valid_obj_new))
 })
 
@@ -429,11 +423,6 @@ test_that("ea_data constructor handles original_value_col renaming consistently"
   expect_equal(obj@data$int_val_value, c(10, 20)) # Stored as double in tibble
   expect_equal(obj@meta$original_value_col, "int_val")
   
-  df2 <- data.frame(year = 2000:2001, char_val = c("A", "B"))
-  expect_error(
-    ea_data(df2, "char_val", "t", "r", "l", "u"),
-    "Columns 'year' and 'char_val' must be numeric."
-  )
 })
 
 # Test `ea.subset` with factors

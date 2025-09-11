@@ -292,7 +292,7 @@ setValidity("ea_data", function(object) {
   # check for at least one column that ends with _value
   value_cols <- grep("_value$", names(object@data), value = TRUE)
   if (length(value_cols) == 0) {
-    errors <- c(errors, "Missing 'value' column in the data slot.")
+    errors <- c(errors, "Missing value column in the data slot.")
   }
   
   if (length(errors) == 0) TRUE else errors
