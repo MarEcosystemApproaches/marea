@@ -49,12 +49,12 @@
 #'   }
 #'   \item{meta}{A named list with:
 #'     \describe{
-#'       \item{data_type}{Character. "Grey Seal Abundance"}
-#'       \item{region}{Character. "Scotian Shelf"}
-#'       \item{location_descriptor}{Character. "Sable Island / Scotian Shelf"}
-#'       \item{units}{Character. "count"}
-#'       \item{species}{Character. "Halichoerus grypus"}
-#'       \item{source_citation}{Character. See details, Hammill et al. (2023)}
+#'       \item{data_type}{"Grey Seal Abundance"}
+#'       \item{region}{ "Scotian Shelf"}
+#'       \item{location_descriptor}{"Sable Island / Scotian Shelf"}
+#'       \item{units}{"count"}
+#'       \item{species}{"Halichoerus grypus"}
+#'       \item{source_citation}{Hammill et al. (2023)}
 #'       \item{original_value_col}{Character. "median"}
 #'     }
 #'   }
