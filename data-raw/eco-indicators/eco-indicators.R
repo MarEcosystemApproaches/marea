@@ -7,6 +7,8 @@ library(here)
 
 
 # From Jamie C. Tam on August 1, 2025
+# updated by Emily O'Grady September 8 2025
+# updated by Jamie C. Tam September 10, 2025
 
 # These are outputs are for two spatial levels of indicators calculated from RV Summer Ecosystem Survey data and commercial data (fisheries landings) using the Rpackage marindicators. 
 
@@ -24,21 +26,22 @@ library(here)
 
 # This is the raw data
 
-dat.dir<-here::here("data-raw/eco-indicators")
-eco_indicators_nafo<- "eco_indicators_nafo.Rdata"
-load(file.path(dat.dir, eco_indicators_nafo))
-eco_indicators_esswss<-"eco_indicators_esswss.Rdata"
-load(file.path(dat.dir, eco_indicators_esswss))
+data_dir <- 'R:/Science/BIODataSvc/SRC/marea'
+eco_indicators_nafo<- file.path(data_dir, "eco_indicators_nafo.csv")
+eco_indicators_nafo <- read_csv(eco_indicators_nafo)
+eco_indicators_esswss<-file.path(data_dir, "eco_indicators_esswss.csv")
+eco_indicators_esswss <- read_csv(eco_indicators_esswss)
 
 
-#join the 2 dataframes
+#join the 2 data frames
 join_indicators<-bind_rows(eco_indicators_nafo, eco_indicators_esswss) 
 
 # filter years -2021, and only to 2022 when the RV survey changed to the Jacques Cartier, still no conversion factors for all the species required for this analysis. 
 
 eco_indicators<-join_indicators |>
   filter(YEAR!=2021) |> 
-  rename(year=YEAR, region=ID)
+  rename(year=YEAR, region=ID) |> 
+  select(-contains("_s")) # remove standardized data
 
 
 #create "ea_data" object
@@ -54,10 +57,7 @@ eco_indicators<- ea_data(
   source_citation = "Bundy et al. 2017",
 )
 
-#TODO change "value" column, rename to "SpeciesRichness" 
-#this sort of worked, but didn't save it to the ea_data object.
 
-eco_indicators@data |> rename(SpeciesRichness_ALL=value)
 
 save(eco_indicators, file = here("data-raw", "eco-indicators", "eco_indicators.rda"))
 usethis::use_data(eco_indicators, overwrite = TRUE)
