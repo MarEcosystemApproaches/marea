@@ -33,8 +33,8 @@ ea_data(
 \item{data}{A \code{data.frame} containing at least a \code{year} column and a numeric
 column specified by \code{value_col}.}
 
-\item{value_col}{A character string naming the column in \code{data} that
-contains the numeric values to be standardized as \code{value}.}
+\item{value_col}{A list naming the column(s) in \code{data} that
+contains the numeric values to be marked as columns with names appended '_value'}
 
 \item{data_type}{A character string describing the type of data (e.g., "temperature").}
 
@@ -66,7 +66,7 @@ value column name to \code{value}, and stores metadata in the \code{meta} slot.
 \examples{
 df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
 obj <- ea_data(df,
-               value_col = "temp_c",
+               value_col = c("temp_c"),
                data_type = "temperature",
                region = "Scotian Shelf",
                location_descriptor = "bottom",

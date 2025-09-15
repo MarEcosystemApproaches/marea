@@ -178,9 +178,9 @@ setMethod(
     } else if (i %in% names(x@data)) {
       # Handle different object types
       if (inherits(x@data, "SpatRaster")) {
-        # terra::values returns a matrix for multi-layer, vector for single
-        return(terra::values(x@data[[i, drop=TRUE]]))
-      } else {
+        value_matrix <- x@data[[i]]
+        return(as.vector(value_matrix))
+        } else {
         # Works for both sf and stars
         return(x@data[[i]])
       }
@@ -237,10 +237,21 @@ setMethod(
       # Use the [i, ] syntax for sf and stars
       subset_data <- x@data[i, , drop = drop, ...]
     } else if (inherits(x@data, "SpatRaster")) {
-      # SpatRaster subsetting is more complex; this handles simple cases
-      # terra::subset or terra::crop are often better.
-      # This basic implementation assumes 'i' is for layers, 'j' for cells.
-      subset_data <- callGeneric(x = x@data, i = i, j = j, ..., drop = drop)
+      # Capture the layer arguments passed via ...
+      dots <- list(...)
+      
+      # The base case is subsetting all rows and columns
+      if (missing(i)) i <- TRUE
+      if (missing(j)) j <- TRUE
+      
+      # If layers were passed, use them. Otherwise, use all layers.
+      if (length(dots) > 0) {
+        # Assumes the first element in ... is the layer index
+        subset_data <- x@data[i, j, dots[[1]], drop = drop]
+      } else {
+        # No layers specified, subset rows/cols from all layers
+        subset_data <- x@data[i, j, , drop = drop]
+      }
     } else {
       stop("Unsupported spatial data type for '[' subsetting.", call. = FALSE)
     }
@@ -283,10 +294,11 @@ setValidity("ea_spatial", function(object) {
 #' based on the values in a specified attribute column or layer.
 #'
 #' @details
-#' For `sf` and `stars` objects, this function subsets features (rows).
-#' For `SpatRaster` objects, it creates a mask from the specified layer and
-#' applies it to all layers in the raster, returning `NA` for cells that do not
-#' match the `value`.
+#' This masks the `data` slot of the `ea_spatial` object, setting the attributes
+#' to `NA` for features or cells that do not match the specified value(s).
+#' This is useful for subsetting spatial data based on specific criteria,
+#' such as filtering by region or time. It is different than the ea.subset method for 
+#' ea_data which removes features that do not match the criteria.
 #'
 #' @param x An `ea_spatial` object.
 #' @param column `[character(1)]` The name of the attribute column or layer to filter by.
@@ -315,27 +327,48 @@ ea.subset.spatial <- function(x, column, value) {
   
   data_obj <- x@data
   
-  if (inherits(data_obj, c("sf", "stars"))) {
-
-    if (inherits(data_obj, "sf")) {
-      col_data <- sf::st_drop_geometry(data_obj)[[column]]
-    } else { # stars object
-      col_data <- data_obj[[column]] # stars object subsetting for an attribute directly gives a vector/array
+  if (inherits(data_obj, "sf")) {
+    # For sf, mask attribute data for features not matching the condition.
+    # Geometries are preserved, but attributes are set to NA.
+    col_data <- sf::st_drop_geometry(data_obj)[[column]]
+    # Identify rows where the condition is NOT met.
+    rows_to_mask <- !(col_data %in% value)
+    
+    subset_data <- data_obj
+    
+    # Get all column names except for the geometry column.
+    geom_col_name <- attr(subset_data, "sf_column")
+    attr_cols <- setdiff(names(subset_data), geom_col_name)
+    
+    # Set the attributes of the masked rows to NA.
+    # A loop is used to safely handle different column data types.
+    for (col in attr_cols) {
+      # Coerce to vector to avoid issues with factors
+      if (is.factor(subset_data[[col]])) {
+        subset_data[[col]] <- as.character(subset_data[[col]])
+      }
+      subset_data[[col]][rows_to_mask] <- NA
     }
-    
-    # Create the logical vector for subsetting rows
-    rows <- col_data %in% value
-    subset_data <- data_obj[rows, , drop = FALSE] # Pass the logical vector directly to sf/stars `[` method
-    
-  } else if (inherits(data_obj, "SpatRaster")) {
-    # Get the layer to filter by
-    mask_layer <- data_obj[[column]]
-    
-    # Create a logical raster mask
-    mask <- mask_layer %in% value
-
-    subset_data <- terra::mask(data_obj, mask)
-  } else {
+  } else if (inherits(data_obj, "stars")) {
+    # For stars, we create a logical mask and apply it.
+    # The mask itself is a stars object.
+    mask <- data_obj[[column]] %in% value
+    # Applying the mask 
+    mask_for_na <- !mask
+    subset_data <- data_obj
+    for (attr_name in names(subset_data)) {
+      subset_data[[attr_name]][!mask] <- NA
+      } 
+    } else if (inherits(data_obj, "SpatRaster")) {
+      # This should be verified by a spatial person
+      # For SpatRaster, we create a mask and apply it.
+      # Create a mask where the values match
+      mask <- as.vector(data_obj[[column]]) %in% as.vector(value) # this is not working as expected
+      subset_data <- data_obj
+      for (attr_name in names(subset_data)) {
+        subset_data[[attr_name]][!mask] <- NA
+      }
+         } else {
     stop("Unsupported spatial data type for subsetting.", call. = FALSE)
   }
   

@@ -21,10 +21,11 @@ A helper function to filter the features or cells of an \code{ea_spatial} object
 based on the values in a specified attribute column or layer.
 }
 \details{
-For \code{sf} and \code{stars} objects, this function subsets features (rows).
-For \code{SpatRaster} objects, it creates a mask from the specified layer and
-applies it to all layers in the raster, returning \code{NA} for cells that do not
-match the \code{value}.
+This masks the \code{data} slot of the \code{ea_spatial} object, setting the attributes
+to \code{NA} for features or cells that do not match the specified value(s).
+This is useful for subsetting spatial data based on specific criteria,
+such as filtering by region or time. It is different than the ea.subset method for
+ea_data which removes features that do not match the criteria.
 }
 \examples{
 if (requireNamespace("sf", quietly = TRUE) && requireNamespace("dplyr", quietly = TRUE)) {

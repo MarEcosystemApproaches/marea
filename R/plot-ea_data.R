@@ -67,8 +67,26 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
             df <- x[["data"]]
             m <- x[["meta"]]
             
+            # TODO make a reasonable default for data with multiple value columns
+            # (plot first value column)
+            #rename to value so that plotting code can call it easily
+            
+            # # gather value columns
+             val_ind <- grep(names(df), pattern = '_value$')
+
+             if (length(val_ind) == 0) {
+               stop("No value column found in data. Value column must end with '_value'.", call. = FALSE)
+             } else if (length(val_ind) > 1) {
+               warning("Multiple value columns found. Using the first one: ", names(df)[val_ind[1]], call. = FALSE)
+               df <- df %>%
+                 dplyr::rename(value = dplyr::all_of(names(df)[val_ind[1]]))
+             } else {
+               df <- df %>%
+                 dplyr::rename(value = dplyr::all_of(names(df)[val_ind]))
+             }
+            # 
             # Base ggplot mapping
-            p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value))
+            p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value)) # TODO update to plot val col determined above either first or only
             labs <- list(
               title    = paste(m$data_type, "for", m$region),
               subtitle = paste("Source:", m$source_citation),
