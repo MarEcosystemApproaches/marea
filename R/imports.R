@@ -7,5 +7,7 @@
 #' @importFrom utils citation data tail toBibtex
 #' @importFrom magrittr %>%
 #' @import ggplot2
-#' @importFrom vctrs s3_register
+#' @importFrom methods callGeneric callNextMethod new validObject
+#' @importFrom stats aggregate
+#' @importFrom utils head
 NULL
