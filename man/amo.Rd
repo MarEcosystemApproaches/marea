@@ -16,7 +16,7 @@ An \code{ea_data} object:
 }
 \item{meta}{Includes:
 \itemize{
-\item{\code{data_type}:} "Atlantic MultiDecadal Oscillation Index"
+\item{\code{data_type}:} "Atlantic Multidecadal Oscillation Index"
 \item{\code{region}:} "Northern Hemisphere (0-60N)"
 \item{\code{location_descriptor}:} "North Atlantic"
 \item{\code{units}:} ""

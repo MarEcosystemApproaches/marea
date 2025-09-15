@@ -8,6 +8,8 @@ library(patchwork)
 
 HalFSAR <- readRDS("C:/Users/tamj/Downloads/HalFSAR.rds")
 
+## code from Mike M. to pull the upper and lower bounds from long to wide format
+
 bases_with_bounds <- c("HSpred", "HSproj", "Ut", "Mt", "RVpred")
 
 # Strip possible suffix from ts.name
