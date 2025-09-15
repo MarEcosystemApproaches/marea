@@ -32,14 +32,15 @@ eco_indicators_esswss<-file.path(data_dir, "eco_indicators_esswss.csv")
 eco_indicators_esswss <- read_csv(eco_indicators_esswss)
 
 
-#join the 2 dataframes
+#join the 2 data frames
 join_indicators<-bind_rows(eco_indicators_nafo, eco_indicators_esswss) 
 
 # filter years -2021, and only to 2022 when the RV survey changed to the Jacques Cartier, still no conversion factors for all the species required for this analysis. 
 
 eco_indicators<-join_indicators |>
   filter(YEAR!=2021) |> 
-  rename(year=YEAR, region=ID)
+  rename(year=YEAR, region=ID) |> 
+  select(-contains("_s")) # remove standardized data
 
 
 #create "ea_data" object
