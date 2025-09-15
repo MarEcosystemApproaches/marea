@@ -35,8 +35,9 @@ as_ea_spatial <- function(x, value_col = NULL, ...) {
     }
   }
   
-  if (!value_col %in% candidate_cols) {
-    stop(paste("Column or layer", value_col, "not found in object."), call. = FALSE)
+  missing_cols <- setdiff(value_col, candidate_cols)
+  if (length(missing_cols) > 0) {
+    stop(paste("Column(s) not found in object:", paste(missing_cols, collapse = ", ")), call. = FALSE)
   }
   
   # Extract metadata from attributes and user input
