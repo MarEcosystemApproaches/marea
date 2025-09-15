@@ -93,7 +93,17 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
               }
             }
             if (!"year" %in% names(data)) {
+              year_cols <- length(grep('year|yr', names(data), ignore.case = TRUE))
+              if ( year_cols == 1) {
+                # rename the column to 'year'
+                original_name <- names(data)[grep("year|yr", names(data), ignore.case = TRUE)]
+                names(data)[grep("year|yr", names(data), ignore.case = TRUE)] <- "year"
+                warning(paste0("Column '", original_name, "' renamed to 'year'."), call. = FALSE)
+              } else if (year_cols > 1) {
+                stop("Multiple columns matching 'year|yr' found. Please ensure only one 'year' column exists.", call. = FALSE)
+              } else{
               stop("`data` must contain a 'year' column.", call. = FALSE)
+              }
             }
             if (!is.numeric(data$year)) {
               stop(paste0("Columns 'year' must be numeric."), call. = FALSE)
