@@ -88,6 +88,8 @@ for (metric in metrics) {
     variable_name= metric
   )
   # Assign the object to a variable with the name from metric
+  # TODO @ steph  maybe preface the name with something consistent so data object can be 
+  # grouped together? ie. paste0('sophye_', metric) @
   assign(metric, r_ea_spatial)
   
   # Save the data with the metric name
