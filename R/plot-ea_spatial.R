@@ -56,7 +56,7 @@ setMethod("plot", signature(x = "ea_spatial", y = "missing"),
             
             # --- Data validation and setup ---
             if (is.null(df)) stop("The data slot of the 'ea_spatial' object is empty.", call. = FALSE)
-            
+            if (missing(style)) stop("Must provide style argument!", call. = FALSE)
             # Get data extent for coastline cropping
             data_bbox <- sf::st_bbox(df)
             

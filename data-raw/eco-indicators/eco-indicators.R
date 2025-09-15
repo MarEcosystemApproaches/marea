@@ -1,14 +1,13 @@
 # A variety of ecological indicators calculated from marindicators
 # Run code line-by-line 
 
-library(dplyr)
+library(tidyverse)
 library(marea)
 library(here)
 
 
 # From Jamie C. Tam on August 1, 2025
 # updated by Emily O'Grady September 8 2025
-# updated by Jamie C. Tam September 10, 2025
 
 # These are outputs are for two spatial levels of indicators calculated from RV Summer Ecosystem Survey data and commercial data (fisheries landings) using the Rpackage marindicators. 
 
@@ -45,18 +44,18 @@ eco_indicators<-join_indicators |>
 
 
 #create "ea_data" object
+val_col_list <- names(eco_indicators)[!(names(eco_indicators) %in% c("year", "region"))]
 
 # Create object with additional metadata
 eco_indicators<- ea_data(
   data = eco_indicators,
-  value_col = "SpeciesRichness_ALL", 
+  value_col = val_col_list, 
   data_type = "diversity",
   region = "Maritimes",
   location_descriptor = "NAFO",
   units = "tonnes",
   source_citation = "Bundy et al. 2017",
 )
-
 
 
 save(eco_indicators, file = here("data-raw", "eco-indicators", "eco_indicators.rda"))

@@ -49,12 +49,12 @@
 #'   }
 #'   \item{meta}{A named list with:
 #'     \describe{
-#'       \item{data_type}{Character. "Grey Seal Abundance"}
-#'       \item{region}{Character. "Scotian Shelf"}
-#'       \item{location_descriptor}{Character. "Sable Island / Scotian Shelf"}
-#'       \item{units}{Character. "count"}
-#'       \item{species}{Character. "Halichoerus grypus"}
-#'       \item{source_citation}{Character. See details, Hammill et al. (2023)}
+#'       \item{data_type}{"Grey Seal Abundance"}
+#'       \item{region}{ "Scotian Shelf"}
+#'       \item{location_descriptor}{"Sable Island / Scotian Shelf"}
+#'       \item{units}{"count"}
+#'       \item{species}{"Halichoerus grypus"}
+#'       \item{source_citation}{Hammill et al. (2023)}
 #'       \item{original_value_col}{Character. "median"}
 #'     }
 #'   }
@@ -385,7 +385,7 @@
 #'
 #' @format an `ea_data` object with multiple columns:
 #' \describe{
-#'   \item{year{Year of data collection}
+#'   \item{year}{Year of data collection}
 #'   \item{region}{assessment of management area, NAFO, Scotian Shelf}
 #'   \item{SpeciesRichness_ALL}{The number of species recorded in RV survey or commercial landings}
 #'   \item{ShannonDiveristy_ALL}{Index considering species richness and evenness of abundances}
