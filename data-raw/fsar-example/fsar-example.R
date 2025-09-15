@@ -10,14 +10,19 @@ library(patchwork)
 # specify file location, load example .csv
 fsar_fourplot_exdata <- read_csv("data-raw/fsar-example/fsar_fourplot_exdata.csv")
 
-# create ea_data() from loaded data
+# OR use an existing .Rdata file
+load(here("data-raw", "fsar-example", "fsar_fourplot_exdata.Rdata"))
+
+# create ea_data() from loaded data, input metadata
 fsar_example<-ea_data(
   data=fsar_fourplot_exdata,
   value_col="value",
   data_type= "stock",
   location_descriptor = "NAFO divisions",
   region = "Maritimes",
-  units="variable")
+  units="variable",
+  source="DFO FSAR 2025 citation"
+  )
 
 #make plots
 pF<-plot(fsar_example[
