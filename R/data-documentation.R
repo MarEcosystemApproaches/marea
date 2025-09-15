@@ -358,7 +358,7 @@
 #'     \itemize{
 #'       \item{\code{year}:} Year
 #'       \item{\code{month}:} Month (1–12)
-#'       \item{\code{value}:} SSTA (sea surafe temperture anomaly)
+#'       \item{\code{value}:} SSTA (sea surface temperature anomaly)
 #'     }
 #'   }
 #'   \item{meta}{Includes:
@@ -382,72 +382,56 @@
 #' ecological indicators (ea_data)
 #'
 #'ecological indicators calculated from biomass estimates and commercial harvesting data
-#'
-#' @format an `ea_data` object with multiple columns:
+#' @format An `ea_data` object:
 #' \describe{
-#'   \item{year{Year of data collection}
-#'   \item{region}{assessment of management area, NAFO, Scotian Shelf}
-#'   \item{SpeciesRichness_ALL}{The number of species recorded in RV survey or commercial landings}
-#'   \item{ShannonDiveristy_ALL}{Index considering species richness and evenness of abundances}
-#'   \item{MargalefRichness_ALL}{An Index measure of richness accounting for sample size}
-#'   \item{PielouEvenness_ALL}{How evenly species are distributed within a community}
-#'   \item{HillDiversity_ALL}{effective number of species}
-#'   \item{HillDominance_ALL}{community dominance index describing how much a community's diveristy is driven bye few dominant species}
-#'   \item{Heips_ALL}{relative abundance of different species in a community}
-#'   \item{SpeciesRichness_ALL_s}{standardized species richness}
-#'   \item{ShannonDiversity_ALL_s}{sandardized Shannon diveristy index}
-#'   \item{MargalefRichness_ALL_s}{sandardized Margalef species richness}
-#'   \item{PielouEvenness_ALL_s}{standardized Pilou's evenness}
-#'   \item{HillDiversity_ALL_s}{standardized Hill diversity}
-#'   \item{HillDominance_ALL_S}{standardized Hill dominance}
-#'   \item{Heips_ALL_s}{standardized Heips}
-#'   \item{Abundance_ALL}{Total abundance}
-#'   \item{BIOMASS_ALL}{Total biomass of all species caught in RV survey (t)}
-#'   \item{BIOMASSS_CLUPEIDS}{Total biomass of clupeid species (t)}
-#'   \item{BIIOMASS_FINFISH}{Total biomass of finfish species (t) }
-#'   \item{BIOMNASS_FLATFISH}{Total biomass of flatfish species (t)}
-#'   \item{BIOMASS_FORAGE}{Total biomass of forage species (t)}
-#'   \item{BIOMASS_GADOIDS}{Total biomass of gadoids species (t)}
-#'   \item{BIOMASS_GROUNDFISH}{Total biomass of groundfish species (t)}
-#'   \item{BIOMASS_PELAGIC}{Total biomass of pelagic species (t)}
-#'   \item{BIOMASS_SKATE}{Total biomass of skate species (t)}
-#'   \item{FishinginBalance}{changes in fishing strategies and their impact on system productivity; positive FiB indicates fishery has expanded or bottom-up effects are occuring}
-#'   \item{ABUNDANCE_ALL_s}{standardized total abundance of all species caught in RV survey}
-#'   \item{BIOMASS_ALL_s}{standardized total biomass of all species caught in RV survey}
-#'   \item{BIOMASS_CLUPEIDS_s}{standardized total biomass of all clupeid species}
-#'   \item{BIOMASS_FINFISH_s}{standardized total biomass of all finsfish species}
-#'   \item{BIOMASS_FLATFISH_s}{standardized total biomass of all flatfish species}
-#'   \item{BIOMASS_FORAGE_s}{standardized total biomass of all forage species}
-#'   \item{BIOMASS_GADOIDS_s}{standardized total biomass of all gadioid species}
-#'   \item{BIOMASS_GROUNDFISH_s}{standardized total biomass of all groundfish species}
-#'   \item{BIOMASS_PELAGIC_s}{standardized total biomass of all pelagic species}
-#'   \item{BIOMASS_SKATES_s}{standardized total biomass of all akate species}
-#'   \item{FishinginBaland_s}{standardized changes in fishing strategies and their impact on system productivity}
-#'   \item{DiversityTargetSpp_ALL}{Diversity of target commercial species}
-#'   \item{MeanTL.Landings}{Mean Trophic level of all landings}
-#'   \item{MTI.Landings_3.25}{Mean Trophic Level of landings  above TL 3.25}
-#'   \item{landings_ALL}{total landings (t)}
-#'   \item{landings_CLUPEIDS.L}{total landings of clupeids species (t)}
-#'   \item{landings_FINFISH.L}{total landings of finfish species (t)}
-#'   \item{landings_FLATFISH.L}{total landings of flatfish species(t)}
-#'   \item{landings_FORAGE.L}{total landings of forage species (t)}
-#'   \item{landings_GADOIDS.L}{total landings of gadoid species (t))}
-#'   \item{landings_GROUNDFISH.L}{total landings of groundfish species (t)}
-#'   \item{landings_INVERTEBRATES.L}{total landings of invertebrate species (t)}
-#'   \item{landings_LARGE_PELAGIC.L}{total landings of pelagic species (t)}
-#'   \item{landings_SKATES.L}{total landings of skate species (t)}
-#'   \item{FP_ALL}{Fishing pressure of all species}
-#'   \item{FP_CLUPEIDS}{Fishing pressure of clupeid species}
-#'   \item{FP_FINFISH}{Fishing pressure of finfish species}
-#'   \item{FP_FLATFISH}{Fishing pressure of flatfish species}
-#'   \item{FP_FORAGE}{Fishing pressure of forage species}
-#'   \item{FP_GADOIDS}{Fishing pressure of gadoid species}
-#'   \item{FP_GROUNDFISH}{Fishing pressure of groundfish species}
-#'   \item{FP_SKATES}{Fishing pressure of skate species}
-#'   \item{DiversityTargetSpp_ALL_s}{standardized diversity of target species}
-#'   \item{MeanTL.Landings_s}{standardize mean trophic level of landings}
-#'   \item{MTI.Landings_3.25_s}{standardized mean trophic level above 3.25}
-#'   \item{landings_ALL_s}{standardized landings of all species}
+#'   \item{data}{Tibble with:
+#'     \itemize{
+#'       \item{\code{year}:} Year
+#'       \item{\code{region}:} NAFO division or SS area
+#'       \item{\code{value}:} Species Richness from samples collected in RV survey
+#'       \item{\code{ShannonDiveristy_ALL}:} Index considering species richness and evenness of abundances
+#'       \item{\code{MargalefRichness_ALL}:} An Index measure of richness accounting for sample size
+#'       \item{\code{PielouEvenness_ALL}:} How evenly species are distributed within a community
+#'       \item{\code{HillDiversity_ALL}:} effective number of species
+#'       \item{\code{HillDominance_ALL}:} community dominance index describing how much a community's diversity is driven bye few dominant species
+#'       \item{\code{Heips_ALL}:} relative abundance of different species in a community
+#'       \item{\code{ABUNDANCE_ALL}:} Total abundance
+#'       \item{\code{BIOMASS_ALL}:} Total biomass of all species caught in RV survey (t)
+#'       \item{\code{BIOMASS_CLUPEIDS}:} Total biomass of clupeid species (t)
+#'       \item{\code{BIOMASS_FINFISH}:} Total biomass of finfish species (t) 
+#'       \item{\code{BIOMASS_FLATFISH}:} Total biomass of flatfish species (t)
+#'       \item{\code{BIOMASS_FORAGE}:} Total biomass of forage species (t)
+#'       \item{\code{BIOMASS_GADOIDS}:} Total biomass of gadoids species (t)
+#'       \item{\code{BIOMASS_GROUNDFISH}:} Total biomass of groundfish species (t)
+#'       \item{\code{BIOMASS_PELAGIC}:} Total biomass of pelagic species (t)
+#'       \item{\code{BIOMASS_SKATES}:} Total biomass of skate species (t)
+#'       \item{\code{FishinginBalance}:} changes in fishing strategies and their impact on system productivity; positive FiB indicates fishery has expanded or bottom-up effects are occurring
+#'       \item{\code{FishinginBalance_s}:} standardized changes in fishing strategies and their impact on system productivity
+#'       \item{\code{DiversityTargetSpp_ALL}:}} Diversity of target commercial species
+#'   \item{\code{value}:}{Mean Trophic level of all landings}
+#'   \item{\code{value}:}{Mean Trophic Level of landings  above TL 3.25}
+#'   \item{\code{value}:}{total landings (t)}
+#'   \item{\code{value}:}{total landings of clupeids species (t)}
+#'   \item{\code{value}:}{total landings of finfish species (t)}
+#'   \item{\code{value}:}{total landings of flatfish species(t)}
+#'   \item{{\code{value}:}{total landings of forage species (t)}
+#'   \item{\code{value}:}{total landings of gadoid species (t))}
+#'   \item{{\code{value}:}{total landings of groundfish species (t)}
+#'   \item{\code{value}:}{total landings of invertebrate species (t)}
+#'   \item{\code{value}:}{total landings of pelagic species (t)}
+#'   \item{\code{value}:}{total landings of skate species (t)}
+#'   \item{\code{value}:}{Fishing pressure of all species}
+#'   \item{\code{value}:}{Fishing pressure of clupeid species}
+#'   \item{{\code{value}:}{Fishing pressure of finfish species}
+#'   \item{\code{value}:}{Fishing pressure of flatfish species}
+#'   \item{\code{value}:}{Fishing pressure of forage species}
+#'   \item{\code{value}:}{Fishing pressure of gadoid species}
+#'   \item{\code{value}:}{Fishing pressure of groundfish species}
+#'   \item{{\code{value}:}{Fishing pressure of skate species}
+#'   \item{\code{value}:}{standardized diversity of target species}
+#'   \item{\code{value}:}{standardize mean trophic level of landings}
+#'   \item{\code{value}:}{standardized mean trophic level above 3.25}
+#'   \item{\code{value}:}{standardized landings of all species}
 #'   \item{landings_CLUPEIDS.L_s}{standardized landings of clupeid species}
 #'   \item{landings_FINFISH.L_s}{standardized landings of finfish species (t)}
 #'   \item{landings_FLATFISH.L_s}{standardized landings of flatfish species(t)}
@@ -518,7 +502,19 @@
 #'   \item{INVERTEBRATES_GROUNDFISH}{proportion of invertebrates to groundfish}
 #'   \item{FP_INVERTEBRATES}{Fishing pressure of invertebrates}
 #'   \item{BIOMASS_TL2}{biomass of trophic level 2}
+#'       
+#'     }
+#'   }
+#'   \item{meta}{List includes:
+#'     \itemize{
+#'       \item{\code{data_type}:} "diversity"
+#'       \item{\code{location_descriptor}:} "Maritimes Region"
+#'       \item{\code{units}:} tonnes
+#'     }
+#'   }
 #' }
+#'
+#' 
 #' @docType data
 #' @name eco_indicators
 #' @author Jamie C. Tam
