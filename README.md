@@ -160,6 +160,8 @@ We welcome contributions! If you have suggestions, find a bug, or would
 like to contribute a new dataset, please see our contribution guidelines
 and open an issue on GitHub.
 
+[CONTRIBUTING](CONTRIBUTING.md)
+
 ## Related Work
 
 This package is part of a coordinated effort across DFO regions to

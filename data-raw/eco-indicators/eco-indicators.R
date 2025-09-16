@@ -1,14 +1,14 @@
 # A variety of ecological indicators calculated from marindicators
 # Run code line-by-line 
 
-library(dplyr)
+library(tidyverse)
 library(marea)
 library(here)
 
 
 # From Jamie C. Tam on August 1, 2025
 # updated by Emily O'Grady September 8 2025
-# updated by Jamie C. Tam September 10, 2025
+# updated by Jamie C. Tam on Sept 15, 2025
 
 # These are outputs are for two spatial levels of indicators calculated from RV Summer Ecosystem Survey data and commercial data (fisheries landings) using the Rpackage marindicators. 
 
@@ -39,24 +39,24 @@ join_indicators<-bind_rows(eco_indicators_nafo, eco_indicators_esswss)
 # filter years -2021, and only to 2022 when the RV survey changed to the Jacques Cartier, still no conversion factors for all the species required for this analysis. 
 
 eco_indicators<-join_indicators |>
-  filter(YEAR!=2021) |> 
   rename(year=YEAR, region=ID) |> 
-  select(-contains("_s")) # remove standardized data
+  select(!ends_with("_s")) # remove standardized data
 
 
-#create "ea_data" object
+#create "ea_data" object with multiple value columns
+val_col_list <- names(eco_indicators)[!(names(eco_indicators) %in% c("year", "region"))]
 
 # Create object with additional metadata
 eco_indicators<- ea_data(
   data = eco_indicators,
-  value_col = "SpeciesRichness_ALL", 
-  data_type = "diversity",
+  value_col = val_col_list, 
+  data_type = "ecological",
   region = "Maritimes",
   location_descriptor = "NAFO",
   units = "tonnes",
   source_citation = "Bundy et al. 2017",
+  nb = "years 2018 and 2021 have incomplete data due to poor survey coverage or ship change",
 )
-
 
 
 save(eco_indicators, file = here("data-raw", "eco-indicators", "eco_indicators.rda"))

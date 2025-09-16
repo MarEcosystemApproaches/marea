@@ -1,7 +1,7 @@
 # Food habits database
 # Run code line-by-line 
 
-library(dplyr)
+library(tidyverse)
 library(marea)
 library(here)
 
@@ -29,12 +29,18 @@ food_habits <- read_csv(food_habits)
 # year = {2010}
 # }
 
-#create "ea_data" object
+# rename year column for compatability with ea_data()
+food_habits<-food_habits |>
+  rename(year=YEAR, region=NAFO_ZONE) 
+
+
+#create "ea_data" object with multiple value columns
+val_col_list <- names(food_habits)[!(names(food_habits) %in% c("year", "region"))]
 
 # Create object with additional metadata
 food_habits<- ea_data(
   data = food_habits,
-  value_col = "FWT", 
+  value_col = val_col_list, 
   data_type = "biological",
   region = "Maritimes",
   location_descriptor = "NAFO 4",

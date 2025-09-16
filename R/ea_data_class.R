@@ -39,8 +39,8 @@ setClass(
 #'
 #' @param data A `data.frame` containing at least a `year` column and a numeric
 #'   column specified by `value_col`.
-#' @param value_col A character string naming the column in `data` that
-#'   contains the numeric values to be standardized as `value`.
+#' @param value_col A list naming the column(s) in `data` that
+#'   contains the numeric values to be marked as columns with names appended '_value'
 #' @param data_type A character string describing the type of data (e.g., "temperature").
 #' @param region A character string indicating the geographic region.
 #' @param location_descriptor A character string describing the location
@@ -58,7 +58,7 @@ setClass(
 #' @examples
 #' df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
 #' obj <- ea_data(df,
-#'                value_col = "temp_c",
+#'                value_col = c("temp_c"),
 #'                data_type = "temperature",
 #'                region = "Scotian Shelf",
 #'                location_descriptor = "bottom",
@@ -86,19 +86,27 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
                    source_citation = "No citation provided", ...) {
             
             # --- Validation ---
-            if (!value_col %in% names(data)) {
-              stop(paste0("Column '", value_col, "' not found in the data."), call. = FALSE)
+            for (i in 1:length(value_col)) {
+              val <- value_col[[i]]
+                 if (!val %in% names(data)) {
+                  stop(paste0("Column '", val, "' not found in the data."), call. = FALSE)
+              }
             }
             if (!"year" %in% names(data)) {
               stop("`data` must contain a 'year' column.", call. = FALSE)
             }
-            if (!is.numeric(data[[value_col]]) || !is.numeric(data$year)) {
-              stop(paste0("Columns 'year' and '", value_col, "' must be numeric."), call. = FALSE)
+            if (!is.numeric(data$year)) {
+              stop(paste0("Columns 'year' must be numeric."), call. = FALSE)
             }
             
             
             # --- Standardize ---
-            data <- dplyr::rename(data, value = .data[[value_col]])
+            # rename all columns from value_col (list) to originalname_value
+            for (i in 1:length(value_col)) {
+              val <- value_col[[i]]
+              new_name <- paste0(val, "_value")
+              data <- dplyr::rename(data, !!new_name := .data[[val]])
+            }
             
             # --- Metadata ---
             meta <- list(
@@ -108,7 +116,7 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
               units = as.character(units),
               species = as.character(species),
               source_citation = as.character(source_citation),
-              original_value_col = value_col,
+              original_value_col = value_col, # TODO check that this prints okay as a list
               ...
             )
             
@@ -141,7 +149,7 @@ setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
 #'
 #' @examples
 #' df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
-#' obj <- ea_data(df, value_col = "temp_c", data_type = "temperature",
+#' obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
 #'                region = "Scotian Shelf", location_descriptor = "bottom",
 #'                units = "°C")
 #'
@@ -242,7 +250,7 @@ setMethod(
 #' df <- data.frame(year = rep(2000:2002, 2),
 #'                  temp_c = rnorm(6),
 #'                  group = rep(c("A", "B"), each = 3))
-#' obj <- ea_data(df, value_col = "temp_c", data_type = "temperature",
+#' obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
 #'                region = "Test Region", location_descriptor = "surface",
 #'                units = "°C")
 #'
@@ -281,8 +289,10 @@ setValidity("ea_data", function(object) {
   if (!"year" %in% names(object@data)) {
     errors <- c(errors, "Missing 'year' column in the data slot.")
   }
-  if (!"value" %in% names(object@data)) {
-    errors <- c(errors, "Missing 'value' column in the data slot.")
+  # check for at least one column that ends with _value
+  value_cols <- grep("_value$", names(object@data), value = TRUE)
+  if (length(value_cols) == 0) {
+    errors <- c(errors, "Missing value column in the data slot.")
   }
   
   if (length(errors) == 0) TRUE else errors

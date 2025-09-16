@@ -49,12 +49,12 @@
 #'   }
 #'   \item{meta}{A named list with:
 #'     \describe{
-#'       \item{data_type}{Character. "Grey Seal Abundance"}
-#'       \item{region}{Character. "Scotian Shelf"}
-#'       \item{location_descriptor}{Character. "Sable Island / Scotian Shelf"}
-#'       \item{units}{Character. "count"}
-#'       \item{species}{Character. "Halichoerus grypus"}
-#'       \item{source_citation}{Character. See details, Hammill et al. (2023)}
+#'       \item{data_type}{"Grey Seal Abundance"}
+#'       \item{region}{ "Scotian Shelf"}
+#'       \item{location_descriptor}{"Sable Island / Scotian Shelf"}
+#'       \item{units}{"count"}
+#'       \item{species}{"Halichoerus grypus"}
+#'       \item{source_citation}{Hammill et al. (2023)}
 #'       \item{original_value_col}{Character. "median"}
 #'     }
 #'   }
@@ -158,43 +158,61 @@
 #' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`
 "azmp_bottom_temperature"
 
-#' Food Habits Metadata
+#' Food Habits 
 #'
 #' Stomach content and food habits data collected during DFO ecosystem surveys in the Maritimes region. Contains trawl set, fish, and prey item information.
 #'
-#' @format A data.frame with columns:
+#'@format A tibble/data.frame with columns:
 #' \describe{
-#'   \item{DATASOURCE}{Data source}
-#'   \item{MISSION}{Cruise/mission identifier}
-#'   \item{SETNO}{Set number}
-#'   \item{SDATE}{Date of set}
-#'   \item{STIME}{Time of set (24 hr)}
-#'   \item{STRAT}{Stratum code}
-#'   \item{BOTTOM_TEMPERATURE}{Water temperature at bottom (°C)}
-#'   \item{DEPTH}{Bottom depth (m)}
-#'   \item{GEAR}{Gear code}
-#'   \item{SLATDD}{Latitude (decimal degrees)}
-#'   \item{SLONGDD}{Longitude (decimal degrees, negative=west)}
-#'   \item{NAFO_ZONE}{NAFO zone}
-#'   \item{NAFO_SUBUNIT}{NAFO subunit}
-#'   \item{SPEC}{Species code}
-#'   \item{FSHNO}{Fish ID}
-#'   \item{FWT}{Fish weight (g)}
-#'   \item{FLEN}{Fish length (cm)}
-#'   \item{STOWGT}{Stomach weight (g)}
-#'   \item{EMPTYWGT}{Empty stomach weight (g)}
-#'   \item{FULLNESS}{Stomach fullness (coded)}
-#'   \item{FGEN}{Fish sex}
-#'   \item{PREYSPECCD}{Prey species code}
-#'   \item{PWT}{Prey weight (g)}
-#'   \item{PLEN}{Prey length (cm)}
-#'   \item{PNUM}{Number of prey}
-#'   \item{DIGESTION}{Digestive state (coded)}
+#'  \item{data}{Tibble:
+#'    \describe{
+#'      \item{SET_SEQ_value}{Sequence identifier for the sampling set}
+#'      \item{PRED_SEQ_value}{Sequence identifier for predator}
+#'      \item{PREY_SEQ_value}{Sequence identifier for prey}
+#'      \item{DATASOURCE_value}{Data source code}
+#'      \item{MISSION_value}{Survey mission code}
+#'      \item{SETNO_value}{Set number within the mission}
+#'      \item{SDATE_value}{Set date (format: DD-Mmm-YY)}
+#'      \item{STIME_value}{Set time (HHMM)}
+#'      \item{STRAT_value}{Stratum identifier}
+#'      \item{BOTTOM_TEMPERATURE_value}{Bottom water temperature (degrees Celsius)}
+#'      \item{DEPTH_value}{Bottom depth (meters)}
+#'      \item{GEAR_value}{Gear code used for sampling}
+#'      \item{SLATDD_value}{Set latitude (decimal degrees)}
+#'      \item{SLONGDD_value}{Set longitude (decimal degrees)}
+#'      \item{region}{Survey region code (e.g., NAFO division)}
+#'      \item{NAFO_SUBUNIT_value}{NAFO subunit code}
+#'      \item{SPEC_value}{Predator species code}
+#'      \item{FSHNO_value}{Predator fish specimen number}
+#'      \item{FWT_value}{Predator whole weight (grams)}
+#'      \item{FLEN_value}{Predator length (cm)}
+#'      \item{STOWGT_value}{Predator stomach total weight (grams)}
+#'      \item{EMPTYWGT_value}{Predator stomach empty weight (grams)}
+#'      \item{FULLNESS_value}{Predator stomach fullness index}
+#'      \item{FGEN_value}{Predator gender code}
+#'      \item{PREYSPECCD_value}{Prey species code}
+#'      \item{PWT_value}{Prey whole weight (grams)}
+#'      \item{PLEN_value}{Prey length (cm)}
+#'      \item{PNUM_value}{Prey count in stomach}
+#'      \item{DIGESTION_value}{Prey digestion stage code}
+#'      \item{year}{Year of the observation}
+#'     }
+#'   }
+#'   \item{meta}{List includes:
+#'     \itemize{
+#'       \item{\code{data_type}:} "biological"
+#'       \item{\code{region}:} "NAFO"
+#'       \item{\code{location_descriptor}:} "Maritimes Region"
+#'       \item{\code{units}:} "weights"
+#'       \item{\code{source_citation}:} "Cook and Bundy 2010"
+#'     }
+#'   }
 #' }
+#' 
 #' @docType data
 #' @name food_habits
-#' @author Manon Cassista Da Ros; Mike McMahon
-#' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`
+#' @author Manon Cassista-Da-Ros; Mike McMahon; Jamie C. Tam
+#' @source Generated from running `data-raw/food-habits/food_habits.R`
 "food_habits"
 
 #' Pacific Decadal Oscillation (PDO) Index (ea_data)
@@ -379,144 +397,98 @@
 #' @source \url{https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat}
 "amo"
  
-#' ecological indicators (ea_data)
+#' Ecological Indicators (ea_data)
 #'
-#'ecological indicators calculated from biomass estimates and commercial harvesting data
-#' @format An `ea_data` object:
+#' Ecological indicators calculated from biomass estimates and commercial harvesting data.
+#'
+#' @format An `ea_data` object with two components:
 #' \describe{
-#'   \item{data}{Tibble with:
-#'     \itemize{
-#'       \item{\code{year}:} Year
-#'       \item{\code{region}:} NAFO division or SS area
-#'       \item{\code{value}:} Species Richness from samples collected in RV survey
-#'       \item{\code{ShannonDiveristy_ALL}:} Index considering species richness and evenness of abundances
-#'       \item{\code{MargalefRichness_ALL}:} An Index measure of richness accounting for sample size
-#'       \item{\code{PielouEvenness_ALL}:} How evenly species are distributed within a community
-#'       \item{\code{HillDiversity_ALL}:} effective number of species
-#'       \item{\code{HillDominance_ALL}:} community dominance index describing how much a community's diversity is driven bye few dominant species
-#'       \item{\code{Heips_ALL}:} relative abundance of different species in a community
-#'       \item{\code{ABUNDANCE_ALL}:} Total abundance
-#'       \item{\code{BIOMASS_ALL}:} Total biomass of all species caught in RV survey (t)
-#'       \item{\code{BIOMASS_CLUPEIDS}:} Total biomass of clupeid species (t)
-#'       \item{\code{BIOMASS_FINFISH}:} Total biomass of finfish species (t) 
-#'       \item{\code{BIOMASS_FLATFISH}:} Total biomass of flatfish species (t)
-#'       \item{\code{BIOMASS_FORAGE}:} Total biomass of forage species (t)
-#'       \item{\code{BIOMASS_GADOIDS}:} Total biomass of gadoids species (t)
-#'       \item{\code{BIOMASS_GROUNDFISH}:} Total biomass of groundfish species (t)
-#'       \item{\code{BIOMASS_PELAGIC}:} Total biomass of pelagic species (t)
-#'       \item{\code{BIOMASS_SKATES}:} Total biomass of skate species (t)
-#'       \item{\code{FishinginBalance}:} changes in fishing strategies and their impact on system productivity; positive FiB indicates fishery has expanded or bottom-up effects are occurring
-#'       \item{\code{FishinginBalance_s}:} standardized changes in fishing strategies and their impact on system productivity
-#'       \item{\code{DiversityTargetSpp_ALL}:}} Diversity of target commercial species
-#'   \item{\code{value}:}{Mean Trophic level of all landings}
-#'   \item{\code{value}:}{Mean Trophic Level of landings  above TL 3.25}
-#'   \item{\code{value}:}{total landings (t)}
-#'   \item{\code{value}:}{total landings of clupeids species (t)}
-#'   \item{\code{value}:}{total landings of finfish species (t)}
-#'   \item{\code{value}:}{total landings of flatfish species(t)}
-#'   \item{{\code{value}:}{total landings of forage species (t)}
-#'   \item{\code{value}:}{total landings of gadoid species (t))}
-#'   \item{{\code{value}:}{total landings of groundfish species (t)}
-#'   \item{\code{value}:}{total landings of invertebrate species (t)}
-#'   \item{\code{value}:}{total landings of pelagic species (t)}
-#'   \item{\code{value}:}{total landings of skate species (t)}
-#'   \item{\code{value}:}{Fishing pressure of all species}
-#'   \item{\code{value}:}{Fishing pressure of clupeid species}
-#'   \item{{\code{value}:}{Fishing pressure of finfish species}
-#'   \item{\code{value}:}{Fishing pressure of flatfish species}
-#'   \item{\code{value}:}{Fishing pressure of forage species}
-#'   \item{\code{value}:}{Fishing pressure of gadoid species}
-#'   \item{\code{value}:}{Fishing pressure of groundfish species}
-#'   \item{{\code{value}:}{Fishing pressure of skate species}
-#'   \item{\code{value}:}{standardized diversity of target species}
-#'   \item{\code{value}:}{standardize mean trophic level of landings}
-#'   \item{\code{value}:}{standardized mean trophic level above 3.25}
-#'   \item{\code{value}:}{standardized landings of all species}
-#'   \item{landings_CLUPEIDS.L_s}{standardized landings of clupeid species}
-#'   \item{landings_FINFISH.L_s}{standardized landings of finfish species (t)}
-#'   \item{landings_FLATFISH.L_s}{standardized landings of flatfish species(t)}
-#'   \item{landings_FORAGE.L_s}{standardized landings of forage species}
-#'   \item{landings_GADOIDS.L_s}{standardized landings of gadoid species}
-#'   \item{landings_GROUNDFISH.L_s}{standardized landings of groundfish species}
-#'   \item{landings_INVERTEBRATES.L_s}{standardized landings of invertebrate species}
-#'   \item{landings_LARGE_PELAGIC.L_s}{standardized landings of large pelagic species}
-#'   \item{landings_SKATES.L_s}{standardized landings of skates species}
-#'   \item{FP_ALL_s}{standardized fishing pressure of all species}
-#'   \item{FP_CLUPEIDS_s}{standardized fishing pressure of clupeid species}
-#'   \item{FP_FINFISH_s}{standardized fishing pressure of finfish species}
-#'   \item{FP_FLATFISH_s}{standardized fishing pressure of flatfish species}
-#'   \item{FP_FORAGE_s}{standardized fishing pressure of forage species}
-#'   \item{FP_GADOIDS_s}{standardized fishing pressure of gadoid species}
-#'   \item{FP_GROUNDFISH_s}{standardized fishing pressure of groundfish species}
-#'   \item{FP_SKATES_s}{standardized fishing pressure of skates species}
-#'   \item{CVBiomass}{Coefficient of Variation of the biomass}
-#'   \item{MeanLifespan}{Mean Lifespan observed for each species}
-#'   \item{BIOMASS_TL3}{biomass of trophic levle 3}
-#'   \item{BIOMASS_TL4}{biomass of trophic level 4}
-#'   \item{MMLength_BIOMASS}{Mean maxium length in the community weigthed by biomass}
-#'   \item{MMLength_ABUNDANCE}{Mean maximum length in the community weighted by abundance}
-#'   \item{IVILandings}{Intrinsic vulnerability index of the catch}
-#'   \item{CVBiomass_s}{standardized coefficient of variation of biomass}
-#'   \item{MeanLifespan_s}{standardized mean lifespan}
-#'   \item{BIOMASS_TL2_s}{standardized biomass of trophic level 2}
-#'   \item{BIOMASS_TL3_s}{standardized biomass of trophic level 3}
-#'   \item{BIOMASS_TL4_s}{standardized biomass of trophic level 4}
-#'   \item{MMLength_BIOMASS_s}{standardized mean maxium length in the community weigthed by biomass}
-#'   \item{MMLength_ABUNDANCE_s}{standardized mean maxium length in the community weigthed by abundance}
-#'   \item{IVILandings_s}{standardized Intrinsic vulnerability index of the catch}
-#'   \item{BIOMASS_LBENTHIVORE}{biomass of large benthovores (t) calculated from RV survey}
-#'   \item{BIOMASS_MBENTHIVORE}{biomass of medium size benthivores (t) calculated from RV survey}
-#'   \item{BIOMASS_PISCIVORE}{biomass of piscivores (t) calculated from RV survey}
-#'   \item{BIOMASS_PLANKTIVORE}{biomass of planktivores (t) calculated from RV survey}
-#'   \item{BIOMASS_ZOOPISCIVORE}{biomass of zoopiscivores (t) calculated from RV survey}
-#'   \item{PELAGIC_GROUNDFISH}{biomass of pelagics to biomass of groundfish}
-#'   \item{PREDATORS_ALL}{Total biomass of predators}
-#'   \item{LargeFishIndicator}{proportion of large fish > 35cm to small fish below or equal to 35cm}
-#'   \item{MeanLengthBIOMASS}{mean length of fish in the community weighted by biomass}
-#'   \item{MeanLengthABUNDANCE}{mean length of fish in the community weighted by abundance}
-#'   \item{CCondition_FINFISH}{community condition of finfish}
-#'   \item{CCondition_LBENTHIVORE}{community condition of large benthivores}
-#'   \item{CCondition_MBENTHIVORE}{community condition of medium benthivores}
-#'   \item{CCondition_PISCIVORE}{community condition of piscivores}
-#'   \item{CCondition_PLANKTIVORE}{community condition of planktivores}
-#'   \item{CCondition_ZOOPISCIVORE}{community condition of zoopiscivores}
-#'   \item{BIOMASS_LBENTHIVORE_s}{standardized biomass of large benthivores}
-#'   \item{BIOMASS_MBENTHIVORE_s}{standardized biomass of medium benthivores}
-#'   \item{BIOMASS_PISCIVORE_s}{standardized biomass of piscivores}
-#'   \item{BIOMASS_PLANKTIVORE_s}{standardized biomass of planktivores}
-#'   \item{BIOMASS_ZOOPISCIVORE_s}{standardized biomass of zoopiscivores}
-#'   \item{PELAGIC_GROUNDFISH_s}{standardized pelagic to groundfish}
-#'   \item{PREDATORS_ALL_s}{standardized predoatrs}
-#'   \item{LargeFishIndicaor_s}{standardized large fish indicator}
-#'   \item{MeanLengthBIOMASS_s}{standardized mean length biomass}
-#'   \item{MeanLengthABUNDANCE_s}{standardized mean length abundance}
-#'   \item{CCondition_FINFISH_s}{standardized community condition of finfish}
-#'   \item{CCondition_LBENTHIVORE_s}{standardized community condition of large benthivores}
-#'   \item{CCondition_MBENTHIVORE_s}{standardized community condition of medium benthivores}
-#'   \item{CCondition_PISCIVORE_s}{standardized community condition of piscivores}
-#'   \item{CCondition_PLANKTIVORE_s}{standardized community condition of planktivores}
-#'   \item{CCondition_PISCIVORE_s}{standardized community condition of piscivores}
-#'   \item{CCondition_PLANKTIVORE_s}{standardized community condition of planktivores}
-#'   \item{CCondition_ZOOPISCIVORE_s}{standardized community condition of zooplanktivores}
-#'   \item{BIOMASS_INVERTEBRATES}{biomass of invertebrates}
-#'   \item{INVERTEBRATES_GROUNDFISH}{proportion of invertebrates to groundfish}
-#'   \item{FP_INVERTEBRATES}{Fishing pressure of invertebrates}
-#'   \item{BIOMASS_TL2}{biomass of trophic level 2}
-#'       
+#'   \item{data}{A tibble with columns:
+#'     \describe{
+#'       \item{year}{Year}
+#'       \item{region}{NAFO division or SS area}
+#'       \item{SpeciesRichness_ALL_value}{Species Richness from samples collected in RV survey}
+#'       \item{ShannonDiveristy_ALL_value}{Index considering species richness and evenness of abundances}
+#'       \item{MargalefRichness_ALL_value}{An index measure of richness accounting for sample size}
+#'       \item{PielouEvenness_ALL_value}{How evenly species are distributed within a community}
+#'       \item{HillDiversity_ALL_value}{Effective number of species}
+#'       \item{HillDominance_ALL_value}{Community dominance index describing how much diversity is driven by a few dominant species}
+#'       \item{Heips_ALL_value}{Relative abundance of different species in a community}
+#'       \item{ABUNDANCE_ALL_value}{Total abundance}
+#'       \item{BIOMASS_ALL_value}{Total biomass of all species caught in RV survey (t)}
+#'       \item{BIOMASS_CLUPEIDS_value}{Total biomass of clupeid species (t)}
+#'       \item{BIOMASS_FINFISH_value}{Total biomass of finfish species (t)}
+#'       \item{BIOMASS_FLATFISH_value}{Total biomass of flatfish species (t)}
+#'       \item{BIOMASS_FORAGE_value}{Total biomass of forage species (t)}
+#'       \item{BIOMASS_GADOIDS_value}{Total biomass of gadoid species (t)}
+#'       \item{BIOMASS_GROUNDFISH_value}{Total biomass of groundfish species (t)}
+#'       \item{BIOMASS_PELAGIC_value}{Total biomass of pelagic species (t)}
+#'       \item{BIOMASS_SKATES_value}{Total biomass of skate species (t)}
+#'       \item{FishinginBalance_value}{Changes in fishing strategies and their impact on system productivity; positive FiB indicates fishery has expanded or bottom-up effects are occurring}
+#'       \item{DiversityTargetSpp_ALL_value}{Diversity of target commercial species}
+#'       \item{MeanTL.Landings_value}{Mean Trophic level of all landings}
+#'       \item{MTI.Landings_3.25_value}{Mean Trophic level of landings above TL 3.25}
+#'       \item{landings_ALL_value}{Total landings (t)}
+#'       \item{landings_CLUPEIDS.L_value}{Total landings of clupeid species (t)}
+#'       \item{landings_FINFISH.L_value}{Total landings of finfish species (t)}
+#'       \item{landings_FLATFISH.L_value}{Total landings of flatfish species(t)}
+#'       \item{landings_FORAGE.L_value}{Total landings of forage species (t)}
+#'       \item{landings_GADOIDS.L_value}{Total landings of gadoid species (t)}
+#'       \item{landings_GROUNDFISH.L_value}{Total landings of groundfish species (t)}
+#'       \item{landings_INVERTEBRATES.L_value}{Total landings of invertebrate species (t)}
+#'       \item{landings_LARGE_PELAGIC.L_value}{Total landings of pelagic species (t)}
+#'       \item{landings_SKATES.L_value}{Total landings of skate species (t)}
+#'       \item{FP_ALL_value}{Fishing pressure of all species}
+#'       \item{FP_CLUPEIDS_value}{Fishing pressure of clupeid species}
+#'       \item{FP_FINFISH_value}{Fishing pressure of finfish species}
+#'       \item{FP_FLATFISH_value}{Fishing pressure of flatfish species}
+#'       \item{FP_FORAGE_value}{Fishing pressure of forage species}
+#'       \item{FP_GADOIDS_value}{Fishing pressure of gadoid species}
+#'       \item{FP_GROUNDFISH_value}{Fishing pressure of groundfish species}
+#'       \item{FP_SKATES_value}{Fishing pressure of skate species}
+#'       \item{CVBiomass_value}{Coefficient of variation of the biomass}
+#'       \item{MeanLifespan_value}{Mean lifespan observed for each species}
+#'       \item{BIOMASS_TL2_value}{Biomass of trophic level 2}
+#'       \item{BIOMASS_TL3_value}{Biomass of trophic level 3}
+#'       \item{BIOMASS_TL4_value}{Biomass of trophic level 4}
+#'       \item{MMLength_BIOMASS_value}{Mean maximum length in the community weighted by biomass}
+#'       \item{MMLength_ABUNDANCE_value}{Mean maximum length in the community weighted by abundance}
+#'       \item{IVILandings_value}{Intrinsic vulnerability index of the catch}
+#'       \item{BIOMASS_LBENTHIVORE_value}{Biomass of large benthivores (t) calculated from RV survey}
+#'       \item{BIOMASS_MBENTHIVORE_value}{Biomass of medium-size benthivores (t) calculated from RV survey}
+#'       \item{BIOMASS_PISCIVORE_value}{Biomass of piscivores (t) calculated from RV survey}
+#'       \item{BIOMASS_PLANKTIVORE_value}{Biomass of planktivores (t) calculated from RV survey}
+#'       \item{BIOMASS_ZOOPISCIVORE_value}{Biomass of zoopiscivores (t) calculated from RV survey}
+#'       \item{PELAGIC_GROUNDFISH_value}{Biomass of pelagics to biomass of groundfish}
+#'       \item{PREDATORS_ALL_value}{Total biomass of predators}
+#'       \item{LargeFishIndicator_value}{Proportion of large fish (> 35cm) to small fish (<= 35cm)}
+#'       \item{MeanLengthBIOMASS_value}{Mean length of fish in the community weighted by biomass}
+#'       \item{MeanLengthABUNDANCE_value}{Mean length of fish in the community weighted by abundance}
+#'       \item{CCondition_FINFISH_value}{Community condition of finfish}
+#'       \item{CCondition_LBENTHIVORE_value}{Community condition of large benthivores}
+#'       \item{CCondition_MBENTHIVORE_value}{Community condition of medium benthivores}
+#'       \item{CCondition_PISCIVORE_value}{Community condition of piscivores}
+#'       \item{CCondition_PLANKTIVORE_value}{Community condition of planktivores}
+#'       \item{CCondition_ZOOPISCIVORE_value}{Community condition of zoopiscivores}
+#'       \item{BIOMASS_INVERTEBRATES_value}{Biomass of invertebrates}
+#'       \item{INVERTEBRATES_GROUNDFISH_value}{Proportion of invertebrates to groundfish}
+#'       \item{FP_INVERTEBRATES_value}{Fishing pressure of invertebrates}
 #'     }
 #'   }
-#'   \item{meta}{List includes:
-#'     \itemize{
-#'       \item{\code{data_type}:} "diversity"
-#'       \item{\code{location_descriptor}:} "Maritimes Region"
-#'       \item{\code{units}:} tonnes
+#'   \item{meta}{A list with elements:
+#'     \describe{
+#'       \item{data_type}{"ecological"}
+#'       \item{region}{"Maritimes"}
+#'       \item{location_descriptor}{"NAFO"}
+#'       \item{units}{"tonnes"}
+#'       \item{species}{"NA"}
+#'       \item{source_citation}{"Bundy et al. 2017"}
 #'     }
 #'   }
 #' }
 #'
-#' 
 #' @docType data
 #' @name eco_indicators
 #' @author Jamie C. Tam
-#' @source Generated from running `data-raw/eco-indicators/eco-indicators.R`
+#' @source Generated from running \code{data-raw/eco-indicators/eco-indicators.R}
 "eco_indicators"
