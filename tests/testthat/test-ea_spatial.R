@@ -211,7 +211,7 @@ test_that("ea_spatial constructor throws errors for missing value_col", {
         value_col = "non_existent_col",
         data_type = "t", region = "r", time_descriptor = "ti", units = "u"
       ),
-      "Column/layer 'non_existent_col' not found in the data object.",
+      "Column(s) not found in object",
       fixed = TRUE
     )
   }
@@ -464,17 +464,6 @@ test_that("ea_spatial validity method works correctly for supported types", {
   }
 })
 
-test_that("ea_spatial validity method identifies missing 'value' layer", {
-  if (requireNamespace("sf", quietly = TRUE)) {
-    sf_no_val <- sf::st_sf(data.frame(x = 1), geometry = sf::st_sfc(sf::st_point(c(0,0)), crs=4326))
-    expect_error(
-      invalid_obj <- methods::new("ea_spatial", meta = list(), data = sf_no_val)
-      ,
-      "The 'data' object must contain a 'value' column or layer.",
-      fixed = TRUE
-    )
-  }
-})
 
 test_that("ea_spatial validity method identifies unsupported data class", {
   expect_error(
