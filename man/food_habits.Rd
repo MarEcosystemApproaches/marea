@@ -3,40 +3,57 @@
 \docType{data}
 \name{food_habits}
 \alias{food_habits}
-\title{Food Habits Metadata}
+\title{Food Habits}
 \format{
-A data.frame with columns:
+A tibble/data.frame with columns:
 \describe{
-\item{DATASOURCE}{Data source}
-\item{MISSION}{Cruise/mission identifier}
-\item{SETNO}{Set number}
-\item{SDATE}{Date of set}
-\item{STIME}{Time of set (24 hr)}
-\item{STRAT}{Stratum code}
-\item{BOTTOM_TEMPERATURE}{Water temperature at bottom (°C)}
-\item{DEPTH}{Bottom depth (m)}
-\item{GEAR}{Gear code}
-\item{SLATDD}{Latitude (decimal degrees)}
-\item{SLONGDD}{Longitude (decimal degrees, negative=west)}
-\item{NAFO_ZONE}{NAFO zone}
-\item{NAFO_SUBUNIT}{NAFO subunit}
-\item{SPEC}{Species code}
-\item{FSHNO}{Fish ID}
-\item{FWT}{Fish weight (g)}
-\item{FLEN}{Fish length (cm)}
-\item{STOWGT}{Stomach weight (g)}
-\item{EMPTYWGT}{Empty stomach weight (g)}
-\item{FULLNESS}{Stomach fullness (coded)}
-\item{FGEN}{Fish sex}
-\item{PREYSPECCD}{Prey species code}
-\item{PWT}{Prey weight (g)}
-\item{PLEN}{Prey length (cm)}
-\item{PNUM}{Number of prey}
-\item{DIGESTION}{Digestive state (coded)}
+\item{data}{Tibble:
+\describe{
+\item{SET_SEQ_value}{Sequence identifier for the sampling set}
+\item{PRED_SEQ_value}{Sequence identifier for predator}
+\item{PREY_SEQ_value}{Sequence identifier for prey}
+\item{DATASOURCE_value}{Data source code}
+\item{MISSION_value}{Survey mission code}
+\item{SETNO_value}{Set number within the mission}
+\item{SDATE_value}{Set date (format: DD-Mmm-YY)}
+\item{STIME_value}{Set time (HHMM)}
+\item{STRAT_value}{Stratum identifier}
+\item{BOTTOM_TEMPERATURE_value}{Bottom water temperature (degrees Celsius)}
+\item{DEPTH_value}{Bottom depth (meters)}
+\item{GEAR_value}{Gear code used for sampling}
+\item{SLATDD_value}{Set latitude (decimal degrees)}
+\item{SLONGDD_value}{Set longitude (decimal degrees)}
+\item{region}{Survey region code (e.g., NAFO division)}
+\item{NAFO_SUBUNIT_value}{NAFO subunit code}
+\item{SPEC_value}{Predator species code}
+\item{FSHNO_value}{Predator fish specimen number}
+\item{FWT_value}{Predator whole weight (grams)}
+\item{FLEN_value}{Predator length (cm)}
+\item{STOWGT_value}{Predator stomach total weight (grams)}
+\item{EMPTYWGT_value}{Predator stomach empty weight (grams)}
+\item{FULLNESS_value}{Predator stomach fullness index}
+\item{FGEN_value}{Predator gender code}
+\item{PREYSPECCD_value}{Prey species code}
+\item{PWT_value}{Prey whole weight (grams)}
+\item{PLEN_value}{Prey length (cm)}
+\item{PNUM_value}{Prey count in stomach}
+\item{DIGESTION_value}{Prey digestion stage code}
+\item{year}{Year of the observation}
+}
+}
+\item{meta}{List includes:
+\itemize{
+\item{\code{data_type}:} "biological"
+\item{\code{region}:} "NAFO"
+\item{\code{location_descriptor}:} "Maritimes Region"
+\item{\code{units}:} "weights"
+\item{\code{source_citation}:} "Cook and Bundy 2010"
+}
+}
 }
 }
 \source{
-Generated from running \code{data-raw/ecosystem-survey/food_habits.R}
+Generated from running \code{data-raw/food-habits/food_habits.R}
 }
 \usage{
 food_habits
@@ -45,6 +62,6 @@ food_habits
 Stomach content and food habits data collected during DFO ecosystem surveys in the Maritimes region. Contains trawl set, fish, and prey item information.
 }
 \author{
-Manon Cassista Da Ros; Mike McMahon
+Manon Cassista-Da-Ros; Mike McMahon; Jamie C. Tam
 }
 \keyword{datasets}
