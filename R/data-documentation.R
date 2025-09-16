@@ -162,7 +162,7 @@
 #'
 #' Stomach content and food habits data collected during DFO ecosystem surveys in the Maritimes region. Contains trawl set, fish, and prey item information.
 #'
-#'@format A tibble/data.frame with columns:
+#'@format An `ea_data` object:
 #' \describe{
 #'  \item{data}{Tibble:
 #'    \describe{
@@ -401,7 +401,7 @@
 #'
 #' Ecological indicators calculated from biomass estimates and commercial harvesting data.
 #'
-#' @format An `ea_data` object with two components:
+#' @format An `ea_data` object:
 #' \describe{
 #'   \item{data}{A tibble with columns:
 #'     \describe{
