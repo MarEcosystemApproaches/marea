@@ -158,44 +158,6 @@
 #' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`
 "azmp_bottom_temperature"
 
-#' Food Habits Metadata
-#'
-#' Stomach content and food habits data collected during DFO ecosystem surveys in the Maritimes region. Contains trawl set, fish, and prey item information.
-#'
-#' @format A data.frame with columns:
-#' \describe{
-#'   \item{DATASOURCE}{Data source}
-#'   \item{MISSION}{Cruise/mission identifier}
-#'   \item{SETNO}{Set number}
-#'   \item{SDATE}{Date of set}
-#'   \item{STIME}{Time of set (24 hr)}
-#'   \item{STRAT}{Stratum code}
-#'   \item{BOTTOM_TEMPERATURE}{Water temperature at bottom (°C)}
-#'   \item{DEPTH}{Bottom depth (m)}
-#'   \item{GEAR}{Gear code}
-#'   \item{SLATDD}{Latitude (decimal degrees)}
-#'   \item{SLONGDD}{Longitude (decimal degrees, negative=west)}
-#'   \item{NAFO_ZONE}{NAFO zone}
-#'   \item{NAFO_SUBUNIT}{NAFO subunit}
-#'   \item{SPEC}{Species code}
-#'   \item{FSHNO}{Fish ID}
-#'   \item{FWT}{Fish weight (g)}
-#'   \item{FLEN}{Fish length (cm)}
-#'   \item{STOWGT}{Stomach weight (g)}
-#'   \item{EMPTYWGT}{Empty stomach weight (g)}
-#'   \item{FULLNESS}{Stomach fullness (coded)}
-#'   \item{FGEN}{Fish sex}
-#'   \item{PREYSPECCD}{Prey species code}
-#'   \item{PWT}{Prey weight (g)}
-#'   \item{PLEN}{Prey length (cm)}
-#'   \item{PNUM}{Number of prey}
-#'   \item{DIGESTION}{Digestive state (coded)}
-#' }
-#' @docType data
-#' @name food_habits
-#' @author Manon Cassista Da Ros; Mike McMahon
-#' @source Generated from running `data-raw/ecosystem-survey/food_habits.R`
-"food_habits"
 
 #' Pacific Decadal Oscillation (PDO) Index (ea_data)
 #'
