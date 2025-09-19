@@ -3,7 +3,6 @@ lib/
 *.html
 *.docx
 *.nc
-*.RData
 *.csv
 *.xlsx
 .Rproj.user

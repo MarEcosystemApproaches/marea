@@ -11,7 +11,7 @@ An \code{ea_data} object:
 \itemize{
 \item{\code{year}:} Year
 \item{\code{month}:} Month (1–12)
-\item{\code{value}:} SSTA (sea surafe temperture anomaly)
+\item{\code{value}:} SSTA (sea surface temperature anomaly)
 }
 }
 \item{meta}{Includes:
