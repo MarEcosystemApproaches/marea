@@ -67,6 +67,7 @@ plot(nao, style = "default")
 Shows uncertainty bounds (requires low and high columns):
 
 ```{r}
+data("grey_seals")
 plot(grey_seals, style = "ribbon")
 ```
 
@@ -505,12 +506,7 @@ plot(nao) + my_theme
 
 # Getting Help
 
-## Available datasets
 
-```{r}
-# See all available datasets
-knitr::kable(marea_metadata())
-```
 
 ## Plot Method Documentation
 
