@@ -8,7 +8,7 @@
 #' The available styles are:
 #'   * `"default"`: A simple line plot with points.
 #'   * `"ribbon"`: A line plot with points and a shaded confidence interval
-#'     ribbon (requires `low` and `high` columns in the data).
+#'     ribbon (requires `lower` and `upper` columns in the data).
 #'   * `"plain"`: A line plot without points or any other embellishments.
 #'   * `"biomass"`: A style that mimics `pacea` biomass plots, featuring a bold
 #'     line, points, and an optional uncertainty ribbon.
@@ -33,8 +33,8 @@
 #'   year = 2000:2010,
 #'   biomass_t = rlnorm(11, meanlog = 5, sdlog = 0.3)
 #' )
-#' df$low <- df$biomass_t * 0.8
-#' df$high <- df$biomass_t * 1.2
+#' df$lower <- df$biomass_t * 0.8
+#' df$upper <- df$biomass_t * 1.2
 #'
 #' # Create an ea_data object
 #' biomass_obj <- ea_data(df,
@@ -104,11 +104,11 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
               },
               
               ribbon = {
-                if (!all(c("low", "high") %in% names(df))) {
-                  stop("Style 'ribbon' requires 'low' and 'high' columns in data.", call. = FALSE)
+                if (!all(c("lower", "upper") %in% names(df))) {
+                  stop("Style 'ribbon' requires 'lower' and 'upper' columns in data.", call. = FALSE)
                 }
                 p +
-                  ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$low, ymax = .data$high),
+                  ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
                                        fill = "grey80", alpha = 0.5, ...) +
                   ggplot2::geom_line(linewidth = 1, ...) +
                   ggplot2::geom_point(size = 2, ...)
@@ -129,7 +129,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 # Add ribbon if uncertainty is present
                 if (has_uncertainty) {
                   p <- p +
-                    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$low, ymax = .data$high),
+                    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
                                          fill = "lightblue", alpha = 0.3, ...)
                 }
                 
@@ -141,9 +141,9 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 # Add dashed lines for uncertainty bounds
                 if (has_uncertainty) {
                   p <- p +
-                    ggplot2::geom_line(ggplot2::aes(y = .data$low),
+                    ggplot2::geom_line(ggplot2::aes(y = .data$lower),
                                        color = "blue", linetype = "dashed", linewidth = 0.8, ...) +
-                    ggplot2::geom_line(ggplot2::aes(y = .data$high),
+                    ggplot2::geom_line(ggplot2::aes(y = .data$upper),
                                        color = "blue", linetype = "dashed", linewidth = 0.8, ...)
                 }
                 p # Return the modified plot
@@ -168,10 +168,10 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                   ggplot2::geom_hline(yintercept = 0, color = "black", linewidth = 0.5)
                 
                 # Add error bars for uncertainty if available
-                if (all(c("low", "high") %in% names(df))) {
+                if (all(c("lower", "upper") %in% names(df))) {
                   p <- p +
                     ggplot2::geom_errorbar(
-                      ggplot2::aes(ymin = .data$low, ymax = .data$high),
+                      ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
                       width = 0.3, color = "black", linewidth = 0.5, ...
                     )
                 }

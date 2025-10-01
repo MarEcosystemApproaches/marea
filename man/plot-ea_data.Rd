@@ -32,7 +32,7 @@ The available styles are:
 \itemize{
 \item \code{"default"}: A simple line plot with points.
 \item \code{"ribbon"}: A line plot with points and a shaded confidence interval
-ribbon (requires \code{low} and \code{high} columns in the data).
+ribbon (requires \code{lower} and \code{upper} columns in the data).
 \item \code{"plain"}: A line plot without points or any other embellishments.
 \item \code{"biomass"}: A style that mimics \code{pacea} biomass plots, featuring a bold
 line, points, and an optional uncertainty ribbon.
@@ -46,8 +46,8 @@ df <- data.frame(
   year = 2000:2010,
   biomass_t = rlnorm(11, meanlog = 5, sdlog = 0.3)
 )
-df$low <- df$biomass_t * 0.8
-df$high <- df$biomass_t * 1.2
+df$lower <- df$biomass_t * 0.8
+df$upper <- df$biomass_t * 1.2
 
 # Create an ea_data object
 biomass_obj <- ea_data(df,

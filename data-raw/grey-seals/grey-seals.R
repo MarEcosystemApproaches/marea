@@ -31,9 +31,9 @@ grey_seals_new <- grey_seals_data_raw %>%
          "lower95...11",
          "median...12",
          "upper95...13") %>%
-  rename(low = "lower95...11",
+  rename(lower = "lower95...11",
          median = "median...12",
-         high = "upper95...13")
+         upper = "upper95...13")
 
 grey_seals <- ea_data(
   data = grey_seals_new,

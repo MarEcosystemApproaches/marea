@@ -64,7 +64,7 @@ plot(nao, style = "default")
 ```
 ### Ribbon Style
 
-Shows uncertainty bounds (requires low and high columns):
+Shows uncertainty bounds (requires lower and upper columns):
 
 ```{r}
 data("grey_seals")
@@ -412,7 +412,7 @@ Display and customize uncertainty bounds:
 p <- plot(grey_seals, style = "default")
 
 p + 
-  geom_ribbon(aes(ymin = low, ymax = high), alpha = 0.3, fill = "lightblue") +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.3, fill = "lightblue") +
   geom_line( color = "darkblue") +
   geom_point( color = "darkblue") +
   labs(
