@@ -101,8 +101,9 @@ setMethod("ea_spatial", signature(data = "ANY", value_col = "character"),
               stop("`data` must be of class `sf`, `stars`, or `SpatRaster`.", call. = FALSE)
             }
             
-            if (!value_col %in% names(data)) {
-              stop(sprintf("Column/layer '%s' not found in the data object.", value_col), call. = FALSE)
+            missing_cols <- setdiff(value_col, names(data))
+            if (length(missing_cols) > 0) {
+              stop(paste("Column(s) not found in object:", paste(missing_cols, collapse = ", ")), call. = FALSE)
             }
             
             # Check for numeric only for sf, as stars/SpatRaster handle types differently
@@ -110,8 +111,68 @@ setMethod("ea_spatial", signature(data = "ANY", value_col = "character"),
               stop(paste0("Column '", value_col, "' must be numeric for sf objects."), call. = FALSE)
             }
             
-            names(data)[names(data) == value_col] <- "value"
+            # rename value columns with _value
             
+            # For sf objects
+            if (inherits(data, "sf")) {
+              if (is.list(value_col) || length(value_col) > 1) {
+                # Handle multiple value columns
+                value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
+                
+                # Rename columns to originalname_value
+                for (col in value_cols) {
+                  new_name <- paste0(col, "_value")
+                  names(data)[names(data) == col] <- new_name
+                }
+              } else {
+                # Handle single value column (existing logic)
+                names(data)[names(data) == value_col] <- "value"
+              }
+            }
+            
+            # For stars objects
+            if (inherits(data, "stars")) {
+              if (is.list(value_col) || length(value_col) > 1) {
+                # Handle multiple value attributes
+                value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
+                
+                # Rename attributes to originalname_value
+                current_names <- names(data)
+                new_names <- current_names
+                for (col in value_cols) {
+                  attr_index <- which(current_names == col)
+                  if (length(attr_index) > 0) {
+                    new_names[attr_index] <- paste0(col, "_value")
+                  }
+                }
+                names(data) <- new_names
+              } else {
+                # Handle single value attribute (existing logic)
+                names(data)[names(data) == value_col] <- "value"
+              }
+            }
+            
+            # For SpatRaster objects
+            if (inherits(data, "SpatRaster")) {
+              if (is.list(value_col) || length(value_col) > 1) {
+                # Handle multiple value layers
+                value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
+                
+                # Rename layers to originalname_value
+                current_names <- names(data)
+                new_names <- current_names
+                for (col in value_cols) {
+                  layer_indices <- which(current_names == col)
+                  if (length(layer_indices) > 0) {
+                    new_names[layer_indices] <- paste0(col, "_value")
+                  }
+                }
+                names(data) <- new_names
+              } else {
+                # Handle single value layer (existing logic)
+                names(data)[names(data) == value_col] <- "value"
+              }
+            }
             # --- Metadata ---
             meta <- list(
               data_type = as.character(data_type),
@@ -279,10 +340,10 @@ setValidity("ea_spatial", function(object) {
     errors <- c(errors, msg)
   }
   
-  if (!"value" %in% names(data)) {
-    msg <- "The 'data' object must contain a 'value' column or layer."
-    errors <- c(errors, msg)
-  }
+  # if (!"value" %in% names(data)) {
+  #   msg <- "The 'data' object must contain a 'value' column or layer."
+  #   errors <- c(errors, msg)
+  # }
   
   if (length(errors) == 0) TRUE else errors
 })
