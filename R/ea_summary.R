@@ -6,7 +6,17 @@
 #' 
 ea.summary <- function(x, ...) {
  if (inherits(x, 'ea_data')) {
-    summary_stats <- summary(x@data$value)
+
+    # Basic summary statistics for all columns with "_value"
+   value_cols <- grep("_value$", names(x@data), value = TRUE)
+   summary_stats <- list()
+   if (length(value_cols) > 1) {
+     summary_stats <- lapply(value_cols, function(col) summary(x@data[[col]]))
+     names(summary_stats) <- value_cols
+   } else {
+     summary_stats <- summary(x@data[[value_cols]])
+   }
+
 
     cat("--- Summary of ea_data ---\n")
     cat("Metadata:\n")
