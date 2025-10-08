@@ -1,13 +1,69 @@
 rm(list=ls())
 library(rerddap)
-library(terra)
 library(sf)
 library(dplyr)
 library(lubridate)
 library(marea)
 
 # bloom metrics available in the satellite product
-metrics <- c("t_start","t_duration","amplitude_real","magnitude_real","annual_mean","NRMSE_bloom","percent_dineof")
+metrics <- list(t_start = list(data_type="Day of year of the start of the spring phytoplankton bloom",
+                               units="day of year"),
+                t_duration = list(data_type="Duration of the spring phytoplankton bloom",
+                                  units="days"),
+                amplitude_real = list(data_type="Maximum concentration during the spring phytoplankton bloom period",
+                                      units="mg/m3"),
+                magnitude_real = list(data_type="Total chlorophyll-a produced during the spring phytoplankton bloom period",
+                                      units="days*mg/m3"),
+                annual_mean = list(data_type="Average chlorophyll-a over the year",
+                                   units="mg/m3"),
+                NRMSE_bloom = list(data_type="Root mean square error between the fitted Gaussian and real chl-a values during the bloom period, normalized to amplitude_real",
+                                   units="mg/m3"),
+                percent_dineof = list(data_type="Percentage of days with pixel values estimated using DINEOF",
+                                      units=""))
+
+
+#*******************************************************************************
+# DOWNLOAD AND FILTER ####
+
+# download the full dataset
+df <- get_erddap_data(variables=names(metrics))
+
+# filter out NRMSE_bloom > 0.5
+bad_inds <- df$NRMSE_bloom > 0.5
+bad_inds[!is.finite(bad_inds)] <- TRUE
+df[bad_inds,c("t_start","t_duration","amplitude_real","magnitude_real","NRMSE_bloom")] <- NA
+
+# filter out |standardized_anomaly| > 4
+stdevnum <- 4
+dfsa <- df %>%
+  dplyr::group_by(longitude,latitude) %>%
+  dplyr::mutate(amplitude_real_climmean=mean(amplitude_real,na.rm=TRUE),
+                amplitude_real_climsd=sd(amplitude_real,na.rm=TRUE),
+                annual_mean_climmean=mean(annual_mean,na.rm=TRUE),
+                annual_mean_climsd=sd(annual_mean,na.rm=TRUE),
+                magnitude_real_climmean=mean(magnitude_real,na.rm=TRUE),
+                magnitude_real_climsd=sd(magnitude_real,na.rm=TRUE),
+                t_duration_climmean=mean(t_duration,na.rm=TRUE),
+                t_duration_climsd=sd(t_duration,na.rm=TRUE),
+                t_start_climmean=mean(t_start,na.rm=TRUE),
+                t_start_climsd=sd(t_start,na.rm=TRUE)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(amplitude_real_sanom=(amplitude_real-amplitude_real_climmean)/amplitude_real_climsd,
+                annual_mean_sanom=(annual_mean-annual_mean_climmean)/annual_mean_climsd,
+                magnitude_real_sanom=(magnitude_real-magnitude_real_climmean)/magnitude_real_climsd,
+                t_duration_sanom=(t_duration-t_duration_climmean)/t_duration_climsd,
+                t_start_sanom=(t_start-t_start_climmean)/t_start_climsd) %>%
+  dplyr::mutate(anySAGTstdevnum = ifelse(is.finite(t_start_sanom),
+                                         abs(amplitude_real_sanom)>stdevnum | abs(annual_mean_sanom)>stdevnum | abs(magnitude_real_sanom)>stdevnum | abs(t_duration_sanom)>stdevnum | abs(t_start_sanom)>stdevnum,
+                                         abs(annual_mean_sanom)>stdevnum))
+bad_inds <- dfsa$anySAGTstdevnum
+bad_inds[!is.finite(bad_inds)] <- TRUE
+df[bad_inds,names(metrics)] <- NA
+
+# make sure lat/lon columns are in the correct format
+df <- df %>% dplyr::mutate(longitude=as.numeric(longitude),
+                           latitude=as.numeric(latitude))
+
 
 #**************************
 # get the dataset into from the server
