@@ -47,8 +47,8 @@ eco_indicators<-join_indicators |>
 val_col_list <- names(eco_indicators)[!(names(eco_indicators) %in% c("year", "region"))]
 
 # Create object with additional metadata
-eco_indicators<- ea_data(
-  data = eco_indicators,
+eco_indicators<- as_ea_data(
+  x = eco_indicators,
   value_col = val_col_list, 
   data_type = "ecological",
   region = "Maritimes",

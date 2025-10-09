@@ -5,7 +5,7 @@
 \alias{eco_indicators}
 \title{Ecological Indicators (ea_data)}
 \format{
-An \code{ea_data} object with two components:
+An \code{ea_data} object:
 \describe{
 \item{data}{A tibble with columns:
 \describe{
