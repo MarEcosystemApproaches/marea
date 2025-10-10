@@ -1,5 +1,5 @@
 ---
-title: "Fisheries Science Advisory Report four plot example"
+title: "Fisheries Science Advisory Report (FSAR) four panel plot example"
 author: "Jamie C. Tam"
 date: '`r Sys.Date()`'
 output: 
@@ -14,11 +14,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Using `marea` to develop four panel plots for Fisheries Science Advisory Reporting (FSAR)
+# Using `marea` to develop FSAR plots
 
 ```{r setup, echo = FALSE, warnings = FALSE, message = FALSE}
-library(tidyverse)
-library(marea)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+
 ```
 
 ## Introduction
@@ -33,6 +33,9 @@ Stock assessments are the scientific process of analyzing available data to eval
 Here we create some example FSAR data:
 
 ```{r}
+library(tidyverse)
+library(marea)
+
 set.seed(42) 
 
 years <- 1970:2025
@@ -81,9 +84,9 @@ fsar_fourplot_exdata <- data.frame(
 
 ```
 
-## Create `ea_data` from this dataset including metadata
+## Create `ea_data` object
 
-Using **ea_data** allows for storage of rich metadata alongside the timeseries dataset. Required metadata include: *x (data), value_col, data_type, location_descriptor, region, units, and source citation*. However, you can add additional metadata as desired.
+Using `ea_data` allows for storage of rich metadata alongside the time series dataset. Required metadata include: *x (data), value_col, data_type, location_descriptor, region, units, and source citation*. However, you can add additional metadata as desired.
 
 ```{r}
 fsar_example<-as_ea_data(
@@ -101,7 +104,7 @@ fsar_example<-as_ea_data(
 
 ## Make individual plots
 
-Individual plots can easily be constructed using `marea` plotting functions with varying style arguments. You can use @ operator to access the `ea_data` data slot and filter data using $ operator. This can be easily embedded in the plot function. Since the plots are `ggplot2` objects, extra layers can be added to customize the plots.
+Individual plots can easily be constructed using `marea` plotting functions with varying style arguments. You can use `@` operator to access the `ea_data` data slot and filter data using `$` operator. This can be easily embedded in the plot function. Since the plots are `ggplot2` objects, extra layers can be added to customize the plots.
 
 ```{r}
 # Fishing mortality
@@ -132,20 +135,17 @@ pabun<-plot(fsar_example[
 
 ```
 
-# Use `patchwork` to easily combine plots
+## Easily combine plots
 
-It is easy to make a four plot commonly used in FSARs:
+It is easy to make a four plot commonly used in FSARs using `patchwork`:
 
 ```{r}
 library(patchwork)
-# (pcatch+ pbiomass)/(pF + pabun)
+(pcatch+ pbiomass)/(pF + pabun)
 ```
 
-*Output:*
-<img src="vignettes/man/figures/FSAR_fourplot_example.png" width="70%" />
 
-
-## Learn More basics
+## Learn More Basics
 
 - The main [README](../README.html) has a quick start
 
@@ -155,7 +155,7 @@ library(patchwork)
 
 Please cite the package in your work. For citation text:
 
-```{r}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 citation("marea")
 ```
 
