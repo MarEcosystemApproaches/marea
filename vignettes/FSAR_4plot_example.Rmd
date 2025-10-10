@@ -1,5 +1,6 @@
 ---
 title: "Fisheries Science Advisory Report four plot example"
+author: "Jamie C. Tam"
 date: '`r Sys.Date()`'
 output: 
   html_document:
