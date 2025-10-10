@@ -259,4 +259,4 @@ Additional packages for specific datasets:
 
 ## Contact
 
-For questions about specific datasets, contact the data providers listed in the source citations. For general package questions, contact the package maintainers.
+For questions about specific datasets, contact the data providers listed in the source citations. For general package questions, contact the package maintainers by opening a github issue.
