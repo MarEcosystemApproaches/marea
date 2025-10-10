@@ -14,7 +14,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Using `marea` to develop four plots for Fisheries Science Advisory Reporting (FSAR)
+# Using `marea` to develop four panel plots for Fisheries Science Advisory Reporting (FSAR)
 
 ```{r setup, echo = FALSE, warnings = FALSE, message = FALSE}
 library(tidyverse)
@@ -30,7 +30,7 @@ Stock assessments are the scientific process of analyzing available data to eval
 
 ## Example of FSAR dataset
 
-Here we recreate some example FSAR data:
+Here we create some example FSAR data:
 
 ```{r}
 set.seed(42) 
@@ -81,20 +81,21 @@ fsar_fourplot_exdata <- data.frame(
 
 ```
 
-## Create `ea_data` from loaded data including metadata
+## Create `ea_data` from this dataset including metadata
 
-Using **ea_data** allows for storage of rich metadata alongside the timeseries dataset. 
+Using **ea_data** allows for storage of rich metadata alongside the timeseries dataset. Required metadata include: *x (data), value_col, data_type, location_descriptor, region, units, and source citation*. However, you can add additional metadata as desired.
 
 ```{r}
-fsar_example<-ea_data(
-  data=fsar_fourplot_exdata,
+fsar_example<-as_ea_data(
+  x=fsar_fourplot_exdata,
   value_col="value",
   data_type= "stock",
   location_descriptor = "NAFO divisions",
   region = "Maritimes",
   units="variable",
   source_citation = "DFO FSAR 2025 citation",
-  notes = "any caveats in this dataset"
+  assessment_lead = "Fishy McFishface",
+  notes = "any caveats in this dataset like missing years or changes to assessment models"
   )
 ```
 
@@ -133,7 +134,7 @@ pabun<-plot(fsar_example[
 
 # Use `patchwork` to easily combine plots
 
-It is easy to make a four plot commonly used in FSARs
+It is easy to make a four plot commonly used in FSARs:
 
 ```{r}
 library(patchwork)
@@ -144,7 +145,7 @@ library(patchwork)
 <img src="vignettes/man/figures/FSAR_fourplot_example.png" width="70%" />
 
 
-## Learn More
+## Learn More basics
 
 - The main [README](../README.html) has a quick start
 
