@@ -82,7 +82,9 @@ Suggests:
     testthat (>= 3.0.0),
     covr,
     pacea,
-    tidyverse
+    tidyverse,
+    patchwork,
+    here
 Remotes: 
     pbs-assess/pacea
 Encoding: UTF-8
