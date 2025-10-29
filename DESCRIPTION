@@ -88,8 +88,7 @@ Suggests:
 Remotes: 
     pbs-assess/pacea
 Encoding: UTF-8
-LazyData: true
-LazyDataCompression: xz
+LazyData: false
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr

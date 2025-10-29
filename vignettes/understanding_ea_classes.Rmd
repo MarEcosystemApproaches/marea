@@ -370,12 +370,7 @@ Using robust S4 classes brings multiple benefits:
 ## Learn More
 
 - The main [README](../README.html) has a quick start
-- To list all built-in datasets and their metadata:
-
-```{r}
-marea_metadata()
-```
-
+- Plotting EA classes vignette
 ---
 
 ## Citing `marea`

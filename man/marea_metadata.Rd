@@ -12,6 +12,3 @@ A data.frame with columns: Dataset, Region, TimeSpan, Source
 \description{
 Returns a summary data frame including region, time span, and source information for each dataset.
 }
-\examples{
-marea_metadata()
-}
