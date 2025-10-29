@@ -21,45 +21,6 @@ make_ea_index <- function(
   )
 }
 
-# ---- NAO ----
-remotes::install_github("casaultb/azmpdata")
-library(azmpdata)
-
-nao_new <- tibble(
-  year = azmpdata::Derived_Annual_Broadscale$year,
-  anomaly = azmpdata::Derived_Annual_Broadscale$north_atlantic_oscillation
-) %>%
-  filter(!is.na(anomaly))
-
-nao <- make_ea_index(
-  df = nao_new,
-  value_col = "anomaly",
-  data_type = "North Atlantic Oscillation Index",
-  region = "North Atlantic",
-  location = "Azores–Iceland SLP difference",
-  units = "",  # Standardized index
-  source = "NOAA NCEP via azmpdata; https://www.ncei.noaa.gov/access/monitoring/nao/"
-)
-usethis::use_data(nao, overwrite = TRUE)
-
-# ---- AZMP BOTTOM TEMPERATURE ----
-azmp_bottom_temperature_new <- tibble(
-  year   = azmpdata::Derived_Annual_Broadscale$year,
-  region = azmpdata::Derived_Annual_Broadscale$area,
-  mean   = azmpdata::Derived_Annual_Broadscale$temperature_at_sea_floor
-) %>%
-  filter(!is.na(mean))
-
-azmp_bottom_temperature <- make_ea_index(
-  df = azmp_bottom_temperature_new,
-  value_col = "mean",
-  data_type = "Bottom Temperature",
-  region = "Scotian Shelf (4X, 4V, 4W)",
-  location = "NAFO sea floor mean temperature",
-  units = "deg C",
-  source = "DFO Atlantic Zone Monitoring Program via azmpdata"
-)
-usethis::use_data(azmp_bottom_temperature, overwrite = TRUE)
 
 # ---- ONI ----
 download.file("https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",

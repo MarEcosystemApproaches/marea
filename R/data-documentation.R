@@ -155,8 +155,132 @@
 #' @docType data
 #' @name azmp_bottom_temperature
 #' @author Jaimie Harbin and Benoit Casault
-#' @source Generated from running `data-raw/coastwide-indices/coastwide-indices.R`
+#' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_bottom_temperature"
+
+#' AZMP Scotian Shelf Surface Temperature (ea_data)
+#' 
+#' Surface water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
+#' 
+#' @format An `ea_data` object:
+#' \describe{
+#'  \item{data}{A tibble with columns:
+#'  \itemize{
+#'    \item{\code{year}:} Numeric year
+#'    \item{\code{region}:} Character area name
+#'    \item{\code{mean_value}:} Numeric temperature at sea surface (°C)
+#'    }
+#'    }
+#'    \item{meta}{A named list, including:
+#'    \itemize{
+#'      \item{\code{data_type}:} "Surface Temperature"
+#'      \item{\code{region}:} "Scotian Shelf"
+#'      \item{\code{location_descriptor}:} "NAFO 4X-4W"
+#'      \item{\code{units}:} "°C"
+#'      \item{\code{species}:} \code{NA}
+#'      \item{\code{source_citation}:} "DFO AZMP, through azmpdata package https://github.com/casaultb/azmpdata/"
+#'      }
+#'      }
+#'      }
+#'      @docType data
+#'      @name azmp_surface_temperature
+#'      @author Emily O'Grady and Benoit Casault
+#'      @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
+"azmp_surface_temperature"
+
+#' AZMP Scotian Shelf SST from Satellite (ea_data)
+#' 
+#' Sea surface temperature (SST) from satellite data for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from satellite observations and are crucial for fisheries and climate analyses.
+#' @format An `ea_data` object:
+#' \describe{
+#' \item{data}{A tibble with columns:
+#' \itemize{
+#' \item{\code{year}:} Numeric year
+#' \item{\code{region}:} Character NAFO area name
+#' \item{\code{mean_value}:} Numeric sea surface temperature (°C)
+#' }
+#' }
+#' \item{meta}{A named list, including:
+#' \itemize{
+#' \item{\code{data_type}:} "Sea Surface Temperature"
+#' \item{\code{region}:} "Scotian Shelf"
+#' \item{\code{location_descriptor}:} "NAFO 4X-4W"
+#' \item{\code{units}:} "°C"
+#' \item{\code{species}:} \code{NA}
+#' \item{\code{source_citation}:} "DFO AZMP, through azmpdata package https://github.com/casaultb/azmpdata/"
+#' }
+#' }
+#' }
+#' 
+#' @docType data
+#' @name azmp_satellite_temperature
+#' 
+#' @author Emily O'Grady and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
+#' 
+"azmp_satellite_temperature"
+
+#' AZMP Scotian Shelf Stratification Index (ea_data)
+#' 
+#' Stratification index ( measured as the density difference between 0 and 50 metres) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
+#' 
+#' @format An `ea_data` object:
+#' \describe{
+#' \item{data}{A tibble with columns:
+#' \itemize{
+#' \item{\code{year}:} Numeric year
+#' \item{\code{region}:} Character NAFO area name
+#' \item{\code{mean_value}:} Numeric stratification index (kg/m^3)
+#' }
+#' }
+#' \item{meta}{A named list, including:
+#' \itemize{
+#' \item{\code{data_type}:} "Stratification Index"
+#' \item{\code{region}:} "Scotian Shelf"
+#' \item{\code{location_descriptor}:} "NAFO 4X-4W"
+#' \item{\code{units}:} "kg/m^3"
+#' \item{\code{species}:} \code{NA}
+#' \item{\code{source_citation}:} "DFO AZMP, through azmpdata package https://github.com/casaultb/azmpdata/"
+#' }
+#' }
+#' }
+#' @docType data
+#' @name azmp_stratification
+#' @author Emily O'Grady and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
+#' 
+"azmp_stratification"
+
+#' AZMP Surface Salinity (ea_data)
+#' 
+#' Surface salinity from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
+#' 
+#' @format An `ea_data` object:
+#' \describe{
+#' \item{data}{A tibble with columns:
+#' \itemize{
+#' \item{\code{year}:} Numeric year
+#' \item{\code{region}:} Character NAFO area name
+#' \item{\code{mean_value}:} Numeric surface salinity (psu)
+#' }
+#' }
+#' \item{meta}{A named list, including:
+#' \itemize{
+#' \item{\code{data_type}:} "Surface Salinity"
+#' \item{\code{region}:} "Scotian Shelf"
+#' \item{\code{location_descriptor}:} "NAFO 4X-4W"
+#' \item{\code{units}:} "psu"
+#' \item{\code{species}:} \code{NA}
+#' \item{\code{source_citation}:} "DFO AZMP, through azmpdata package https://github.com/casaultb/azmpdata/"
+#' }
+#' }
+#' }
+#' 
+#' @docType data
+#' @name azmp_salinity
+#' @author Emily O'Grady and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
+"azmp_salinity"
 
 
 #' Pacific Decadal Oscillation (PDO) Index (ea_data)
@@ -515,3 +639,5 @@
 #' @author marea/DFO
 #' @source SOPhyE group, DFO, see data-raw/satellite-ocean-colour/satellite_ocean_colour.R
 "satellite_ocean_colour"
+
+

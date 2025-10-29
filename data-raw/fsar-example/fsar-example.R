@@ -21,7 +21,7 @@ fsar_example<-ea_data(
   location_descriptor = "NAFO divisions",
   region = "Maritimes",
   units="variable",
-  source="DFO FSAR 2025 citation"
+  source_citation = "DFO FSAR 2025 citation"
   )
 
 #make plots

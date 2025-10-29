@@ -7,7 +7,20 @@
 \usage{
 plot(x, y, ...)
 
-\S4method{plot}{ea_data,missing}(x, style = c("default", "ribbon", "plain", "biomass", "anomaly"), ...)
+\S4method{plot}{ea_data,missing}(
+  x,
+  style = c("default", "ribbon", "plain", "biomass", "anomaly", "indicator",
+    "indicator_ref", "diversity", "temperature_regime", "nao_enhanced"),
+  reference_period = c(1991, 2020),
+  highlight_recent = TRUE,
+  show_trend = TRUE,
+  regime_threshold = 0.5,
+  mean_line_color = "red",
+  trend_line_color = "blue",
+  warm_color = "red",
+  cold_color = "blue",
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{ea_data} object.}
@@ -17,7 +30,30 @@ plot(x, y, ...)
 \item{...}{Additional arguments passed to the underlying geoms
 (\code{geom_line}, \code{geom_point}, \code{geom_ribbon}, \code{geom_col}, \code{geom_errorbar}).}
 
-\item{style}{Character; one of \code{"default"}, \code{"ribbon"}, \code{"plain"}, \code{"biomass"}, or \code{"anomaly"}.}
+\item{style}{Character; One of: \code{"default"}, \code{"ribbon"},
+\code{"plain"}, \code{"biomass"}, \code{"anomaly"}, \code{"indicator"}, \code{"indicator_ref"},
+\code{"diversity"}, \code{"temperature_regime"}, \code{"nao_enhanced"}.}
+
+\item{reference_period}{Numeric vector of length 2. Years defining reference
+period for standardized anomalies. Default is c(1991, 2020) for climate
+consistency. Used with \code{"indicator_ref"} and \code{"temperature_regime"} styles.}
+
+\item{highlight_recent}{Logical. Whether to highlight the most recent 5 years.
+Default is TRUE for indicator styles.}
+
+\item{show_trend}{Logical. Whether to add trend line and statistics. Default
+is TRUE for indicator styles.}
+
+\item{regime_threshold}{Numeric. Threshold for regime change detection in
+standardized units. Default is 0.5 standard deviations.}
+
+\item{mean_line_color}{Color for mean reference line. Default is "red".}
+
+\item{trend_line_color}{Color for trend line. Default is "blue".}
+
+\item{warm_color}{Color for warm/positive anomalies. Default is "red".}
+
+\item{cold_color}{Color for cold/negative anomalies. Default is "blue".}
 }
 \value{
 A \code{ggplot} object.
@@ -32,12 +68,22 @@ The available styles are:
 \itemize{
 \item \code{"default"}: A simple line plot with points.
 \item \code{"ribbon"}: A line plot with points and a shaded confidence interval
-ribbon (requires \code{low} and \code{high} columns in the data).
+ribbon (requires \code{lower} and \code{upper} columns in the data).
 \item \code{"plain"}: A line plot without points or any other embellishments.
 \item \code{"biomass"}: A style that mimics \code{pacea} biomass plots, featuring a bold
 line, points, and an optional uncertainty ribbon.
 \item \code{"anomaly"}: A bar plot where positive values are colored red and
 negative values are blue, suitable for anomaly time series.
+\item \code{"indicator"}: Ecosystem indicator style with mean reference line and
+trend analysis. Shows long-term mean and recent 5-year period highlighting.
+\item \code{"indicator_ref"}: Indicator style with 1991-2020 climate reference period.
+Shows standardized anomalies relative to climate normal period.
+\item \code{"diversity"}: Specialized style for diversity indices with regime
+change detection and period comparisons.
+\item \code{"temperature_regime"}: Temperature anomaly visualization with regime
+shift detection, warm/cold period highlighting, and trend analysis.
+\item \code{"nao_enhanced"}: Enhanced NAO visualization with phase indicators,
+regime periods, and standardized anomaly coloring.
 }
 }
 \examples{
@@ -46,8 +92,8 @@ df <- data.frame(
   year = 2000:2010,
   biomass_t = rlnorm(11, meanlog = 5, sdlog = 0.3)
 )
-df$low <- df$biomass_t * 0.8
-df$high <- df$biomass_t * 1.2
+df$lower <- df$biomass_t * 0.8
+df$upper <- df$biomass_t * 1.2
 
 # Create an ea_data object
 biomass_obj <- ea_data(df,
