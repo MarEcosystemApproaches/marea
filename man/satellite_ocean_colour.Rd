@@ -7,11 +7,11 @@
 \format{
 An \code{ea_spatial} (stars) object:
 \describe{
-\item{t_start_value}{Day of year of the start of the spring phytoplankton bloom (day of year)}\
-\item{t_duration_value}{Duration of the spring phytoplankton bloom (days)}\
-\item{amplitude_real_value}{Maximum concentration during the spring phytoplankton bloom period (mg/m3)}\
-\item{magnitude_real_value}{Total chlorophyll-a produced during the spring phytoplankton bloom period (days\emph{mg/m3)}\
-\item{annual_mean_value}{Average chlorophyll-a over the year (mg/m3)}\
+\item{t_start_value}{Day of year of the start of the spring phytoplankton bloom (day of year)}
+\item{t_duration_value}{Duration of the spring phytoplankton bloom (days)}
+\item{amplitude_real_value}{Maximum concentration during the spring phytoplankton bloom period (mg/m3)}
+\item{magnitude_real_value}{Total chlorophyll-a produced during the spring phytoplankton bloom period (days\emph{mg/m3)}
+\item{annual_mean_value}{Average chlorophyll-a over the year (mg/m3)}
 }
 \strong{Metadata (\code{attr(obj, "meta")})}:
 \describe{
@@ -31,7 +31,10 @@ SOPhyE group, DFO, see data-raw/satellite-ocean-colour/satellite_ocean_colour.R
 satellite_ocean_colour
 }
 \description{
-Annual spring bloom metrics and average chlorophyll-a derived from the OC-CCI POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data(). NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from 4.64 km to 0.1 degree resolution.
+Annual spring bloom metrics and average chlorophyll-a derived from the OC-CCI
+POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data().
+NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from
+4.64 km to 0.1 degree resolution.
 }
 \author{
 marea/DFO
