@@ -624,7 +624,7 @@
 #'   \item{t_start_value}{Day of year of the start of the spring phytoplankton bloom (day of year)}
 #'   \item{t_duration_value}{Duration of the spring phytoplankton bloom (days)}
 #'   \item{amplitude_real_value}{Maximum concentration during the spring phytoplankton bloom period (mg/m3)}
-#'   \item{magnitude_real_value}{Total chlorophyll-a produced during the spring phytoplankton bloom period (days*mg/m3)}
+#'   \item{magnitude_real_value}{Total chlorophyll-a produced during the spring phytoplankton bloom period (days x mg/m3)}
 #'   \item{annual_mean_value}{Average chlorophyll-a over the year (mg/m3)}
 #' }
 #' \strong{Metadata (\code{attr(obj, "meta")})}:
