@@ -14,6 +14,9 @@
 #'     line, points, and an optional uncertainty ribbon.
 #'   * `"anomaly"`: A bar plot where positive values are colored red and
 #'     negative values are blue, suitable for anomaly time series.
+#'   * `"histogram"`: A simple bar plot showing values by year. Creates a 
+#'     single-layer plot that can be easily customized with additional geoms
+#'     like trend lines or reference lines.
 #'   * `"indicator"`: Ecosystem indicator style with mean reference line and 
 #'     trend analysis. Shows long-term mean and recent 5-year period highlighting.
 #'   * `"indicator_ref"`: Indicator style with 1991-2020 climate reference period. 
@@ -28,8 +31,8 @@
 #' @param x An `ea_data` object.
 #' @param y Ignored. Included for consistency with the generic `plot` method.
 #' @param style Character; One of: `"default"`, `"ribbon"`, 
-#'   `"plain"`, `"biomass"`, `"anomaly"`, `"indicator"`, `"indicator_ref"`, 
-#'   `"diversity"`, `"temperature_regime"`, `"nao_enhanced"`.
+#'   `"plain"`, `"biomass"`, `"anomaly"`, `"histogram"`, `"indicator"`, 
+#'   `"indicator_ref"`, `"diversity"`, `"temperature_regime"`, `"nao_enhanced"`.
 #' @param reference_period Numeric vector of length 2. Years defining reference 
 #'   period for standardized anomalies. Default is c(1991, 2020) for climate 
 #'   consistency. Used with `"indicator_ref"` and `"temperature_regime"` styles.
@@ -73,6 +76,11 @@
 #' plot(biomass_obj, style = "default")
 #' plot(biomass_obj, style = "ribbon")
 #' plot(biomass_obj, style = "biomass")
+#' plot(biomass_obj, style = "histogram")
+#' 
+#' # Histogram with custom additions
+#' plot(biomass_obj, style = "histogram") +
+#'   ggplot2::geom_smooth(method = "lm", se = FALSE, color = "red")
 #' 
 setGeneric("plot")
 
@@ -81,7 +89,7 @@ setGeneric("plot")
 setMethod("plot", signature(x = "ea_data", y = "missing"),
           function(x,
                    style = c("default", "ribbon", "plain", "biomass", "anomaly",
-                             "indicator", "indicator_ref", "diversity", 
+                             "histogram", "indicator", "indicator_ref", "diversity", 
                              "temperature_regime", "nao_enhanced"),
                    reference_period = c(1991, 2020),
                    highlight_recent = TRUE,
@@ -98,26 +106,22 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
             df <- x[["data"]]
             m <- x[["meta"]]
             
-            # TODO make a reasonable default for data with multiple value columns
-            # (plot first value column)
-            #rename to value so that plotting code can call it easily
+            # Rename value column
+            val_ind <- grep(names(df), pattern = '_value$')
             
-            # # gather value columns
-             val_ind <- grep(names(df), pattern = '_value$')
-
-             if (length(val_ind) == 0) {
-               stop("No value column found in data. Value column must end with '_value'.", call. = FALSE)
-             } else if (length(val_ind) > 1) {
-               warning("Multiple value columns found. Using the first one: ", names(df)[val_ind[1]], call. = FALSE)
-               df <- df %>%
-                 dplyr::rename(value = dplyr::all_of(names(df)[val_ind[1]]))
-             } else {
-               df <- df %>%
-                 dplyr::rename(value = dplyr::all_of(names(df)[val_ind]))
-             }
-            # 
+            if (length(val_ind) == 0) {
+              stop("No value column found in data. Value column must end with '_value'.", call. = FALSE)
+            } else if (length(val_ind) > 1) {
+              warning("Multiple value columns found. Using the first one: ", names(df)[val_ind[1]], call. = FALSE)
+              df <- df %>%
+                dplyr::rename(value = dplyr::all_of(names(df)[val_ind[1]]))
+            } else {
+              df <- df %>%
+                dplyr::rename(value = dplyr::all_of(names(df)[val_ind]))
+            }
+            
             # Base ggplot mapping
-            p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value)) # TODO update to plot val col determined above either first or only
+            p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value))
             labs <- list(
               title    = paste(m$data_type, "for", m$region),
               subtitle = paste("Source:", m$source_citation),
@@ -177,7 +181,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                     ggplot2::geom_line(ggplot2::aes(y = .data$upper),
                                        color = "blue", linetype = "dashed", linewidth = 0.8, ...)
                 }
-                p # Return the modified plot
+                p
               },
               
               anomaly = {
@@ -194,7 +198,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                   ggplot2::geom_col(ggplot2::aes(fill = df$bar_color), ...) +
                   ggplot2::scale_fill_manual(
                     values = c("positive" = "red", "negative" = "blue"),
-                    guide = "none" # Hide legend
+                    guide = "none"
                   ) +
                   ggplot2::geom_hline(yintercept = 0, color = "black", linewidth = 0.5)
                 
@@ -206,7 +210,15 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                       width = 0.3, color = "black", linewidth = 0.5, ...
                     )
                 }
-                p # Return the modified plot
+                p
+              },
+              
+              histogram = {
+                # Simple histogram/bar plot with year on x-axis
+                # Uses fill = "steelblue" as default, can be overridden via ...
+                # Creates a clean, single-layer base that users can add to
+                p +
+                  ggplot2::geom_col(fill = "steelblue", color = NA, width = 0.8, ...)
               },
               
               # MAReco-inspired styles
@@ -380,9 +392,8 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
             # Apply labels and theme to the final plot
             p + do.call(ggplot2::labs, labs) + ggplot2::theme_bw()
           }
-              
-            )
-            
+)
+
 # Helper functions for MAReco-style calculations
 #' Calculate indicator statistics for reference periods
 #' @noRd
