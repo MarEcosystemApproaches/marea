@@ -40,7 +40,7 @@ period for standardized anomalies. Default is c(1991, 2020) for climate
 consistency. Used with \code{"indicator_ref"} and \code{"temperature_regime"} styles.}
 
 \item{sd_threshold}{Numeric. Number of standard deviations for threshold lines
-and point classification in indicator styles. Default is 1 (±1 SD). Use 0.5
+and point classification in indicator styles. Default is 1 (+/-1 SD). Use 0.5
 for tighter bounds or larger values for wider bounds.}
 
 \item{highlight_recent}{Logical. Whether to highlight the most recent 5 years.

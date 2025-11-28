@@ -37,8 +37,8 @@
 #'   period for standardized anomalies. Default is c(1991, 2020) for climate 
 #'   consistency. Used with `"indicator_ref"` and `"temperature_regime"` styles.
 #' @param sd_threshold Numeric. Number of standard deviations for threshold lines
-#'   and point classification in indicator styles. Default is 1 (±1 SD). Use 0.5 
-#'   for tighter bounds or larger values for wider bounds.
+#'  and point classification in indicator styles. Default is 1 (+/-1 SD). Use 0.5
+#'  for tighter bounds or larger values for wider bounds.
 #' @param highlight_recent Logical. Whether to highlight the most recent 5 years.
 #'   Default is TRUE for indicator styles.
 #' @param show_trend Logical. Whether to add trend line and statistics. Default
@@ -252,7 +252,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                   scale_color_manual(
                     values = c("above_sd" = "orange", "below_sd" = "blue", "within_sd" = "black"),
                     labels = c(paste0("Below -", sd_threshold, " SD"), 
-                               paste0("Within ±", sd_threshold, " SD"), 
+                               paste0("Within +/-", sd_threshold, " SD"), 
                                paste0("Above +", sd_threshold, " SD")),
                     name = "Status",
                     na.translate = FALSE
@@ -325,13 +325,13 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                                       fill = "purple2", alpha = 0.2)
                 }
                 
-                # Add colored points based on whether they're outside ±1 SD
+            # Add colored points based on whether they're outside 1 SD
                 p <- p +
                   ggplot2::geom_point(ggplot2::aes(color = .data$point_color), size = 2.5) +
                   ggplot2::scale_color_manual(
                     values = c("above_sd" = "orange", "below_sd" = "blue", "within_sd" = "black"),
-                    labels = c(paste0("Below -", sd_threshold, " SD"), 
-                               paste0("Within ±", sd_threshold, " SD"), 
+                    labels = c(paste0("Below -", sd_threshold, " SD"),
+                               paste0("Within +/-", sd_threshold, " SD"),
                                paste0("Above +", sd_threshold, " SD")),
                     name = "Status",
                     na.translate = FALSE
@@ -345,7 +345,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 
                 # Update labels
                 labs$subtitle <- paste0(labs$subtitle, 
-                                        sprintf(" | Reference period (%d-%d): %.2f ± %.2f %s", 
+                                        sprintf(" | Reference period (%d-%d): %.2f +/- %.2f %s",
                                                 reference_period[1], reference_period[2],
                                                 ref_mean, ref_sd, m$units))
                 p
@@ -409,7 +409,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 }
                 
                 labs$subtitle <- paste0(labs$subtitle, 
-                                        sprintf(" | Mean: %.2f°C, Regime threshold: ±%.1f SD", 
+                                        sprintf(" | Mean: %.2f C, Regime threshold: +/-%.1f SD",
                                                 temp_mean, regime_threshold))
                 p
               },
