@@ -12,6 +12,7 @@ plot(x, y, ...)
   style = c("default", "ribbon", "plain", "biomass", "anomaly", "histogram", "indicator",
     "indicator_ref", "diversity", "temperature_regime", "nao_enhanced"),
   reference_period = c(1991, 2020),
+  sd_threshold = 1,
   highlight_recent = TRUE,
   show_trend = TRUE,
   regime_threshold = 0.5,
@@ -37,6 +38,10 @@ plot(x, y, ...)
 \item{reference_period}{Numeric vector of length 2. Years defining reference
 period for standardized anomalies. Default is c(1991, 2020) for climate
 consistency. Used with \code{"indicator_ref"} and \code{"temperature_regime"} styles.}
+
+\item{sd_threshold}{Numeric. Number of standard deviations for threshold lines
+and point classification in indicator styles. Default is 1 (±1 SD). Use 0.5
+for tighter bounds or larger values for wider bounds.}
 
 \item{highlight_recent}{Logical. Whether to highlight the most recent 5 years.
 Default is TRUE for indicator styles.}
