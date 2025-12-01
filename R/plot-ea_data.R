@@ -80,14 +80,7 @@ setGeneric("plot")
 #' @export
 setMethod("plot", signature(x = "ea_data", y = "missing"),
           function(x,
-<<<<<<< HEAD
-                   style = c("default",
-                             "ribbon",
-                             "plain",
-                             "biomass",
-                             "anomaly",
-                             "histogram"),
-=======
+
                    style = c("default", "ribbon", "plain", "biomass", "anomaly",
                              "indicator", "indicator_ref", "diversity", 
                              "temperature_regime", "nao_enhanced"),
@@ -99,7 +92,6 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                    trend_line_color = "blue", 
                    warm_color = "red",
                    cold_color = "blue",
->>>>>>> 2fed17fc279937dde6d9dabc9c9efab5e7c34540
                    ...) {
             style <- match.arg(style)
             
@@ -217,23 +209,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 }
                 p # Return the modified plot
               },
-<<<<<<< HEAD
-              ##ADDED Histogram here TODO test
-              histogram = {
-                p <- p +
-                  ggplot2::ggplot(df, ggplot2::aes_string(x = value_col)) +
-                  ggplot2::geom_histogram(binwidth = binwidth, aes(fill = ..x.. > mean_val), color = "grey", ...) +
-                  ggplot2::scale_fill_manual(
-                    values = c("TRUE" = "red", "FALSE" = "blue"),
-                    guide = "none" # Hide legend
-                  ) +
-                  ggplot2::geom_vline(xintercept = mean_val, color = "black", linewidth = 0.5, linetype = "dashed")
-                
-                p # Return the plot object
-              }
-            )
-            # Apply labs and theme to the final plot
-=======
+
               
               # MAReco-inspired styles
               indicator = {
@@ -404,7 +380,6 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
             )
             
             # Apply labels and theme to the final plot
->>>>>>> 2fed17fc279937dde6d9dabc9c9efab5e7c34540
             p + do.call(ggplot2::labs, labs) + ggplot2::theme_bw()
           }
               

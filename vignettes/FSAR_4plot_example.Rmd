@@ -68,13 +68,13 @@ fsar_fourplot_exdata <- data.frame(
     rep("RVpred", length(years))
   ),
   value = c(catch_value, biomass_value, fishing_value, recruitment_value),
-  low   = c(
+  lower   = c(
     rep(NA, length(years)),
     biomass_low, 
     fishing_low, 
     recruitment_low
   ),
-  high  = c(
+  upper  = c(
     rep(NA, length(years)),
     biomass_high,
     fishing_high,
