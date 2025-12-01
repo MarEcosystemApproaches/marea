@@ -7,7 +7,11 @@
 \usage{
 plot(x, y, ...)
 
-\S4method{plot}{ea_data,missing}(x, style = c("default", "ribbon", "plain", "biomass", "anomaly"), ...)
+\S4method{plot}{ea_data,missing}(
+  x,
+  style = c("default", "ribbon", "plain", "biomass", "anomaly", "histogram"),
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{ea_data} object.}
@@ -17,7 +21,7 @@ plot(x, y, ...)
 \item{...}{Additional arguments passed to the underlying geoms
 (\code{geom_line}, \code{geom_point}, \code{geom_ribbon}, \code{geom_col}, \code{geom_errorbar}).}
 
-\item{style}{Character; one of \code{"default"}, \code{"ribbon"}, \code{"plain"}, \code{"biomass"}, or \code{"anomaly"}.}
+\item{style}{Character; one of \code{"default"}, \code{"ribbon"}, \code{"plain"}, \code{"biomass"},\code{"histogram"}, or \code{"anomaly"}.}
 }
 \value{
 A \code{ggplot} object.
@@ -38,6 +42,7 @@ ribbon (requires \code{low} and \code{high} columns in the data).
 line, points, and an optional uncertainty ribbon.
 \item \code{"anomaly"}: A bar plot where positive values are colored red and
 negative values are blue, suitable for anomaly time series.
+\item \code{"histogram"}: A simple bar plot.
 }
 }
 \examples{

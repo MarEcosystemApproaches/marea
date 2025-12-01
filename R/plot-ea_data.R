@@ -14,10 +14,11 @@
 #'     line, points, and an optional uncertainty ribbon.
 #'   * `"anomaly"`: A bar plot where positive values are colored red and
 #'     negative values are blue, suitable for anomaly time series.
+#'   * `"histogram"`: A simple bar plot.
 #'
 #' @param x An `ea_data` object.
 #' @param y Ignored. Included for consistency with the generic `plot` method.
-#' @param style Character; one of `"default"`, `"ribbon"`, `"plain"`, `"biomass"`, or `"anomaly"`.
+#' @param style Character; one of `"default"`, `"ribbon"`, `"plain"`, `"biomass"`,`"histogram"`, or `"anomaly"`.
 #' @param ... Additional arguments passed to the underlying geoms
 #'   (`geom_line`, `geom_point`, `geom_ribbon`, `geom_col`, `geom_errorbar`).
 #'
@@ -59,7 +60,8 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                              "ribbon",
                              "plain",
                              "biomass",
-                             "anomaly"),
+                             "anomaly",
+                             "histogram"),
                    ...) {
             style <- match.arg(style)
             
@@ -176,9 +178,21 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                     )
                 }
                 p # Return the modified plot
+              },
+              ##ADDED Histogram here TODO test
+              histogram = {
+                p <- p +
+                  ggplot2::ggplot(df, ggplot2::aes_string(x = value_col)) +
+                  ggplot2::geom_histogram(binwidth = binwidth, aes(fill = ..x.. > mean_val), color = "grey", ...) +
+                  ggplot2::scale_fill_manual(
+                    values = c("TRUE" = "red", "FALSE" = "blue"),
+                    guide = "none" # Hide legend
+                  ) +
+                  ggplot2::geom_vline(xintercept = mean_val, color = "black", linewidth = 0.5, linetype = "dashed")
+                
+                p # Return the plot object
               }
             )
-            
             # Apply labs and theme to the final plot
             p + do.call(ggplot2::labs, labs) + ggplot2::theme_bw()
           })

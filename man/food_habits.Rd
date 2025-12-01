@@ -5,7 +5,7 @@
 \alias{food_habits}
 \title{Food Habits}
 \format{
-A tibble/data.frame with columns:
+An \code{ea_data} object:
 \describe{
 \item{data}{Tibble:
 \describe{
