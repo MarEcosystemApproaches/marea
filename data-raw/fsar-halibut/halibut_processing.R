@@ -3,6 +3,7 @@ HalFSAR_raw<- readRDS("R:/<wherever Jamie put the file>/HalFSAR.rds")
 library(dplyr)
 library(tidyr)
 library(stringr)
+library(ggplot2)
 
 bases_with_bounds <- c("HSpred", "HSproj", "Ut", "Mt", "RVpred")
 
@@ -36,3 +37,10 @@ fsar_halibut<-ea_data(
   units="variable")
 
 usethis::use_data(fsar_halibut)
+
+plot(fsar_halibut[fsar_halibut@data$panel.category=="Fishing" & fsar_halibut@data$ts.name=="Mt"], style="ribbon")   +   labs(title="Fishing:Mt")
+plot(fsar_halibut[fsar_halibut@data$panel.category=="Fishing" & fsar_halibut@data$ts.name=="Ut"], style="ribbon")   +   labs(title="Fishing:Ut")
+plot(fsar_halibut[fsar_halibut@data$panel.category=="Biomass" & fsar_halibut@data$ts.name=="HSpred"], style="ribbon")   +   labs(title="Biomass:HSpred")
+plot(fsar_halibut[fsar_halibut@data$panel.category=="Biomass" & fsar_halibut@data$ts.name=="HSproj"], style="ribbon")   +   labs(title="Biomass:HSProj")
+plot(fsar_halibut[fsar_halibut@data$panel.category=="Recruitment" & fsar_halibut@data$ts.name=="RVpred"], style="ribbon")   +   labs(title="Recruitment:RVpred")
+
