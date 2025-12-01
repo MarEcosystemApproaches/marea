@@ -64,9 +64,10 @@ plot(nao, style = "default")
 ```
 ### Ribbon Style
 
-Shows uncertainty bounds (requires low and high columns):
+Shows uncertainty bounds (requires lower and upper columns):
 
 ```{r}
+data("grey_seals")
 plot(grey_seals, style = "ribbon")
 ```
 
@@ -116,6 +117,21 @@ p +
   theme_minimal()
 ```
 
+# Working with subset of time series data
+
+```{r, eval = FALSE}
+# Start with ea_data object
+marea::azmp_bottom_temperature #this data contains time series bottom temperature for multiple regions
+
+# filter bottom temperature for one region
+bottom_temp_cs <- azmp_bottom_temperature[azmp_bottom_temperature@data$region == 'Cabot Strait']
+
+# Add custom elements
+plot(bottom_temp_cs) +
+  labs(title="Bottom Temperature for the Cabot Strait")
+
+```
+
 # Working with Multiple Variables
 
 Compare different indices:
@@ -126,8 +142,8 @@ data(nao)
 data(oni)
 
 # Create comparison plot
-nao_recent <- nao@data[nao@data$year >= 2000, ]
-oni_recent <- oni@data[oni@data$year >= 2000 & oni@data$month == 1, ]  # January only
+nao_recent <- nao@data[nao@data$year >= 2000,]
+oni_recent <- oni@data[oni@data$year >= 2000 & oni@data$month == 1,]  # January only
 
 # Combine data
 combined_data <- data.frame(
@@ -300,6 +316,40 @@ if (exists("azmp_bottom_temperature")) {
 par(mfrow = c(1, 1))
 ```
 
+You can also use patchwork:
+
+```{r, eval = FALSE}
+
+# Panel 1: NAO
+p1<-plot(nao)+
+  labs(title="NAO")+
+    ylab("NAO")
+
+# Panel 2: Grey Seals
+p2<-plot(grey_seals)+
+  labs(title="Grey seals")+
+       ylab ("abundance")
+
+# Panel 3: ONI (subset)
+oni_subset <- oni[oni@data$month == 1]  # January only
+p3<-plot(oni_subset)+
+  labs(title="ONI")+
+       ylab ("ONI")
+
+# Panel 4: Bottom Temperature
+bottom_temp_eb <- azmp_bottom_temperature[azmp_bottom_temperature@data$region == 'Emerald Basin']
+p4<-plot(bottom_temp_eb)+
+  labs(title="Emerald Basin")+
+  ylab("bottom temp (degC)")
+
+# Reset to single panel
+require(patchwork)
+
+(p1+p2)/(p3+p4)
+
+```
+
+
 # Advanced Customization
 
 Since our ea class objectse are consistent in their structure and naming, 
@@ -362,7 +412,7 @@ Display and customize uncertainty bounds:
 p <- plot(grey_seals, style = "default")
 
 p + 
-  geom_ribbon(aes(ymin = low, ymax = high), alpha = 0.3, fill = "lightblue") +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.3, fill = "lightblue") +
   geom_line( color = "darkblue") +
   geom_point( color = "darkblue") +
   labs(
@@ -456,12 +506,7 @@ plot(nao) + my_theme
 
 # Getting Help
 
-## Available datasets
 
-```{r}
-# See all available datasets
-knitr::kable(marea_metadata())
-```
 
 ## Plot Method Documentation
 

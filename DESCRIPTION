@@ -57,16 +57,21 @@ Depends:
 Imports:
     dplyr (>= 1.0.0),
     lubridate (>= 1.8.0),
-    pacea (>= 0.1.0),
     reticulate (>= 1.20),
     stats,
     utils,
     magrittr,
     tibble,
-    vctrs,
     ggplot2 (>= 3.3.0),
     sf,
-    tidyverse
+    akima,
+    maps,
+    pals,
+    rnaturalearth,
+    stars,
+    terra,
+    tidyterra,
+    methods
 Suggests:
     devtools,
     doParallel,
@@ -75,12 +80,13 @@ Suggests:
     raster,
     rmarkdown,
     testthat (>= 3.0.0),
-    covr
+    covr,
+    pacea,
+    tidyverse
 Remotes: 
     pbs-assess/pacea
 Encoding: UTF-8
-LazyData: true
-LazyDataCompression: xz
+LazyData: false
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr

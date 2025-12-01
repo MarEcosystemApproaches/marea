@@ -14,7 +14,7 @@ myint_ds <- "cmems_mod_glo_phy_myint_0.083deg_P1M-m"
 lonmin <- -67.74250; lonmax <- -54.90132
 latmin <- 40.04343;  latmax <- 47.83333
 
-start10 <- Sys.Date() - years(5)
+start10 <- Sys.Date() - years(10)
 end10   <- Sys.Date()
 
 reticulate::use_virtualenv("CopernicusMarine", required = TRUE)

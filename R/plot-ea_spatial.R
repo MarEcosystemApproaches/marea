@@ -56,9 +56,15 @@ setMethod("plot", signature(x = "ea_spatial", y = "missing"),
             
             # --- Data validation and setup ---
             if (is.null(df)) stop("The data slot of the 'ea_spatial' object is empty.", call. = FALSE)
-            
+            if (missing(style)) stop("Must provide style argument!", call. = FALSE)
             # Get data extent for coastline cropping
-            data_bbox <- sf::st_bbox(df)
+            if (inherits(df, "stars")) {
+              df <- prepare_stars_data(df)
+              # Get bbox differently for stars
+              data_bbox <- sf::st_bbox(sf::st_as_sf(df, as_points = FALSE))
+            } else {
+              data_bbox <- sf::st_bbox(df)
+            }
             
             # Get coastline data if requested
             coastline_data <- NULL
@@ -71,8 +77,11 @@ setMethod("plot", signature(x = "ea_spatial", y = "missing"),
             }
             
             # Base plot
-            p <- ggplot2::ggplot(df)
-            
+            if (inherits(df, "stars")) {
+              p <- ggplot2::ggplot()  # Empty ggplot for stars
+            } else {
+              p <- ggplot2::ggplot(df)  # Normal ggplot for sf/data.frames
+            }
             # --- Apply style-specific plotting ---
             p <- switch(
               style,
@@ -594,3 +603,15 @@ add_climatology_contours <- function(p, contour.dat, contour_type) {
   return(p)
 }
 
+# Helper function to prepare stars data for plotting
+prepare_stars_data <- function(stars_obj) {
+  # Get the first attribute name if no 'value' attribute exists
+  attr_names <- names(stars_obj)
+  
+  if (!"value" %in% attr_names) {
+    # Rename first attribute to 'value' for consistency
+    names(stars_obj)[1] <- "value"
+  }
+  
+  return(stars_obj)
+}

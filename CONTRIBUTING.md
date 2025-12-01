@@ -20,15 +20,14 @@
 
 1. Push to your development branch
 2. Ensure GitHub Actions pass
-3. Merge into main when ready
+3. Merge into main when ready (Please request review from @jamiectam)
 
 ### Coding Standards
 
 - Use `snake_case` for functions and variables
 - Document all exported functions
 - Include examples in documentation
-- Add tests for new functionality
-- Maintain >80% code coverage
+- Add tests for new functionality in testthat structure
 
 ### Git Branching Strategy
 

@@ -70,19 +70,20 @@ ea.print(grey_seals)
 
     ## --- Ecosystem Approach (EA) Data Object --- 
     ## Class:  ea_data 
-    ## Data Type:  Estimated abundance (number of seals, 1000s) 
-    ## Location:    ( Maritimes  Region ) 
+    ## Data Type:  Grey Seal Abundance 
+    ## Species:   grey seal 
+    ## Location:    ( Scotian Shelf  Region ) 
     ## Time Range:   1960  -  2021 
-    ## Units:  Not specified 
+    ## Units:  number of seals 
     ## --------------------------------------------
     ## Data Preview:
-    ##   year      low    value     high
-    ## 1 1960 1.652570 1.860824 2.396134
-    ## 2 1961 2.032521 2.263192 2.809171
-    ## 3 1962 2.407304 2.659018 3.214911
-    ## 4 1963 2.700793 2.972982 3.541202
-    ## 5 1964 2.785795 3.088971 3.684344
-    ## 6 1965 3.126289 3.449040 4.053713
+    ##   year      low median_value     high
+    ## 1 1960 1.652570     1.860824 2.396134
+    ## 2 1961 2.032521     2.263192 2.809171
+    ## 3 1962 2.407304     2.659018 3.214911
+    ## 4 1963 2.700793     2.972982 3.541202
+    ## 5 1964 2.785795     3.088971 3.684344
+    ## 6 1965 3.126289     3.449040 4.053713
 
 ``` r
 # 3. Create a simple plot
@@ -118,21 +119,23 @@ library(knitr)
 kable(marea_metadata())
 ```
 
-| Dataset                   | Region                      | TimeSpan  | Source                                                                                           |
-|:--------------------------|:----------------------------|:----------|:-------------------------------------------------------------------------------------------------|
-| amo                       | Northern Hemisphere (0-60N) | 1854-2025 | NOAA , <https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat>                 |
-| ao                        | Northern Hemisphere         | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/>                 |
-| azmp_bottom_temperature   | Scotian Shelf (4X, 4V, 4W)  | 1950-2024 | DFO Atlantic Zone Monitoring Program via azmpdata                                                |
-| food_habits               | Not specified               | 1995-2016 | pacea object                                                                                     |
-| glorys_bottom_temperature | Northwest Atlantic          | Unknown   | CMEMS Global Ocean Physics Reanalysis                                                            |
-| grey_seals                | Maritimes                   | 1960-2021 | No citation provided                                                                             |
-| grey_seals_2021           | Maritimes                   | 1960-2021 | No citation provided                                                                             |
-| mei                       | Equatorial Pacific          | 1979-2025 | NOAA ESRL/PSL, <https://psl.noaa.gov/enso/mei/>                                                  |
-| nao                       | North Atlantic              | 1951-2024 | NOAA NCEP via azmpdata; <https://www.ncei.noaa.gov/access/monitoring/nao/>                       |
-| npgo                      | North Pacific Gyre          | 1950-2025 | Di Lorenzo et al., <http://www.o3d.org/npgo/>                                                    |
-| oni                       | Niño 3.4 Region (Pacific)   | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml> |
-| pdo                       | North Pacific               | 1854-2025 | NOAA ERSST, <https://www.ncei.noaa.gov/access/monitoring/pdo/>                                   |
-| soi                       | Equatorial Pacific          | 1951-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/data/indices/soi>                                       |
+| Dataset | Region | TimeSpan | Source |
+|:---|:---|:---|:---|
+| amo | Northern Hemisphere (0-60N) | 1854-2025 | NOAA , <https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat> |
+| ao | Northern Hemisphere | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/> |
+| azmp_bottom_temperature | Scotian Shelf (4X, 4V, 4W) | 1950-2024 | DFO Atlantic Zone Monitoring Program via azmpdata |
+| coastline | Unknown | Unknown | Unknown |
+| eco_indicators | Maritimes | 1970-2022 | Bundy et al. 2017 |
+| food_habits | Not specified | 1995-2016 | pacea object |
+| glorys_bottom_temperature | Northwest Atlantic | Unknown | CMEMS Global Ocean Physics Reanalysis |
+| grey_seals | Scotian Shelf | 1960-2021 | den Heyer, C. E., Mosnier, A., Stenson, G. B., Lidgard, D. C., Bowen, W. D., & Hammill, M. O. (2024). Grey seal pup production in Canada (DFO Can. Sci. Advis. Sec. Res. Doc. 2023/078). Fisheries and Oceans Canada, Canadian Science Advisory Secretariat. |
+| grey_seals_2021 | Maritimes | 1960-2021 | No citation provided |
+| mei | Equatorial Pacific | 1979-2025 | NOAA ESRL/PSL, <https://psl.noaa.gov/enso/mei/> |
+| nao | North Atlantic | 1951-2024 | NOAA NCEP via azmpdata; <https://www.ncei.noaa.gov/access/monitoring/nao/> |
+| npgo | North Pacific Gyre | 1950-2025 | Di Lorenzo et al., <http://www.o3d.org/npgo/> |
+| oni | Niño 3.4 Region (Pacific) | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml> |
+| pdo | North Pacific | 1854-2025 | NOAA ERSST, <https://www.ncei.noaa.gov/access/monitoring/pdo/> |
+| soi | Equatorial Pacific | 1951-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/data/indices/soi> |
 
 ## Documentation
 
@@ -159,6 +162,8 @@ citation("marea")
 We welcome contributions! If you have suggestions, find a bug, or would
 like to contribute a new dataset, please see our contribution guidelines
 and open an issue on GitHub.
+
+[CONTRIBUTING](CONTRIBUTING.md)
 
 ## Related Work
 
