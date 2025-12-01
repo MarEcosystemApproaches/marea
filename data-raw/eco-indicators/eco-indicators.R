@@ -61,5 +61,3 @@ eco_indicators<- as_ea_data(
 
 save(eco_indicators, file = here("data-raw", "eco-indicators", "eco_indicators.rda"))
 usethis::use_data(eco_indicators, overwrite = TRUE)
-
-

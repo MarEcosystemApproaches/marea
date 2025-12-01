@@ -31,9 +31,9 @@ grey_seals_new <- grey_seals_data_raw %>%
          "lower95...11",
          "median...12",
          "upper95...13") %>%
-  rename(low = "lower95...11",
+  rename(lower = "lower95...11",
          median = "median...12",
-         high = "upper95...13")
+         upper = "upper95...13")
 
 grey_seals <- ea_data(
   data = grey_seals_new,
@@ -44,7 +44,7 @@ grey_seals <- ea_data(
   species = "grey seal",
   region = "Scotian Shelf",
   location_descriptor = 'Sable Island',
-  source_citation = "Hammill et al. (2023)",
+  source_citation = "den Heyer, C. E., Mosnier, A., Stenson, G. B., Lidgard, D. C., Bowen, W. D., & Hammill, M. O. (2024). Grey seal pup production in Canada (DFO Can. Sci. Advis. Sec. Res. Doc. 2023/078). Fisheries and Oceans Canada, Canadian Science Advisory Secretariat.",
   comment = paste0("Estimates from a Bayesian state-space model fitted to aerial survey data and demographic rates from Sable Island. See Hammill et al. (2023) for details.")
 )
 

@@ -28,7 +28,7 @@ An \code{ea_data} object:
 }
 }
 \source{
-Generated from running \code{data-raw/coastwide-indices/coastwide-indices.R}
+Generated from running \code{data-raw/azmpdata/azmpdata-load.R}
 }
 \usage{
 azmp_bottom_temperature

@@ -5,8 +5,6 @@
 #' @return A data.frame with columns: Dataset, Region, TimeSpan, Source
 #' @export
 #'
-#' @examples
-#' marea_metadata()
 marea_metadata <- function() {
   # Helper function for NULL coalesce
   `%||%` <- function(x, y) if (is.null(x)) y else x

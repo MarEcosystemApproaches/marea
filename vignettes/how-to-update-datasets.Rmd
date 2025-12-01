@@ -1,0 +1,262 @@
+---
+title: "How to: Update Datasets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to: Update Datasets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(marea)
+```
+
+## Introduction
+
+This vignette provides step-by-step instructions for updating the datasets included in the `marea` package. Each dataset has a corresponding R script in the `data-raw/` folder that contains the code to download, process, and save the data.
+
+## General Workflow
+
+All dataset update scripts follow a similar pattern:
+
+1. Load required packages
+2. Download or access raw data from external sources
+3. Process and clean the data
+4. Convert to `ea_data` or `ea_spatial` class with metadata
+5. Save using `usethis::use_data()`
+
+## Dataset Categories
+
+### 1. Coastwide Climate Indices
+
+**Script location:** `data-raw/coastwide-indices/coastwide-indices.R`
+
+**Datasets updated:**
+- `nao` - North Atlantic Oscillation Index
+- `oni` - Oceanic Niño Index
+- `pdo` - Pacific Decadal Oscillation
+- `soi` - Southern Oscillation Index
+- `npgo` - North Pacific Gyre Oscillation
+- `mei` - Multivariate ENSO Index
+- `ao` - Arctic Oscillation Index
+- `amo` - Atlantic MultiDecadal Oscillation Index
+- `azmp_bottom_temperature` - AZMP Bottom Temperature
+
+**Update instructions:**
+
+1. Install the `azmpdata` package if updating AZMP-related data:
+   ```r
+   remotes::install_github("casaultb/azmpdata")
+   ```
+
+2. Run the script line-by-line or in sections. Most indices are downloaded automatically from public NOAA/NCEP servers.
+
+3. Each index is converted to an `ea_data` object using the `make_ea_index()` helper function with appropriate metadata.
+
+4. The script handles temporary file downloads and cleanup automatically.
+
+**Data sources:**
+- NOAA Climate Prediction Center
+- NOAA NCEI
+- DFO Atlantic Zone Monitoring Program (azmpdata package)
+
+---
+
+### 2. Grey Seals Abundance
+
+**Script location:** `data-raw/grey-seals/grey-seals.R`
+
+**Datasets updated:**
+- `grey_seals` - Grey Seal Abundance estimates
+
+**Update instructions:**
+
+1. Update the `assess_yr` variable to the current assessment year (line 8).
+
+2. Obtain the latest data file from the assessment contact (Nell den Heyer) and place it in the appropriate directory (currently `R:/Science/BIODataSvc/SRC/marea/`).
+
+3. Update the file path and filename if needed (line 20).
+
+4. Update the citation information to match the latest assessment report.
+
+5. Run the script to process the data and save to the package.
+
+**Data source:**
+- DFO Seal Assessment (den Heyer et al.)
+- Bayesian state-space model estimates
+
+---
+
+### 3. GLORYS Bottom Temperature
+
+**Script location:** `data-raw/glorys/glorys-bottom-temperature.R`
+
+**Datasets updated:**
+- `glorys_bottom_temperature` - Bottom temperature from GLORYS reanalysis
+
+**Update instructions:**
+
+1. **Set up Copernicus Marine credentials:**
+   - Create environment variables `CMEMS_USERNAME` and `CMEMS_PASSWORD`
+   - Set up a Python virtual environment named "CopernicusMarine" with the `copernicusmarine` package
+
+2. **Adjust date ranges:**
+   - Update `start10` and `end10` variables for the desired time period (currently last 10 years)
+
+3. **Run the download:**
+   - The script downloads from two datasets: `cmems_mod_glo_phy_my_0.083deg_P1M-m` and `cmems_mod_glo_phy_myint_0.083deg_P1M-m`
+   - Spatial bounds are pre-set for the Maritimes region
+
+4. **Process the data:**
+   - The `clean_glorys_nc()` function processes the netCDF files
+   - Data is converted to sf format and cleaned
+
+**Requirements:**
+- Python environment with `copernicusmarine` package
+- Valid Copernicus Marine credentials
+- `reticulate`, `stars`, `sf` R packages
+
+---
+
+### 4. Ecological Indicators
+
+**Script location:** `data-raw/eco-indicators/eco-indicators.R`
+
+**Datasets updated:**
+- `eco_indicators` - Multiple ecological indicators from RV surveys
+
+**Update instructions:**
+
+1. Obtain the latest CSV files from the data contact (Jamie C. Tam):
+   - `eco_indicators_nafo.csv`
+   - `eco_indicators_esswss.csv`
+
+2. Place files in `R:/Science/BIODataSvc/SRC/marea/` or update the `data_dir` path.
+
+3. Run the script which:
+   - Reads both CSV files
+   - Joins them together
+   - Filters years as appropriate (note: 2018 and 2021 have data quality issues)
+   - Removes standardized columns (ending in "_s")
+
+4. The data is converted to an `ea_data` object with multiple value columns.
+
+**Data source:**
+- DFO RV Summer Ecosystem Survey
+- Commercial fisheries landings data
+- Calculated using `marindicators` R package
+
+**Citation:** Bundy et al. 2017
+
+---
+
+### 5. Satellite Ocean Colour (Phytoplankton Bloom Metrics)
+
+**Script location:** `data-raw/satellite-ocean-colour/satellite_ocean_colour.R`
+
+**Datasets updated:**
+- `t_start` - Bloom start day
+- `t_duration` - Bloom duration
+- `amplitude_real` - Maximum chlorophyll concentration
+- `magnitude_real` - Total chlorophyll produced
+- `annual_mean` - Average annual chlorophyll
+- `NRMSE_bloom` - Root mean square error
+- `percent_dineof` - Percentage of DINEOF-estimated days
+
+**Update instructions:**
+
+1. The script uses `get_erddap_data()` to download from CIOOS Atlantic ERDDAP server.
+
+2. **Quality control filters applied:**
+   - Filter out data where `NRMSE_bloom > 0.5`
+   - Filter out standardized anomalies with |z-score| > 4
+
+3. Each metric is processed separately and converted to an `ea_spatial` object (spatiotemporal data).
+
+4. The script creates multilayer rasters where each layer represents a year.
+
+**Data source:**
+- SOPhyE group, DFO
+- CIOOS Atlantic ERDDAP server
+- OC-CCI satellite ocean colour data
+
+---
+
+### 6. Coastline Data
+
+**Script location:** `data-raw/coastline/coastline.R`
+
+**Datasets updated:**
+- `coastline` - Coastline geometry for mapping
+
+**Update instructions:**
+
+1. This is a simple script that downloads Natural Earth data using `rnaturalearth`.
+
+2. Extracts coastlines for Canada (CA), United States (US), Greenland (GL), and Saint Pierre and Miquelon (PM).
+
+3. Select relevant columns and save.
+
+4. This dataset rarely needs updating unless Natural Earth releases new versions.
+
+**Data source:**
+- Natural Earth Data via `rnaturalearth` package
+
+---
+
+## Best Practices
+
+1. **Always run scripts line-by-line first** to check for errors and understand the process.
+
+2. **Update citations and metadata** when data sources change or new assessments are released.
+
+3. **Check data quality** by viewing summaries and plotting before saving.
+
+4. **Document changes** in the script comments, including date, name, and reason for update.
+
+5. **Test the updated data** by running examples in the documentation (`?dataset_name`).
+
+6. **Version control:** Commit changes to git with clear commit messages.
+
+## Required Packages
+
+Common packages used across update scripts:
+```r
+library(dplyr)
+library(tidyr)
+library(readr)
+library(lubridate)
+library(marea)
+library(usethis)
+```
+
+Additional packages for specific datasets:
+- Spatial data: `sf`, `stars`, `terra`, `tidyterra`
+- Python interface: `reticulate`
+- Data access: `rerddap`, `remotes`
+- Visualization: `ggplot2`
+
+## Troubleshooting
+
+**Problem:** Download fails from external server  
+**Solution:** Check internet connection, verify URLs are still valid, check for authentication requirements
+
+**Problem:** Package dependencies missing  
+**Solution:** Install required packages using `install.packages()` or `remotes::install_github()`
+
+**Problem:** Data format has changed  
+**Solution:** Update processing code to match new format, verify column names and structure
+
+**Problem:** `usethis::use_data()` fails  
+**Solution:** Ensure you're in the package root directory, check that the `data/` folder exists
+
+## Contact
+
+For questions about specific datasets, contact the data providers listed in the source citations. For general package questions, contact the package maintainers by opening a github issue.

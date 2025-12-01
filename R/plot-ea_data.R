@@ -8,17 +8,41 @@
 #' The available styles are:
 #'   * `"default"`: A simple line plot with points.
 #'   * `"ribbon"`: A line plot with points and a shaded confidence interval
-#'     ribbon (requires `low` and `high` columns in the data).
+#'     ribbon (requires `lower` and `upper` columns in the data).
 #'   * `"plain"`: A line plot without points or any other embellishments.
 #'   * `"biomass"`: A style that mimics `pacea` biomass plots, featuring a bold
 #'     line, points, and an optional uncertainty ribbon.
 #'   * `"anomaly"`: A bar plot where positive values are colored red and
 #'     negative values are blue, suitable for anomaly time series.
-#'   * `"histogram"`: A simple bar plot.
-#'
+#'   * `"indicator"`: Ecosystem indicator style with mean reference line and 
+#'     trend analysis. Shows long-term mean and recent 5-year period highlighting.
+#'   * `"indicator_ref"`: Indicator style with 1991-2020 climate reference period. 
+#'     Shows standardized anomalies relative to climate normal period.
+#'   * `"diversity"`: Specialized style for diversity indices with regime 
+#'     change detection and period comparisons.
+#'   * `"temperature_regime"`: Temperature anomaly visualization with regime 
+#'     shift detection, warm/cold period highlighting, and trend analysis.
+#'   * `"nao_enhanced"`: Enhanced NAO visualization with phase indicators,
+#'     regime periods, and standardized anomaly coloring.
+#'     
 #' @param x An `ea_data` object.
 #' @param y Ignored. Included for consistency with the generic `plot` method.
-#' @param style Character; one of `"default"`, `"ribbon"`, `"plain"`, `"biomass"`,`"histogram"`, or `"anomaly"`.
+#' @param style Character; One of: `"default"`, `"ribbon"`, 
+#'   `"plain"`, `"biomass"`, `"anomaly"`, `"indicator"`, `"indicator_ref"`, 
+#'   `"diversity"`, `"temperature_regime"`, `"nao_enhanced"`.
+#' @param reference_period Numeric vector of length 2. Years defining reference 
+#'   period for standardized anomalies. Default is c(1991, 2020) for climate 
+#'   consistency. Used with `"indicator_ref"` and `"temperature_regime"` styles.
+#' @param highlight_recent Logical. Whether to highlight the most recent 5 years.
+#'   Default is TRUE for indicator styles.
+#' @param show_trend Logical. Whether to add trend line and statistics. Default
+#'   is TRUE for indicator styles.
+#' @param regime_threshold Numeric. Threshold for regime change detection in 
+#'   standardized units. Default is 0.5 standard deviations.
+#' @param mean_line_color Color for mean reference line. Default is "red".
+#' @param trend_line_color Color for trend line. Default is "blue".
+#' @param warm_color Color for warm/positive anomalies. Default is "red".
+#' @param cold_color Color for cold/negative anomalies. Default is "blue".
 #' @param ... Additional arguments passed to the underlying geoms
 #'   (`geom_line`, `geom_point`, `geom_ribbon`, `geom_col`, `geom_errorbar`).
 #'
@@ -34,8 +58,8 @@
 #'   year = 2000:2010,
 #'   biomass_t = rlnorm(11, meanlog = 5, sdlog = 0.3)
 #' )
-#' df$low <- df$biomass_t * 0.8
-#' df$high <- df$biomass_t * 1.2
+#' df$lower <- df$biomass_t * 0.8
+#' df$upper <- df$biomass_t * 1.2
 #'
 #' # Create an ea_data object
 #' biomass_obj <- ea_data(df,
@@ -56,12 +80,26 @@ setGeneric("plot")
 #' @export
 setMethod("plot", signature(x = "ea_data", y = "missing"),
           function(x,
+<<<<<<< HEAD
                    style = c("default",
                              "ribbon",
                              "plain",
                              "biomass",
                              "anomaly",
                              "histogram"),
+=======
+                   style = c("default", "ribbon", "plain", "biomass", "anomaly",
+                             "indicator", "indicator_ref", "diversity", 
+                             "temperature_regime", "nao_enhanced"),
+                   reference_period = c(1991, 2020),
+                   highlight_recent = TRUE,
+                   show_trend = TRUE,
+                   regime_threshold = 0.5,
+                   mean_line_color = "red",
+                   trend_line_color = "blue", 
+                   warm_color = "red",
+                   cold_color = "blue",
+>>>>>>> 2fed17fc279937dde6d9dabc9c9efab5e7c34540
                    ...) {
             style <- match.arg(style)
             
@@ -106,11 +144,11 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
               },
               
               ribbon = {
-                if (!all(c("low", "high") %in% names(df))) {
-                  stop("Style 'ribbon' requires 'low' and 'high' columns in data.", call. = FALSE)
+                if (!all(c("lower", "upper") %in% names(df))) {
+                  stop("Style 'ribbon' requires 'lower' and 'upper' columns in data.", call. = FALSE)
                 }
                 p +
-                  ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$low, ymax = .data$high),
+                  ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
                                        fill = "grey80", alpha = 0.5, ...) +
                   ggplot2::geom_line(linewidth = 1, ...) +
                   ggplot2::geom_point(size = 2, ...)
@@ -131,7 +169,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 # Add ribbon if uncertainty is present
                 if (has_uncertainty) {
                   p <- p +
-                    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$low, ymax = .data$high),
+                    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
                                          fill = "lightblue", alpha = 0.3, ...)
                 }
                 
@@ -143,9 +181,9 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 # Add dashed lines for uncertainty bounds
                 if (has_uncertainty) {
                   p <- p +
-                    ggplot2::geom_line(ggplot2::aes(y = .data$low),
+                    ggplot2::geom_line(ggplot2::aes(y = .data$lower),
                                        color = "blue", linetype = "dashed", linewidth = 0.8, ...) +
-                    ggplot2::geom_line(ggplot2::aes(y = .data$high),
+                    ggplot2::geom_line(ggplot2::aes(y = .data$upper),
                                        color = "blue", linetype = "dashed", linewidth = 0.8, ...)
                 }
                 p # Return the modified plot
@@ -170,15 +208,16 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                   ggplot2::geom_hline(yintercept = 0, color = "black", linewidth = 0.5)
                 
                 # Add error bars for uncertainty if available
-                if (all(c("low", "high") %in% names(df))) {
+                if (all(c("lower", "upper") %in% names(df))) {
                   p <- p +
                     ggplot2::geom_errorbar(
-                      ggplot2::aes(ymin = .data$low, ymax = .data$high),
+                      ggplot2::aes(ymin = .data$lower, ymax = .data$upper),
                       width = 0.3, color = "black", linewidth = 0.5, ...
                     )
                 }
                 p # Return the modified plot
               },
+<<<<<<< HEAD
               ##ADDED Histogram here TODO test
               histogram = {
                 p <- p +
@@ -194,5 +233,236 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
               }
             )
             # Apply labs and theme to the final plot
+=======
+              
+              # MAReco-inspired styles
+              indicator = {
+                # Calculate statistics
+                long_mean <- mean(df$value, na.rm = TRUE)
+                recent_years <- tail(df$year, 5)
+                recent_data <- df[df$year %in% recent_years, ]
+                
+                p <- p +
+                  ggplot2::geom_line(color = "black", linewidth = 0.8, ...) +
+                  ggplot2::geom_point(size = 1.5, color = "black", ...) +
+                  ggplot2::geom_hline(yintercept = long_mean, color = mean_line_color, 
+                                      linetype = "dashed", linewidth = 1)
+                
+                # Highlight recent period
+                if (highlight_recent && nrow(recent_data) > 0) {
+                  p <- p +
+                    ggplot2::geom_point(data = recent_data, 
+                                        ggplot2::aes(x = .data$year, y = .data$value),
+                                        color = "red", size = 2.5, shape = 16)
+                }
+                
+                # Add trend line
+                if (show_trend) {
+                  p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE, 
+                                                color = trend_line_color, linewidth = 0.8, ...)
+                }
+                
+                # Update labels
+                labs$subtitle <- paste0(labs$subtitle, 
+                                        sprintf(" | Long-term mean: %.2f %s", 
+                                                long_mean, m$units))
+                p
+              },
+              
+              indicator_ref = {
+                # Calculate reference period statistics
+                ref_data <- df[df$year >= reference_period[1] & df$year <= reference_period[2], ]
+                if (nrow(ref_data) == 0) {
+                  stop("No data available for reference period ", 
+                       reference_period[1], "-", reference_period[2], call. = FALSE)
+                }
+                
+                ref_mean <- mean(ref_data$value, na.rm = TRUE)
+                ref_sd <- stats::sd(ref_data$value, na.rm = TRUE)
+                
+                # Calculate standardized anomalies
+                df$anomaly <- (df$value - ref_mean) / ref_sd
+                df$anomaly_color <- ifelse(df$anomaly >= 0, "positive", "negative")
+                
+                p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$anomaly)) +
+                  ggplot2::geom_col(ggplot2::aes(fill = .data$anomaly_color), ...) +
+                  ggplot2::scale_fill_manual(
+                    values = c("positive" = warm_color, "negative" = cold_color),
+                    name = "Anomaly"
+                  ) +
+                  ggplot2::geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
+                  ggplot2::geom_hline(yintercept = c(-1, 1), color = "grey50", 
+                                      linetype = "dashed", alpha = 0.7)
+                
+                # Update labels for anomaly plot
+                labs$y <- paste0("Standardized Anomaly (", 
+                                 reference_period[1], "-", reference_period[2], " reference)")
+                labs$subtitle <- paste0(labs$subtitle, 
+                                        sprintf(" | Reference: %.2f ± %.2f %s", 
+                                                ref_mean, ref_sd, m$units))
+                p
+              },
+              
+              diversity = {
+                # Diversity-specific visualization with regime detection
+                df_smooth <- df
+                if (nrow(df_smooth) > 10) {
+                  # Apply smoothing for regime detection
+                  df_smooth$smooth_value <- stats::smooth.spline(df_smooth$year, df_smooth$value, df = 5)$y
+                  
+                  p <- p +
+                    ggplot2::geom_line(color = "grey70", linewidth = 0.8, alpha = 0.7, ...) +
+                    ggplot2::geom_line(ggplot2::aes(y = .data$smooth_value), 
+                                       color = "black", linewidth = 1.2, ...) +
+                    ggplot2::geom_point(size = 1.2, alpha = 0.8, ...)
+                } else {
+                  p <- p +
+                    ggplot2::geom_line(color = "black", linewidth = 1, ...) +
+                    ggplot2::geom_point(size = 2, ...)
+                }
+                
+                # Add mean line
+                diversity_mean <- mean(df$value, na.rm = TRUE)
+                p <- p +
+                  ggplot2::geom_hline(yintercept = diversity_mean, color = mean_line_color, 
+                                      linetype = "dashed", linewidth = 1)
+                
+                labs$subtitle <- paste0(labs$subtitle, 
+                                        sprintf(" | Mean diversity: %.3f", diversity_mean))
+                p
+              },
+              
+              temperature_regime = {
+                # Temperature regime analysis with warm/cold periods
+                temp_mean <- mean(df$value, na.rm = TRUE)
+                temp_sd <- stats::sd(df$value, na.rm = TRUE)
+                
+                # Create regime indicators
+                df$regime <- ifelse(df$value > temp_mean + regime_threshold * temp_sd, "warm",
+                                    ifelse(df$value < temp_mean - regime_threshold * temp_sd, "cold", "normal"))
+                df$regime_color <- factor(df$regime, levels = c("cold", "normal", "warm"))
+                
+                p <- p +
+                  ggplot2::geom_line(color = "black", linewidth = 0.8, alpha = 0.7, ...) +
+                  ggplot2::geom_point(ggplot2::aes(color = .data$regime_color), size = 2.5, ...) +
+                  ggplot2::scale_color_manual(
+                    values = c("cold" = cold_color, "normal" = "grey50", "warm" = warm_color),
+                    name = "Regime"
+                  ) +
+                  ggplot2::geom_hline(yintercept = temp_mean, color = "black", 
+                                      linetype = "solid", linewidth = 0.8) +
+                  ggplot2::geom_hline(yintercept = temp_mean + c(-1, 1) * regime_threshold * temp_sd,
+                                      color = "grey50", linetype = "dashed", alpha = 0.7)
+                
+                # Add trend line
+                if (show_trend) {
+                  p <- p + ggplot2::geom_smooth(method = "lm", se = TRUE, 
+                                                color = trend_line_color, alpha = 0.3, ...)
+                }
+                
+                labs$subtitle <- paste0(labs$subtitle, 
+                                        sprintf(" | Mean: %.2f°C, Regime threshold: ±%.1f SD", 
+                                                temp_mean, regime_threshold))
+                p
+              },
+              
+              nao_enhanced = {
+                # Enhanced NAO visualization with phase indicators
+                if (!grepl("NAO|North Atlantic Oscillation", m$data_type, ignore.case = TRUE)) {
+                  warning("Style 'nao_enhanced' is intended for NAO data, but data_type is: ",
+                          m$data_type, call. = FALSE)
+                }
+                
+                # Define NAO phases
+                df$nao_phase <- ifelse(df$value > 1, "strong_positive",
+                                       ifelse(df$value > 0, "positive", 
+                                              ifelse(df$value < -1, "strong_negative", "negative")))
+                df$phase_color <- factor(df$nao_phase, 
+                                         levels = c("strong_negative", "negative", "positive", "strong_positive"))
+                
+                p <- p +
+                  ggplot2::geom_col(ggplot2::aes(fill = .data$phase_color), width = 0.8, ...) +
+                  ggplot2::scale_fill_manual(
+                    values = c("strong_negative" = "#053061", "negative" = "#4393c3", 
+                               "positive" = "#d6604d", "strong_positive" = "#67001f"),
+                    name = "NAO Phase",
+                    labels = c("Strong Negative", "Negative", "Positive", "Strong Positive")
+                  ) +
+                  ggplot2::geom_hline(yintercept = 0, color = "black", linewidth = 1) +
+                  ggplot2::geom_hline(yintercept = c(-1, 1), color = "grey30", 
+                                      linetype = "dashed", alpha = 0.8)
+                
+                # Add smoothed trend line
+                if (show_trend && nrow(df) > 10) {
+                  p <- p + ggplot2::geom_smooth(method = "loess", se = TRUE, 
+                                                color = "black", alpha = 0.3, span = 0.3, ...)
+                }
+                
+                labs$subtitle <- paste0(labs$subtitle, " | Phases: |NAO| > 1 = Strong, 0 < |NAO| < 1 = Moderate")
+                p
+              }
+            )
+            
+            # Apply labels and theme to the final plot
+>>>>>>> 2fed17fc279937dde6d9dabc9c9efab5e7c34540
             p + do.call(ggplot2::labs, labs) + ggplot2::theme_bw()
-          })
+          }
+              
+            )
+            
+# Helper functions for MAReco-style calculations
+#' Calculate indicator statistics for reference periods
+#' @noRd
+calculate_indicator_stats <- function(data, reference_period = c(1991, 2020)) {
+  if (length(reference_period) != 2) {
+    stop("reference_period must be a vector of length 2 (start_year, end_year)")
+  }
+  
+  ref_data <- data[data$year >= reference_period[1] & data$year <= reference_period[2], ]
+  all_data <- data
+  
+  list(
+    reference = list(
+      mean = mean(ref_data$value, na.rm = TRUE),
+      sd = stats::sd(ref_data$value, na.rm = TRUE),
+      n = nrow(ref_data)
+    ),
+    longterm = list(
+      mean = mean(all_data$value, na.rm = TRUE),
+      sd = stats::sd(all_data$value, na.rm = TRUE),
+      n = nrow(all_data)
+    ),
+    recent_5yr = {
+      recent_years <- tail(sort(all_data$year), 5)
+      recent_data <- all_data[all_data$year %in% recent_years, ]
+      list(
+        mean = mean(recent_data$value, na.rm = TRUE),
+        years = recent_years
+      )
+    }
+  )
+}
+
+#' Detect regime shifts in time series data
+#' @noRd
+detect_regime_shifts <- function(data, threshold = 0.5) {
+  if (nrow(data) < 10) {
+    return(data$regime <- rep("insufficient_data", nrow(data)))
+  }
+  
+  mean_val <- mean(data$value, na.rm = TRUE)
+  sd_val <- stats::sd(data$value, na.rm = TRUE)
+  
+  data$regime <- ifelse(data$value > mean_val + threshold * sd_val, "high",
+                        ifelse(data$value < mean_val - threshold * sd_val, "low", "normal"))
+  
+  return(data$regime)
+}
+
+
+
+
+
+
+
+

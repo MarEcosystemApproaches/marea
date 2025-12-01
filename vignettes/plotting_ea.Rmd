@@ -64,9 +64,10 @@ plot(nao, style = "default")
 ```
 ### Ribbon Style
 
-Shows uncertainty bounds (requires low and high columns):
+Shows uncertainty bounds (requires lower and upper columns):
 
 ```{r}
+data("grey_seals")
 plot(grey_seals, style = "ribbon")
 ```
 
@@ -411,7 +412,7 @@ Display and customize uncertainty bounds:
 p <- plot(grey_seals, style = "default")
 
 p + 
-  geom_ribbon(aes(ymin = low, ymax = high), alpha = 0.3, fill = "lightblue") +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.3, fill = "lightblue") +
   geom_line( color = "darkblue") +
   geom_point( color = "darkblue") +
   labs(
@@ -505,12 +506,7 @@ plot(nao) + my_theme
 
 # Getting Help
 
-## Available datasets
 
-```{r}
-# See all available datasets
-knitr::kable(marea_metadata())
-```
 
 ## Plot Method Documentation
 
