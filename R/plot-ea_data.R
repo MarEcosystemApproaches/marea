@@ -249,7 +249,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                                       linetype = "dotted", linewidth = 0.8) +  # +SD threshold
                   ggplot2::geom_hline(yintercept = long_mean - sd_threshold * sd_value, color = "darkgreen", 
                                       linetype = "dotted", linewidth = 0.8) +  # -SD threshold
-                  scale_color_manual(
+                  ggplot2::scale_color_manual(
                     values = c("above_sd" = "orange", "below_sd" = "blue", "within_sd" = "black"),
                     labels = c(paste0("Below -", sd_threshold, " SD"), 
                                paste0("Within +/-", sd_threshold, " SD"), 
