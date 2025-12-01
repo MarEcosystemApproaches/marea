@@ -229,7 +229,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
               indicator = {
                 # Calculate statistics
                 long_mean <- mean(df$value, na.rm = TRUE)
-                sd_value <- sd(df$value, na.rm = TRUE)
+                sd_value <- stats::sd(df$value, na.rm = TRUE)
                 recent_years <- tail(df$year, 5)
                 recent_data <- df[df$year %in% recent_years, ]
                 
