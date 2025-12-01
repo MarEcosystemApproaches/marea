@@ -309,7 +309,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 
                 p <- p +
                   ggplot2::geom_path(color = "black", linewidth = 0.8, ...) +
-                  ggplot2::geom_hline(yintercept = ref_mean, color = 'darkgreen', 
+                  ggplot2::geom_hline(yintercept = ref_mean, color = "darkgreen", 
                                       linetype = "dashed", linewidth = 1) +
                   ggplot2::geom_hline(yintercept = ref_mean + sd_threshold * ref_sd, color = "darkgreen", 
                                       linewidth = 0.8) +  # +SD threshold
