@@ -242,7 +242,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 
                 p <- p +
                   ggplot2::geom_line(color = "black", linewidth = 0.8, ...) +
-                  ggplot2::geom_point(aes( color = .data$point_color), ...) +
+                  ggplot2::geom_point(ggplot2::aes(color = .data$point_color), ...) +
                   ggplot2::geom_hline(yintercept = long_mean, color = "darkgreen", 
                                       linetype = "dashed", linewidth = 1)+
                   ggplot2::geom_hline(yintercept = long_mean + sd_threshold * sd_value, color = "darkgreen", 
