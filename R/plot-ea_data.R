@@ -293,7 +293,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 
                 # Calculate mean and standard deviation for reference period
                 ref_mean <- mean(ref_data$value, na.rm = TRUE)
-                ref_sd <- sd(ref_data$value, na.rm = TRUE)
+                ref_sd <- stats::sd(ref_data$value, na.rm = TRUE)
                 
                 # Determine the last 5 years in the data
                 end_year <- max(df$year, na.rm = TRUE)
