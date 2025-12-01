@@ -263,7 +263,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 # Highlight recent period
                 if (highlight_recent && nrow(recent_data) > 0) {
                   p <- p +
-                    annotate(geom = "rect",
+                    ggplot2::annotate(geom = "rect",
                              xmin = min(recent_years), xmax = max(recent_years),
                              ymin = -Inf, ymax = Inf,
                              fill = "purple2", alpha = 0.2)
