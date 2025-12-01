@@ -325,7 +325,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                                       fill = "purple2", alpha = 0.2)
                 }
                 
-            # Add colored points based on whether they're outside 1 SD
+                # Add colored points based on whether they're outside 1 SD
                 p <- p +
                   ggplot2::geom_point(ggplot2::aes(color = .data$point_color), size = 2.5) +
                   ggplot2::scale_color_manual(
