@@ -90,10 +90,8 @@ Plotting works out-of-the-box and returns a `ggplot2` object:
 # plot(grey_seals)
 ```
 
-*Output:*
-<img src="man/figures/plot_grey_Seals.png" width="70%" />
 
-If columns like `"low"` and `"high"` exist, add ribbons easily:
+If columns like `"lower"` and `"upper"` exist, add ribbons easily:
 
 ```{r}
 # plot(grey_seals, style = "ribbon")
