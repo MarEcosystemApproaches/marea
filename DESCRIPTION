@@ -84,7 +84,7 @@ Suggests:
     pacea,
     tidyverse,
     mockery,
-    rerddap
+    rerddap,
     patchwork,
     here
 Remotes: 
