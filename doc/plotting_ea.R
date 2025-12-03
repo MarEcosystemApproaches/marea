@@ -21,6 +21,7 @@ plot(nao)
 plot(nao, style = "default")
 
 ## -----------------------------------------------------------------------------
+data("grey_seals")
 plot(grey_seals, style = "ribbon")
 
 ## -----------------------------------------------------------------------------
@@ -261,7 +262,7 @@ plot(grey_seals, style = "biomass")
 # p <- plot(grey_seals, style = "default")
 # 
 # p +
-#   geom_ribbon(aes(ymin = low, ymax = high), alpha = 0.3, fill = "lightblue") +
+#   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.3, fill = "lightblue") +
 #   geom_line( color = "darkblue") +
 #   geom_point( color = "darkblue") +
 #   labs(
@@ -325,10 +326,6 @@ p4
 # 
 # # Apply to any plot
 # plot(nao) + my_theme
-
-## -----------------------------------------------------------------------------
-# See all available datasets
-knitr::kable(marea_metadata())
 
 ## ----eval = FALSE-------------------------------------------------------------
 # # Get help on plotting functions
