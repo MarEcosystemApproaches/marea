@@ -9,9 +9,10 @@ plot(x, y, ...)
 
 \S4method{plot}{ea_data,missing}(
   x,
-  style = c("default", "ribbon", "plain", "biomass", "anomaly", "indicator",
+  style = c("default", "ribbon", "plain", "biomass", "anomaly", "histogram", "indicator",
     "indicator_ref", "diversity", "temperature_regime", "nao_enhanced"),
   reference_period = c(1991, 2020),
+  sd_threshold = 1,
   highlight_recent = TRUE,
   show_trend = TRUE,
   regime_threshold = 0.5,
@@ -31,12 +32,16 @@ plot(x, y, ...)
 (\code{geom_line}, \code{geom_point}, \code{geom_ribbon}, \code{geom_col}, \code{geom_errorbar}).}
 
 \item{style}{Character; One of: \code{"default"}, \code{"ribbon"},
-\code{"plain"}, \code{"biomass"}, \code{"anomaly"}, \code{"indicator"}, \code{"indicator_ref"},
-\code{"diversity"}, \code{"temperature_regime"}, \code{"nao_enhanced"}.}
+\code{"plain"}, \code{"biomass"}, \code{"anomaly"}, \code{"histogram"}, \code{"indicator"},
+\code{"indicator_ref"}, \code{"diversity"}, \code{"temperature_regime"}, \code{"nao_enhanced"}.}
 
 \item{reference_period}{Numeric vector of length 2. Years defining reference
 period for standardized anomalies. Default is c(1991, 2020) for climate
 consistency. Used with \code{"indicator_ref"} and \code{"temperature_regime"} styles.}
+
+\item{sd_threshold}{Numeric. Number of standard deviations for threshold lines
+and point classification in indicator styles. Default is 1 (+/-1 SD). Use 0.5
+for tighter bounds or larger values for wider bounds.}
 
 \item{highlight_recent}{Logical. Whether to highlight the most recent 5 years.
 Default is TRUE for indicator styles.}
@@ -74,6 +79,9 @@ ribbon (requires \code{lower} and \code{upper} columns in the data).
 line, points, and an optional uncertainty ribbon.
 \item \code{"anomaly"}: A bar plot where positive values are colored red and
 negative values are blue, suitable for anomaly time series.
+\item \code{"histogram"}: A simple bar plot showing values by year. Creates a
+single-layer plot that can be easily customized with additional geoms
+like trend lines or reference lines.
 \item \code{"indicator"}: Ecosystem indicator style with mean reference line and
 trend analysis. Shows long-term mean and recent 5-year period highlighting.
 \item \code{"indicator_ref"}: Indicator style with 1991-2020 climate reference period.
@@ -107,5 +115,10 @@ biomass_obj <- ea_data(df,
 plot(biomass_obj, style = "default")
 plot(biomass_obj, style = "ribbon")
 plot(biomass_obj, style = "biomass")
+plot(biomass_obj, style = "histogram")
+
+# Histogram with custom additions
+plot(biomass_obj, style = "histogram") +
+  ggplot2::geom_smooth(method = "lm", se = FALSE, color = "red")
 
 }

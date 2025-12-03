@@ -14,6 +14,9 @@
 #'     line, points, and an optional uncertainty ribbon.
 #'   * `"anomaly"`: A bar plot where positive values are colored red and
 #'     negative values are blue, suitable for anomaly time series.
+#'   * `"histogram"`: A simple bar plot showing values by year. Creates a 
+#'     single-layer plot that can be easily customized with additional geoms
+#'     like trend lines or reference lines.
 #'   * `"indicator"`: Ecosystem indicator style with mean reference line and 
 #'     trend analysis. Shows long-term mean and recent 5-year period highlighting.
 #'   * `"indicator_ref"`: Indicator style with 1991-2020 climate reference period. 
@@ -28,11 +31,14 @@
 #' @param x An `ea_data` object.
 #' @param y Ignored. Included for consistency with the generic `plot` method.
 #' @param style Character; One of: `"default"`, `"ribbon"`, 
-#'   `"plain"`, `"biomass"`, `"anomaly"`, `"indicator"`, `"indicator_ref"`, 
-#'   `"diversity"`, `"temperature_regime"`, `"nao_enhanced"`.
+#'   `"plain"`, `"biomass"`, `"anomaly"`, `"histogram"`, `"indicator"`, 
+#'   `"indicator_ref"`, `"diversity"`, `"temperature_regime"`, `"nao_enhanced"`.
 #' @param reference_period Numeric vector of length 2. Years defining reference 
 #'   period for standardized anomalies. Default is c(1991, 2020) for climate 
 #'   consistency. Used with `"indicator_ref"` and `"temperature_regime"` styles.
+#' @param sd_threshold Numeric. Number of standard deviations for threshold lines
+#'  and point classification in indicator styles. Default is 1 (+/-1 SD). Use 0.5
+#'  for tighter bounds or larger values for wider bounds.
 #' @param highlight_recent Logical. Whether to highlight the most recent 5 years.
 #'   Default is TRUE for indicator styles.
 #' @param show_trend Logical. Whether to add trend line and statistics. Default
@@ -73,6 +79,11 @@
 #' plot(biomass_obj, style = "default")
 #' plot(biomass_obj, style = "ribbon")
 #' plot(biomass_obj, style = "biomass")
+#' plot(biomass_obj, style = "histogram")
+#' 
+#' # Histogram with custom additions
+#' plot(biomass_obj, style = "histogram") +
+#'   ggplot2::geom_smooth(method = "lm", se = FALSE, color = "red")
 #' 
 setGeneric("plot")
 
@@ -82,9 +93,10 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
           function(x,
 
                    style = c("default", "ribbon", "plain", "biomass", "anomaly",
-                             "indicator", "indicator_ref", "diversity", 
+                             "histogram", "indicator", "indicator_ref", "diversity", 
                              "temperature_regime", "nao_enhanced"),
                    reference_period = c(1991, 2020),
+                   sd_threshold = 1, 
                    highlight_recent = TRUE,
                    show_trend = TRUE,
                    regime_threshold = 0.5,
@@ -99,26 +111,22 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
             df <- x[["data"]]
             m <- x[["meta"]]
             
-            # TODO make a reasonable default for data with multiple value columns
-            # (plot first value column)
-            #rename to value so that plotting code can call it easily
+            # Rename value column
+            val_ind <- grep(names(df), pattern = '_value$')
             
-            # # gather value columns
-             val_ind <- grep(names(df), pattern = '_value$')
-
-             if (length(val_ind) == 0) {
-               stop("No value column found in data. Value column must end with '_value'.", call. = FALSE)
-             } else if (length(val_ind) > 1) {
-               warning("Multiple value columns found. Using the first one: ", names(df)[val_ind[1]], call. = FALSE)
-               df <- df %>%
-                 dplyr::rename(value = dplyr::all_of(names(df)[val_ind[1]]))
-             } else {
-               df <- df %>%
-                 dplyr::rename(value = dplyr::all_of(names(df)[val_ind]))
-             }
-            # 
+            if (length(val_ind) == 0) {
+              stop("No value column found in data. Value column must end with '_value'.", call. = FALSE)
+            } else if (length(val_ind) > 1) {
+              warning("Multiple value columns found. Using the first one: ", names(df)[val_ind[1]], call. = FALSE)
+              df <- df %>%
+                dplyr::rename(value = dplyr::all_of(names(df)[val_ind[1]]))
+            } else {
+              df <- df %>%
+                dplyr::rename(value = dplyr::all_of(names(df)[val_ind]))
+            }
+            
             # Base ggplot mapping
-            p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value)) # TODO update to plot val col determined above either first or only
+            p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value))
             labs <- list(
               title    = paste(m$data_type, "for", m$region),
               subtitle = paste("Source:", m$source_citation),
@@ -178,7 +186,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                     ggplot2::geom_line(ggplot2::aes(y = .data$upper),
                                        color = "blue", linetype = "dashed", linewidth = 0.8, ...)
                 }
-                p # Return the modified plot
+                p
               },
               
               anomaly = {
@@ -195,7 +203,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                   ggplot2::geom_col(ggplot2::aes(fill = df$bar_color), ...) +
                   ggplot2::scale_fill_manual(
                     values = c("positive" = "red", "negative" = "blue"),
-                    guide = "none" # Hide legend
+                    guide = "none"
                   ) +
                   ggplot2::geom_hline(yintercept = 0, color = "black", linewidth = 0.5)
                 
@@ -207,7 +215,15 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                       width = 0.3, color = "black", linewidth = 0.5, ...
                     )
                 }
-                p # Return the modified plot
+                p
+              },
+              
+              histogram = {
+                # Simple histogram/bar plot with year on x-axis
+                # Uses fill = "steelblue" as default, can be overridden via ...
+                # Creates a clean, single-layer base that users can add to
+                p +
+                  ggplot2::geom_col(fill = "steelblue", color = NA, width = 0.8, ...)
               },
 
               
@@ -215,21 +231,44 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
               indicator = {
                 # Calculate statistics
                 long_mean <- mean(df$value, na.rm = TRUE)
+                sd_value <- stats::sd(df$value, na.rm = TRUE)
                 recent_years <- tail(df$year, 5)
                 recent_data <- df[df$year %in% recent_years, ]
                 
+                # Create color classification for points BEFORE creating base plot
+                df$point_color <- ifelse(df$value > long_mean + sd_threshold * sd_value, "above_sd",
+                                         ifelse(df$value < long_mean - sd_threshold * sd_value, "below_sd", "within_sd"))
+                df$point_color <- factor(df$point_color, levels = c("below_sd", "within_sd", "above_sd"))
+                
+                p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value))
+                
                 p <- p +
                   ggplot2::geom_line(color = "black", linewidth = 0.8, ...) +
-                  ggplot2::geom_point(size = 1.5, color = "black", ...) +
-                  ggplot2::geom_hline(yintercept = long_mean, color = mean_line_color, 
-                                      linetype = "dashed", linewidth = 1)
-                
+                  ggplot2::geom_point(ggplot2::aes(color = .data$point_color), ...) +
+                  ggplot2::geom_hline(yintercept = long_mean, color = "darkgreen", 
+                                      linetype = "dashed", linewidth = 1) +
+                  ggplot2::geom_hline(yintercept = long_mean + sd_threshold * sd_value, color = "darkgreen", 
+                                      linetype = "dotted", linewidth = 0.8) +  # +SD threshold
+                  ggplot2::geom_hline(yintercept = long_mean - sd_threshold * sd_value, color = "darkgreen", 
+                                      linetype = "dotted", linewidth = 0.8) +  # -SD threshold
+                  ggplot2::scale_color_manual(
+                    values = c("above_sd" = "orange", "below_sd" = "blue", "within_sd" = "black"),
+                    labels = c(paste0("Below -", sd_threshold, " SD"), 
+                               paste0("Within +/-", sd_threshold, " SD"), 
+                               paste0("Above +", sd_threshold, " SD")),
+                    name = "Status",
+                    na.translate = FALSE
+                  )
+                  
+
+                  
                 # Highlight recent period
                 if (highlight_recent && nrow(recent_data) > 0) {
                   p <- p +
-                    ggplot2::geom_point(data = recent_data, 
-                                        ggplot2::aes(x = .data$year, y = .data$value),
-                                        color = "red", size = 2.5, shape = 16)
+                    ggplot2::annotate(geom = "rect",
+                             xmin = min(recent_years), xmax = max(recent_years),
+                             ymin = -Inf, ymax = Inf,
+                             fill = "purple2", alpha = 0.2)
                 }
                 
                 # Add trend line
@@ -246,35 +285,70 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
               },
               
               indicator_ref = {
-                # Calculate reference period statistics
+                # Filter data for reference period (1991-2020)
                 ref_data <- df[df$year >= reference_period[1] & df$year <= reference_period[2], ]
+                
                 if (nrow(ref_data) == 0) {
                   stop("No data available for reference period ", 
                        reference_period[1], "-", reference_period[2], call. = FALSE)
                 }
                 
+                # Calculate mean and standard deviation for reference period
                 ref_mean <- mean(ref_data$value, na.rm = TRUE)
                 ref_sd <- stats::sd(ref_data$value, na.rm = TRUE)
                 
-                # Calculate standardized anomalies
-                df$anomaly <- (df$value - ref_mean) / ref_sd
-                df$anomaly_color <- ifelse(df$anomaly >= 0, "positive", "negative")
+                # Determine the last 5 years in the data
+                end_year <- max(df$year, na.rm = TRUE)
+                start_year <- end_year - 4
+                recent_data <- df[df$year >= start_year, ]
                 
-                p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$anomaly)) +
-                  ggplot2::geom_col(ggplot2::aes(fill = .data$anomaly_color), ...) +
-                  ggplot2::scale_fill_manual(
-                    values = c("positive" = warm_color, "negative" = cold_color),
-                    name = "Anomaly"
-                  ) +
-                  ggplot2::geom_hline(yintercept = 0, color = "black", linewidth = 0.8) +
-                  ggplot2::geom_hline(yintercept = c(-1, 1), color = "grey50", 
-                                      linetype = "dashed", alpha = 0.7)
+                # Create color classification for points BEFORE creating base plot
+                df$point_color <- ifelse(df$value > ref_mean + sd_threshold * ref_sd, "above_sd",
+                                         ifelse(df$value < ref_mean - sd_threshold * ref_sd, "below_sd", "within_sd"))
+                df$point_color <- factor(df$point_color, levels = c("below_sd", "within_sd", "above_sd"))
+                # Recreate base plot with updated df
+                p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$year, y = .data$value))
                 
-                # Update labels for anomaly plot
-                labs$y <- paste0("Standardized Anomaly (", 
-                                 reference_period[1], "-", reference_period[2], " reference)")
+                p <- p +
+                  ggplot2::geom_path(color = "black", linewidth = 0.8, ...) +
+                  ggplot2::geom_hline(yintercept = ref_mean, color = "darkgreen", 
+                                      linetype = "dashed", linewidth = 1) +
+                  ggplot2::geom_hline(yintercept = ref_mean + sd_threshold * ref_sd, color = "darkgreen", 
+                                      linewidth = 0.8) +  # +SD threshold
+                  ggplot2::geom_hline(yintercept = ref_mean - sd_threshold * ref_sd, color = "darkgreen", 
+                                      linewidth = 0.8)  # -SD threshold
+                
+                # Highlight recent period (last 5 years)
+                if (highlight_recent && nrow(recent_data) > 0) {
+                  p <- p +
+                    ggplot2::annotate(geom = "rect",
+                                      xmin = start_year, xmax = end_year,
+                                      ymin = -Inf, ymax = Inf,
+                                      fill = "purple2", alpha = 0.2)
+                }
+                
+                # Add colored points based on whether they're outside 1 SD
+                p <- p +
+                  ggplot2::geom_point(ggplot2::aes(color = .data$point_color), size = 2.5) +
+                  ggplot2::scale_color_manual(
+                    values = c("above_sd" = "orange", "below_sd" = "blue", "within_sd" = "black"),
+                    labels = c(paste0("Below -", sd_threshold, " SD"),
+                               paste0("Within +/-", sd_threshold, " SD"),
+                               paste0("Above +", sd_threshold, " SD")),
+                    name = "Status",
+                    na.translate = FALSE
+                  )
+                
+                # Add trend line
+                if (show_trend) {
+                  p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE, 
+                                                color = trend_line_color, linewidth = 0.8, ...)
+                }
+                
+                # Update labels
                 labs$subtitle <- paste0(labs$subtitle, 
-                                        sprintf(" | Reference: %.2f ± %.2f %s", 
+                                        sprintf(" | Reference period (%d-%d): %.2f +/- %.2f %s",
+                                                reference_period[1], reference_period[2],
                                                 ref_mean, ref_sd, m$units))
                 p
               },
@@ -337,7 +411,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 }
                 
                 labs$subtitle <- paste0(labs$subtitle, 
-                                        sprintf(" | Mean: %.2f°C, Regime threshold: ±%.1f SD", 
+                                        sprintf(" | Mean: %.2f C, Regime threshold: +/-%.1f SD",
                                                 temp_mean, regime_threshold))
                 p
               },
@@ -382,9 +456,8 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
             # Apply labels and theme to the final plot
             p + do.call(ggplot2::labs, labs) + ggplot2::theme_bw()
           }
-              
-            )
-            
+)
+
 # Helper functions for MAReco-style calculations
 #' Calculate indicator statistics for reference periods
 #' @noRd
@@ -433,11 +506,3 @@ detect_regime_shifts <- function(data, threshold = 0.5) {
   
   return(data$regime)
 }
-
-
-
-
-
-
-
-

@@ -83,6 +83,8 @@ Suggests:
     covr,
     pacea,
     tidyverse,
+    mockery,
+    rerddap
     patchwork,
     here
 Remotes: 
