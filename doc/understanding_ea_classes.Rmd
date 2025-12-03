@@ -90,8 +90,10 @@ Plotting works out-of-the-box and returns a `ggplot2` object:
 # plot(grey_seals)
 ```
 
+*Output:*
+<img src="man/figures/plot_grey_Seals.png" width="70%" />
 
-If columns like `"lower"` and `"upper"` exist, add ribbons easily:
+If columns like `"low"` and `"high"` exist, add ribbons easily:
 
 ```{r}
 # plot(grey_seals, style = "ribbon")
@@ -368,7 +370,12 @@ Using robust S4 classes brings multiple benefits:
 ## Learn More
 
 - The main [README](../README.html) has a quick start
-- Plotting EA classes vignette
+- To list all built-in datasets and their metadata:
+
+```{r}
+marea_metadata()
+```
+
 ---
 
 ## Citing `marea`

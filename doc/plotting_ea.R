@@ -1,0 +1,342 @@
+## ----echo = FALSE-------------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+
+## ----echo = FALSE, message = FALSE, warning = FALSE---------------------------
+library(marea)
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+
+## -----------------------------------------------------------------------------
+# Load and plot North Atlantic Oscillation index
+data(nao)
+plot(nao)
+
+## -----------------------------------------------------------------------------
+plot(nao, style = "default")
+
+## -----------------------------------------------------------------------------
+plot(grey_seals, style = "ribbon")
+
+## -----------------------------------------------------------------------------
+plot(nao, style = "plain")
+
+## -----------------------------------------------------------------------------
+data(nao)
+
+plot(nao, style = "anomaly")
+
+## -----------------------------------------------------------------------------
+plot(grey_seals, style = "biomass")
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Start with base plot
+# p <- plot(nao, style = "plain")
+# 
+# # Add custom elements
+# p +
+#   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+#   geom_smooth(method = "loess", se = TRUE, alpha = 0.3) +
+#   labs(
+#     title = "North Atlantic Oscillation Index",
+#     subtitle = "With trend line and zero reference",
+#     caption = "Data source: NOAA"
+#   ) +
+#   theme_minimal()
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Start with ea_data object
+# marea::azmp_bottom_temperature #this data contains time series bottom temperature for multiple regions
+# 
+# # filter bottom temperature for one region
+# bottom_temp_cs <- azmp_bottom_temperature[azmp_bottom_temperature@data$region == 'Cabot Strait']
+# 
+# # Add custom elements
+# plot(bottom_temp_cs) +
+#   labs(title="Bottom Temperature for the Cabot Strait")
+# 
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Load multiple climate indices
+# data(nao)
+# data(oni)
+# 
+# # Create comparison plot
+# nao_recent <- nao@data[nao@data$year >= 2000,]
+# oni_recent <- oni@data[oni@data$year >= 2000 & oni@data$month == 1,]  # January only
+# 
+# # Combine data
+# combined_data <- data.frame(
+#   year = nao_recent$year,
+#   NAO = nao_recent$value,
+#   ONI = oni_recent$value[match(nao_recent$year, oni_recent$year)]
+# )
+# 
+# ea_df <- ea_data(
+#   data = combined_data,
+#   value_col = "NAO",
+#   data_type = "Climate Indices Comparison",
+#   region = "North Atlantic",
+#   location_descriptor = "Global",
+#   units = "Index Value"
+# )
+# 
+# plot(ea_df, style = "default") +
+#   geom_line(aes(y = ONI), color = "blue") +
+#   labs(
+#     title = "Climate Indices: NAO vs ONI",
+#     y = "Index Value",
+#     x = "Year"
+#   ) +
+#   theme_minimal()
+# 
+
+## ----eval = FALSE-------------------------------------------------------------
+# 
+# data(glorys_bottom_temperature)
+# glorys_2024 <- ea.subset.spatial(glorys_bottom_temperature, 'year', 2024)
+# 
+
+## ----eval = FALSE-------------------------------------------------------------
+# plot(glorys_2024, style = "fill")
+
+## ----eval = FALSE-------------------------------------------------------------
+# plot(glorys_2024, style = "contour")
+
+## ----eval = FALSE-------------------------------------------------------------
+# p <- plot(glorys_2024, style = "fill")
+# 
+# # Customize the map
+# p +
+#   scale_fill_viridis_c(name = "Temperature\n(°C)") +
+#   labs(
+#     title = "Bottom Temperature in the Maritimes Region",
+#     subtitle = "GLORYS Reanalysis Data"
+#   ) +
+#   theme_void() +
+#   theme(
+#     legend.position = "bottom",
+#     legend.key.width = unit(1.5, "cm")
+#   )
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Filter for specific months if time dimension exists
+#   winter_data <- glorys_2024[
+#     glorys_2024@data$month %in% c(12, 1, 2),
+#   ]
+# 
+#   plot(winter_data, style = "fill") +
+#     labs(title = "2024 Winter Bottom Temperature")
+# 
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Example correlation plot (if sufficient data overlap exists)
+#   recent_nao <- ea.subset(nao, 'year', c(1990:2024))
+# 
+#   # Add trend analysis
+#   p <- plot(recent_nao, style = 'plain')+
+#       labs(x = 'Year', y = 'NAO Index')+
+#       ggtitle("NAO Index Over Time (1990 - Present)")
+# 
+#   # Add regression line
+#   lm_fit <- lm(value ~ year, data = recent_nao@data)
+#   p <- p +
+#     geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "dashed") +
+#     theme_minimal()
+# 
+#   # Add text with trend
+#   slope <- round(coef(lm_fit)[2], 4)
+# 
+#   p <- p +
+#     geom_text(aes(x = 2000, y = max(recent_nao@data$value),
+#                   label = paste("Trend:", slope, "per year")),
+#               color = "red", hjust = 0)
+# 
+#   print(p)
+# 
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Create a multi-panel plot
+# par(mfrow = c(2, 2))
+# 
+# # Panel 1: NAO
+# plot(nao@data$year, nao@data$value, type = "l",
+#      main = "North Atlantic Oscillation",
+#      xlab = "Year", ylab = "Index")
+# 
+# # Panel 2: Grey Seals
+# plot(grey_seals@data$year, grey_seals@data$value, type = "l",
+#      main = "Grey Seal Abundance",
+#      xlab = "Year", ylab = "Count")
+# 
+# # Panel 3: ONI (subset)
+# oni_subset <- oni@data[oni@data$month == 1, ]  # January only
+# plot(oni_subset$year, oni_subset$value, type = "l",
+#      main = "Oceanic Niño Index (January)",
+#      xlab = "Year", ylab = "Temperature Anomaly (°C)")
+# 
+# # Panel 4: Bottom Temperature
+# if (exists("azmp_bottom_temperature")) {
+#   data(azmp_bottom_temperature)
+#   bottom_temp_eb <- azmp_bottom_temperature[azmp_bottom_temperature@data$region == 'Emerald Basin']
+#   plot(bottom_temp_eb@data$year, bottom_temp_eb@data$value,
+#        type = "p",
+#        main = "Emerald Basin Bottom Temperature",
+#        xlab = "Year", ylab = "Temperature (°C)")
+# }
+# 
+# # Reset to single panel
+# par(mfrow = c(1, 1))
+
+## ----eval = FALSE-------------------------------------------------------------
+# 
+# # Panel 1: NAO
+# p1<-plot(nao)+
+#   labs(title="NAO")+
+#     ylab("NAO")
+# 
+# # Panel 2: Grey Seals
+# p2<-plot(grey_seals)+
+#   labs(title="Grey seals")+
+#        ylab ("abundance")
+# 
+# # Panel 3: ONI (subset)
+# oni_subset <- oni[oni@data$month == 1]  # January only
+# p3<-plot(oni_subset)+
+#   labs(title="ONI")+
+#        ylab ("ONI")
+# 
+# # Panel 4: Bottom Temperature
+# bottom_temp_eb <- azmp_bottom_temperature[azmp_bottom_temperature@data$region == 'Emerald Basin']
+# p4<-plot(bottom_temp_eb)+
+#   labs(title="Emerald Basin")+
+#   ylab("bottom temp (degC)")
+# 
+# # Reset to single panel
+# require(patchwork)
+# 
+# (p1+p2)/(p3+p4)
+# 
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Custom color scheme for temperature data
+# custom_temp_plot <- function(data_obj) {
+#   p <- plot(data_obj, style = "fill")
+# 
+#   p +
+#     scale_fill_gradient2(
+#       low = "blue", mid = "white", high = "red",
+#       midpoint = mean(data_obj@data$value, na.rm = TRUE),
+#       name = "Temperature\n(°C)"
+#     ) +
+#     theme_minimal()
+# }
+# 
+# # Apply to spatial data
+# if (exists("glorys_2024")) {
+#   custom_temp_plot(glorys_2024)
+# }
+
+## ----eval = FALSE-------------------------------------------------------------
+# p <- plot(nao, style = "default")
+# 
+# p +
+#   geom_hline(yintercept = c(-1, 1), linetype = "dashed", alpha = 0.5) +
+#   annotate("text", x = 1960, y = 1.2, label = "Positive phase",
+#            hjust = 0, size = 3) +
+#   annotate("text", x = 1960, y = -1.2, label = "Negative phase",
+#            hjust = 0, size = 3) +
+#   labs(
+#     title = "North Atlantic Oscillation with Phase Indicators",
+#     caption = "Dashed lines show ±1 standard deviation"
+#   )
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Plot with custom confidence styling
+# p <- plot(grey_seals, style = "default")
+# 
+# p +
+#   geom_ribbon(aes(ymin = low, ymax = high), alpha = 0.3, fill = "lightblue") +
+#   geom_line( color = "darkblue") +
+#   geom_point( color = "darkblue") +
+#   labs(
+#     title = "Grey Seal Abundance with 95% Confidence Intervals",
+#     y = "Abundance (thousands)"
+#   ) +
+#   theme_bw()
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Create publication-ready plot
+# pub_plot <- plot(grey_seals, style = "ribbon") +
+#   labs(
+#     title = "Grey Seal Population Trends",
+#     subtitle = "Sable Island, Nova Scotia",
+#     x = "Year",
+#     y = "Estimated Abundance (thousands)",
+#     caption = "Data source: DFO Science"
+#   ) +
+#   theme_bw() +
+#   theme(
+#     plot.title = element_text(size = 14, face = "bold"),
+#     plot.subtitle = element_text(size = 12),
+#     axis.title = element_text(size = 12),
+#     axis.text = element_text(size = 10)
+#   )
+# 
+# # Save as high-resolution PNG
+# ggsave("grey_seals_trends.png", pub_plot,
+#        width = 8, height = 6, dpi = 300)
+# 
+# # Save as PDF for vector graphics
+# ggsave("grey_seals_trends.pdf", pub_plot,
+#        width = 8, height = 6)
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Always inspect your data first
+# ea.print(nao)
+# ea.summary(nao)
+# str(nao@data)
+
+## -----------------------------------------------------------------------------
+# Start simple
+p1 <- plot(nao)
+
+# Add one element at a time
+p2 <- p1 + theme_minimal()
+p3 <- p2 + labs(title = "Custom Title")
+p4 <- p3 + geom_smooth(method = "loess", se = FALSE)
+
+# Final result
+p4
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Create a custom theme for all your plots
+# my_theme <- theme_bw() +
+#   theme(
+#     plot.title = element_text(size = 14, face = "bold", colour = 'darkblue'),
+#     axis.title = element_text(size = 12),
+#     legend.position = "bottom"
+#   )
+# 
+# # Apply to any plot
+# plot(nao) + my_theme
+
+## -----------------------------------------------------------------------------
+# See all available datasets
+knitr::kable(marea_metadata())
+
+## ----eval = FALSE-------------------------------------------------------------
+# # Get help on plotting functions
+# ?`plot,ea_data,missing-method`
+# ?`plot,ea_spatial,missing-method`
+# 
+
+## -----------------------------------------------------------------------------
+# Cite the package in your work
+citation("marea")
+

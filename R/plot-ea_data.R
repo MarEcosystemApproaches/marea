@@ -80,6 +80,7 @@ setGeneric("plot")
 #' @export
 setMethod("plot", signature(x = "ea_data", y = "missing"),
           function(x,
+
                    style = c("default", "ribbon", "plain", "biomass", "anomaly",
                              "indicator", "indicator_ref", "diversity", 
                              "temperature_regime", "nao_enhanced"),
@@ -208,6 +209,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 }
                 p # Return the modified plot
               },
+
               
               # MAReco-inspired styles
               indicator = {

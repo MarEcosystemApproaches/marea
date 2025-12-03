@@ -1,0 +1,61 @@
+## ----setup, echo = FALSE, warnings = FALSE, message = FALSE-------------------
+library(tidyverse)
+library(readr)
+library(marea)
+library(here)
+library(patchwork)
+
+## -----------------------------------------------------------------------------
+# data_dir <- 'R:/Science/BIODataSvc/SRC/marea'
+# fsar_fourplot_exdata<- file.path(data_dir, "fsar_fourplot_exdata.csv")
+# fsar_fourplot_exdata <- read_csv(fsar_fourplot_exdata)
+
+# use an existing .Rdata file
+load(here::here("data-raw", "fsar-example", "fsar_fourplot_exdata.Rdata"))
+
+## -----------------------------------------------------------------------------
+fsar_example<-ea_data(
+  data=fsar_fourplot_exdata,
+  value_col="value",
+  data_type= "stock",
+  location_descriptor = "NAFO divisions",
+  region = "Maritimes",
+  units="variable",
+  source_citation = "DFO FSAR 2025 citation",
+  notes = "any caveats in this dataset"
+  )
+
+## -----------------------------------------------------------------------------
+# Fishing mortality
+pF<-plot(fsar_example[
+  fsar_example@data$panel.category=="Fishing" & fsar_example@data$ts.name=="Ut"
+], style="ribbon") +
+  labs(title="Fishing Mortality", y="Mortality (1/yr)", subtitle="")
+
+# Biomass with additional Reference Points
+pbiomass<-plot(fsar_example[
+  fsar_example@data$panel.category=="Biomass" & fsar_example@data$ts.name=="Survey"
+], style="ribbon") +
+  labs(title="Biomass", y="Biomass (kt)", subtitle="") +
+  geom_hline (yintercept=10.5, color="red", linetype="dashed") +
+  geom_hline (yintercept=22, color="green", linetype="dashed") 
+
+# Catches
+pcatch<-plot(fsar_example[
+  fsar_example@data$panel.category=="Catch" & fsar_example@data$ts.name=="CanadaTotal"
+]) +
+  labs(title="Fish NAFO div", y="Catch (t)", subtitle="")
+
+# Recruitment
+pabun<-plot(fsar_example[
+  fsar_example@data$panel.category=="Recruitment" & fsar_example@data$ts.name=="RVpred"
+], style="ribbon") +
+  labs(title="RV Survey (modeled)", y="Abundance (millions)", subtitle="")
+
+
+## -----------------------------------------------------------------------------
+# (pcatch+ pbiomass)/(pF + pabun)
+
+## -----------------------------------------------------------------------------
+citation("marea")
+
