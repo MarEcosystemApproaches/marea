@@ -20,8 +20,10 @@ marea_metadata <- function() {
   )
   
   for (dataset_name in datasets) {
+    #load all data sets
+    utils::data(list = dataset_name, package = "marea", envir = environment())
     # Get the dataset object from the marea namespace
-    data_obj <- get(dataset_name, envir = asNamespace("marea"))
+    data_obj <- get(dataset_name)
     
     # Initialize meta extraction
     meta <- NULL

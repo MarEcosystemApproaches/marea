@@ -373,35 +373,7 @@
 #' @source \url{http://www.o3d.org/npgo/}
 "npgo"
 
-#' Multivariate ENSO Index (MEI) (ea_data)
-#'
-#' The MEI is a bimonthly index formed by combining multiple atmospheric and oceanic variables, quantifying ENSO state in the tropical Pacific.
-#'
-#' @format An `ea_data` object:
-#' \describe{
-#'   \item{data}{Tibble with:
-#'     \itemize{
-#'       \item{\code{year}:} Year
-#'       \item{\code{month}:} Month (1–12, for bimonthly periods)
-#'       \item{\code{value}:} MEI anomaly (unitless)
-#'     }
-#'   }
-#'   \item{meta}{Includes:
-#'     \itemize{
-#'       \item{\code{data_type}:} "Multivariate ENSO Index"
-#'       \item{\code{region}:} "Tropical Pacific"
-#'       \item{\code{location_descriptor}:} "ENSO Basin"
-#'       \item{\code{units}:} "index"
-#'       \item{\code{source_citation}:} "NOAA PSL"
-#'       \item{\code{original_value_col}:} "anomaly"
-#'     }
-#'   }
-#' }
-#' @docType data
-#' @name mei
-#' @author Andrew Edwards
-#' @source \url{https://psl.noaa.gov/enso/mei/}
-"mei"
+
 
 #' Arctic Oscillation (AO) Index (ea_data)
 #'
