@@ -85,6 +85,8 @@ Suggests:
     tidyverse,
     mockery,
     rerddap
+    patchwork,
+    here
 Remotes: 
     pbs-assess/pacea
 Encoding: UTF-8

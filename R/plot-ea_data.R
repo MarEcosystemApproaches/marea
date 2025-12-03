@@ -91,6 +91,7 @@ setGeneric("plot")
 #' @export
 setMethod("plot", signature(x = "ea_data", y = "missing"),
           function(x,
+
                    style = c("default", "ribbon", "plain", "biomass", "anomaly",
                              "histogram", "indicator", "indicator_ref", "diversity", 
                              "temperature_regime", "nao_enhanced"),
@@ -224,6 +225,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 p +
                   ggplot2::geom_col(fill = "steelblue", color = NA, width = 0.8, ...)
               },
+
               
               # MAReco-inspired styles
               indicator = {
