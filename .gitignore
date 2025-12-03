@@ -8,3 +8,4 @@ lib/
 .Rproj.user
 .Rhistory
 inst/doc
+.Rhistory
