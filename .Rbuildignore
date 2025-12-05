@@ -20,3 +20,5 @@
 
 # CI/CD
 ^codecov\.yml$
+^doc$
+^Meta$
