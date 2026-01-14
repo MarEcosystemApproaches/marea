@@ -1,5 +1,5 @@
 # Food habits database
-# Run code line-by-line 
+# Run code line-by-line
 
 library(tidyverse)
 library(marea)
@@ -10,11 +10,10 @@ library(here)
 # updated by Jamie C. Tam September 10, 2025
 
 
-
 # This is the raw data extracted by Manon
 
-data_dir <- 'R:/Science/BIODataSvc/SRC/marea'
-food_habits<- file.path(data_dir, "FH.Eco.Surv.Data.Jan.2025.csv")
+data_dir <- "R:/Science/BIODataSvc/SRC/marea"
+food_habits <- file.path(data_dir, "FH.Eco.Surv.Data.Jan.2025.csv")
 food_habits <- read_csv(food_habits)
 
 # Citation:
@@ -30,17 +29,17 @@ food_habits <- read_csv(food_habits)
 # }
 
 # rename year column for compatability with ea_data()
-food_habits<-food_habits |>
-  rename(year=YEAR, region=NAFO_ZONE) 
+food_habits <- food_habits |>
+  rename(year = YEAR, region = NAFO_ZONE)
 
 
-#create "ea_data" object with multiple value columns
+# create "ea_data" object with multiple value columns
 val_col_list <- names(food_habits)[!(names(food_habits) %in% c("year", "region"))]
 
 # Create object with additional metadata
-food_habits<- ea_data(
+food_habits <- ea_data(
   data = food_habits,
-  value_col = val_col_list, 
+  value_col = val_col_list,
   data_type = "biological",
   region = "Maritimes",
   location_descriptor = "NAFO 4",

@@ -66,12 +66,13 @@ value column name to \code{value}, and stores metadata in the \code{meta} slot.
 \examples{
 df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
 obj <- ea_data(df,
-               value_col = c("temp_c"),
-               data_type = "temperature",
-               region = "Scotian Shelf",
-               location_descriptor = "bottom",
-               units = "°C",
-               project = "AZMP")
+  value_col = c("temp_c"),
+  data_type = "temperature",
+  region = "Scotian Shelf",
+  location_descriptor = "bottom",
+  units = "°C",
+  project = "AZMP"
+)
 
 # Access metadata
 obj[["region"]]

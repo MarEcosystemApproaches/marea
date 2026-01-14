@@ -59,7 +59,7 @@
 #'     }
 #'   }
 #' }
-#' 
+#'
 #' @name grey_seals
 #' @docType data
 #' @author Andrew Edwards, Nell den Heyer
@@ -100,12 +100,12 @@
 #' GLORYS Bottom Temperature (ea_spatial)
 #'
 #' Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.
-#' The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and 
+#' The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and
 #' interim monthly) for best data coverage.
 #'
 #' Dataset IDs: cmems_mod_glo_phy_my_0.083deg_P1M-m and cmems_mod_glo_phy_myint_0.083deg_P1M-m
 #' Pulled using marea::get_CMEMS_ncdf()
-#' 
+#'
 #' @format An `ea_spatial` (sf) object:
 #' \describe{
 #'   \item{value}{Bottom temperature value (°C)}
@@ -159,9 +159,9 @@
 "azmp_bottom_temperature"
 
 #' AZMP Scotian Shelf Surface Temperature (ea_data)
-#' 
+#'
 #' Surface water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#' 
+#'
 #' @format An `ea_data` object:
 #' \describe{
 #'  \item{data}{A tibble with columns:
@@ -189,7 +189,7 @@
 "azmp_surface_temperature"
 
 #' AZMP Scotian Shelf SST from Satellite (ea_data)
-#' 
+#'
 #' Sea surface temperature (SST) from satellite data for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from satellite observations and are crucial for fisheries and climate analyses.
 #' @format An `ea_data` object:
 #' \describe{
@@ -211,19 +211,19 @@
 #' }
 #' }
 #' }
-#' 
+#'
 #' @docType data
 #' @name azmp_satellite_temperature
-#' 
+#'
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
-#' 
+#'
 "azmp_satellite_temperature"
 
 #' AZMP Scotian Shelf Stratification Index (ea_data)
-#' 
+#'
 #' Stratification index ( measured as the density difference between 0 and 50 metres) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#' 
+#'
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
@@ -248,13 +248,13 @@
 #' @name azmp_stratification
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
-#' 
+#'
 "azmp_stratification"
 
 #' AZMP Surface Salinity (ea_data)
-#' 
+#'
 #' Surface salinity from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#' 
+#'
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
@@ -275,7 +275,7 @@
 #' }
 #' }
 #' }
-#' 
+#'
 #' @docType data
 #' @name azmp_salinity
 #' @author Emily O'Grady and Benoit Casault
@@ -374,7 +374,6 @@
 "npgo"
 
 
-
 #' Arctic Oscillation (AO) Index (ea_data)
 #'
 #' The AO Index tracks the primary mode of atmospheric circulation variability in the Northern Hemisphere, calculated via PCA of 1000 hPa geopotential anomalies north of 20°N.
@@ -399,16 +398,16 @@
 #'     }
 #'   }
 #' }
-#' 
+#'
 #' @docType data
 #' @name ao
 #' @author Andrew Edwards
 #' @source \url{https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/}
 "ao"
- 
+
 #' Atlantic MultiDecadal Oscillation (AMO) Index (ea_data)
 #'
-#' 
+#'
 #'
 #' @format An `ea_data` object:
 #' \describe{
@@ -430,16 +429,16 @@
 #'     }
 #'   }
 #' }
-#' 
+#'
 #' @docType data
 #' @name amo
 #' @author Emily O'Grady
 #' @source \url{https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat}
 "amo"
- 
+
 #' ecological indicators (ea_data)
 #'
-#'ecological indicators calculated from biomass estimates and commercial harvesting data
+#' ecological indicators calculated from biomass estimates and commercial harvesting data
 #'
 #' @format an `ea_data` object with multiple columns:
 #' \describe{
@@ -587,10 +586,10 @@
 #' Satellite Ocean Colour (ea_spatial)
 #'
 #' Annual spring bloom metrics and average chlorophyll-a derived from the OC-CCI
-#'  POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data(). 
-#'  NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from 
+#'  POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data().
+#'  NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from
 #'  4.64 km to 0.1 degree resolution.
-#' 
+#'
 #' @format An `ea_spatial` (stars) object:
 #' \describe{
 #'   \item{t_start_value}{Day of year of the start of the spring phytoplankton bloom (day of year)}
@@ -605,7 +604,7 @@
 #'   \item{units}{Character. "t_start: day of year; t_duration: days; amplitude_real: mg/m3; magnitude_real: days*mg/m3; annual_mean: mg/m3"}
 #'   \item{region}{Character. "Northwest Atlantic"}
 #'   \item{time_descriptor}{Character. Year}
-#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1) [Data set]. https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
+#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1) \[Data set\]. https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
 #'   \item{temporal_coverage}{Character. "1998-2024"}
 #'   \item{variable_name}{Character. The name used for the variable}
 #' }
@@ -614,5 +613,3 @@
 #' @author marea/DFO
 #' @source SOPhyE group, DFO, see data-raw/satellite-ocean-colour/satellite_ocean_colour.R
 "satellite_ocean_colour"
-
-

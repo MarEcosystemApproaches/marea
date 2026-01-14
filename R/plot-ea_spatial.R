@@ -1,5 +1,5 @@
 #' @title Plot an ea_spatial object with multiple styles
-#' @rdname plot-ea_spatial
+#' @name plot-ea_spatial
 #' @description
 #' Creates a spatial plot for an `ea_spatial` object. Styles:
 #'   * "fill": geom_sf fill by value
@@ -29,133 +29,131 @@
 #' @param resolution For "anomaly" style: resolution for rasterization when creating contours
 #' @param ... Additional args passed to the geoms.
 #' @return A ggplot object.
-#' 
+#'
 setGeneric("plot")
 
 #' @rdname plot-ea_spatial
 #' @export
-setMethod("plot", signature(x = "ea_spatial", y = "missing"),
-          function(x,
-                   style = c("fill", "contour", "bubble", "anomaly"),
-                   months.plot = NULL,
-                   years.plot = NULL,
-                   clim.dat = NULL,
-                   coastline = TRUE,
-                   coastline_region = "nw_atlantic",
-                   coastline_color = "darkgrey",
-                   coastline_fill = "grey90",
-                   coastline_size = 0.3,
-                   coastline_resolution = "medium",
-                   eez = TRUE,
-                   eez_data = NULL,
-                   resolution = 6000,
-                   ...) {
-            
-            df <- x@data
-            meta <- x@meta
-            
-            # --- Data validation and setup ---
-            if (is.null(df)) stop("The data slot of the 'ea_spatial' object is empty.", call. = FALSE)
-            if (missing(style)) stop("Must provide style argument!", call. = FALSE)
-            # Get data extent for coastline cropping
-            if (inherits(df, "stars")) {
-              df <- prepare_stars_data(df)
-              # Get bbox differently for stars
-              data_bbox <- sf::st_bbox(sf::st_as_sf(df, as_points = FALSE))
-            } else {
-              data_bbox <- sf::st_bbox(df)
-            }
-            
-            # Get coastline data if requested
-            coastline_data <- NULL
-            if (coastline) {
-              coastline_data <- get_coastline_data(
-                region = coastline_region,
-                data_bbox = data_bbox,
-                resolution = coastline_resolution
-              )
-            }
-            
-            # Base plot
-            if (inherits(df, "stars")) {
-              p <- ggplot2::ggplot()  # Empty ggplot for stars
-            } else {
-              p <- ggplot2::ggplot(df)  # Normal ggplot for sf/data.frames
-            }
-            # --- Apply style-specific plotting ---
-            p <- switch(
-              style,
-              fill = {
-                p <- p + ggplot2::labs(fill = meta$units)
-                if (inherits(df, "sf")) {
-                  p + ggplot2::geom_sf(data = df, ggplot2::aes(fill = .data$value), color = NA, ...)
-                } else if (inherits(df, "stars")) {
-                  if (!requireNamespace("stars", quietly = TRUE)) {
-                    stop("Package 'stars' is required for plotting 'stars' objects.", call. = FALSE)
-                  }
-                  p + stars::geom_stars(data = df, ggplot2::aes(fill = .data$value), ...)
-                } else if (inherits(df, "SpatRaster")) {
-                  if (!requireNamespace("tidyterra", quietly = TRUE)) {
-                    stop("Package 'tidyterra' is required for plotting 'SpatRaster' objects.", call. = FALSE)
-                  }
-                  p + tidyterra::geom_spatraster(data = df, ggplot2::aes(fill = .data$value), ...)
-                } else {
-                  stop("Unsupported data type for 'fill' style.", call. = FALSE)
-                }
-              },
-              
-              contour = {
-                # The helper function is responsible for handling data types
-                create_contour_plot(df, meta, ...)
-              },
-              
-              bubble = {
-                if (!inherits(df, "sf")) {
-                  stop("Style 'bubble' is only supported for 'sf' vector data.", call. = FALSE)
-                }
-                # Bubble size proportional to value
-                cent <- suppressWarnings(sf::st_centroid(df))
-                p +
-                  ggplot2::geom_sf(data = cent, ggplot2::aes(size = .data$value),
-                                   fill = "steelblue", color = 'black', shape = 21, ...) +
-                  ggplot2::scale_size_continuous(name = meta$units)
-              },
-              
-              anomaly = {
-                # The helper function is responsible for handling data types
-                create_anomaly_plot(df, meta, months.plot, years.plot, clim.dat, ...)
-              }
-            )
-            
-            # --- Add common layers (coastline, CRS, labels) ---
-            
-            # Add coastline (if not anomaly, which handles it internally for layering)
-            if (style != "anomaly" && !is.null(coastline_data)) {
-              p <- p + ggplot2::geom_sf(
-                data = coastline_data,
-                fill = "grey90",
-                color = "darkgrey",
-                linewidth = 0.3,
-                inherit.aes = FALSE
-              )
-            }
-            
-            # Add coordinate system and final styling
-            p <- p +
-              ggplot2::coord_sf(crs = sf::st_crs(df), datum = sf::st_crs(4326)) +
-              ggplot2::labs(
-                title = meta$data_type,
-                subtitle = paste(meta$time_descriptor, "| Source:", meta$source_citation),
-                x = NULL, y = NULL
-              ) +
-              ggplot2::theme_bw()
-            
-            return(p)
-          })
+setMethod(
+  "plot", signature(x = "ea_spatial", y = "missing"),
+  function(x,
+           style = c("fill", "contour", "bubble", "anomaly"),
+           months.plot = NULL,
+           years.plot = NULL,
+           clim.dat = NULL,
+           coastline = TRUE,
+           coastline_region = "nw_atlantic",
+           coastline_color = "darkgrey",
+           coastline_fill = "grey90",
+           coastline_size = 0.3,
+           coastline_resolution = "medium",
+           eez = TRUE,
+           eez_data = NULL,
+           resolution = 6000,
+           ...) {
+    df <- x@data
+    meta <- x@meta
+
+    # --- Data validation and setup ---
+    if (is.null(df)) stop("The data slot of the 'ea_spatial' object is empty.", call. = FALSE)
+    if (missing(style)) stop("Must provide style argument!", call. = FALSE)
+    # Get data extent for coastline cropping
+    if (inherits(df, "stars")) {
+      df <- prepare_stars_data(df)
+      # Get bbox differently for stars
+      data_bbox <- sf::st_bbox(sf::st_as_sf(df, as_points = FALSE))
+    } else {
+      data_bbox <- sf::st_bbox(df)
+    }
+
+    # Get coastline data if requested
+    coastline_data <- NULL
+    if (coastline) {
+      coastline_data <- get_coastline_data(
+        region = coastline_region,
+        data_bbox = data_bbox,
+        resolution = coastline_resolution
+      )
+    }
+
+    # Base plot
+    if (inherits(df, "stars")) {
+      p <- ggplot2::ggplot() # Empty ggplot for stars
+    } else {
+      p <- ggplot2::ggplot(df) # Normal ggplot for sf/data.frames
+    }
+    # --- Apply style-specific plotting ---
+    p <- switch(style,
+      fill = {
+        p <- p + ggplot2::labs(fill = meta$units)
+        if (inherits(df, "sf")) {
+          p + ggplot2::geom_sf(data = df, ggplot2::aes(fill = .data$value), color = NA, ...)
+        } else if (inherits(df, "stars")) {
+          if (!requireNamespace("stars", quietly = TRUE)) {
+            stop("Package 'stars' is required for plotting 'stars' objects.", call. = FALSE)
+          }
+          p + stars::geom_stars(data = df, ggplot2::aes(fill = .data$value), ...)
+        } else if (inherits(df, "SpatRaster")) {
+          if (!requireNamespace("tidyterra", quietly = TRUE)) {
+            stop("Package 'tidyterra' is required for plotting 'SpatRaster' objects.", call. = FALSE)
+          }
+          p + tidyterra::geom_spatraster(data = df, ggplot2::aes(fill = .data$value), ...)
+        } else {
+          stop("Unsupported data type for 'fill' style.", call. = FALSE)
+        }
+      },
+      contour = {
+        # The helper function is responsible for handling data types
+        create_contour_plot(df, meta, ...)
+      },
+      bubble = {
+        if (!inherits(df, "sf")) {
+          stop("Style 'bubble' is only supported for 'sf' vector data.", call. = FALSE)
+        }
+        # Bubble size proportional to value
+        cent <- suppressWarnings(sf::st_centroid(df))
+        p +
+          ggplot2::geom_sf(
+            data = cent, ggplot2::aes(size = .data$value),
+            fill = "steelblue", color = "black", shape = 21, ...
+          ) +
+          ggplot2::scale_size_continuous(name = meta$units)
+      },
+      anomaly = {
+        # The helper function is responsible for handling data types
+        create_anomaly_plot(df, meta, months.plot, years.plot, clim.dat, ...)
+      }
+    )
+
+    # --- Add common layers (coastline, CRS, labels) ---
+
+    # Add coastline (if not anomaly, which handles it internally for layering)
+    if (style != "anomaly" && !is.null(coastline_data)) {
+      p <- p + ggplot2::geom_sf(
+        data = coastline_data,
+        fill = "grey90",
+        color = "darkgrey",
+        linewidth = 0.3,
+        inherit.aes = FALSE
+      )
+    }
+
+    # Add coordinate system and final styling
+    p <- p +
+      ggplot2::coord_sf(crs = sf::st_crs(df), datum = sf::st_crs(4326)) +
+      ggplot2::labs(
+        title = meta$data_type,
+        subtitle = paste(meta$time_descriptor, "| Source:", meta$source_citation),
+        x = NULL, y = NULL
+      ) +
+      ggplot2::theme_bw()
+
+    return(p)
+  }
+)
 
 # Helper function to get coastline data based on region
 get_coastline_data <- function(region, data_bbox, resolution = "medium") {
-
   # Define region bounding boxes
   region_boxes <- list(
     nw_atlantic = c(xmin = -68, xmax = -54, ymin = 40, ymax = 48),
@@ -173,18 +171,18 @@ get_coastline_data <- function(region, data_bbox, resolution = "medium") {
   } else {
     # Default to data extent with buffer
     bbox <- as.numeric(data_bbox)
-    bbox[1] <- bbox[1] - 5  # xmin
-    bbox[2] <- bbox[2] + 5  # ymin
-    bbox[3] <- bbox[3] + 5  # xmax
-    bbox[4] <- bbox[4] + 5  # ymax
+    bbox[1] <- bbox[1] - 5 # xmin
+    bbox[2] <- bbox[2] + 5 # ymin
+    bbox[3] <- bbox[3] + 5 # xmax
+    bbox[4] <- bbox[4] + 5 # ymax
     names(bbox) <- c("xmin", "ymin", "xmax", "ymax")
-    bbox <- bbox[c("xmin", "xmax", "ymin", "ymax")]  # Reorder
+    bbox <- bbox[c("xmin", "xmax", "ymin", "ymax")] # Reorder
   }
   # Ensure bbox values are valid
-  bbox[1] <- max(bbox[1], -180)  # xmin
-  bbox[2] <- min(bbox[2], 180)   # xmax
-  bbox[3] <- max(bbox[3], -90)   # ymin
-  bbox[4] <- min(bbox[4], 90)    # ymax
+  bbox[1] <- max(bbox[1], -180) # xmin
+  bbox[2] <- min(bbox[2], 180) # xmax
+  bbox[3] <- max(bbox[3], -90) # ymin
+  bbox[4] <- min(bbox[4], 90) # ymax
 
 
   # Try different data sources
@@ -193,60 +191,69 @@ get_coastline_data <- function(region, data_bbox, resolution = "medium") {
   # Option 1: Try rnaturalearth with better error handling
   if (requireNamespace("rnaturalearth", quietly = TRUE)) {
     scale_map <- switch(resolution,
-                        "low" = 110,
-                        "medium" = 50,
-                        "high" = 10,
-                        50)
+      "low" = 110,
+      "medium" = 50,
+      "high" = 10,
+      50
+    )
 
-    tryCatch({
-      # Try to get countries data first
-      world <- rnaturalearth::ne_countries(scale = scale_map, returnclass = "sf")
+    tryCatch(
+      {
+        # Try to get countries data first
+        world <- rnaturalearth::ne_countries(scale = scale_map, returnclass = "sf")
 
-      # Check if data is valid
-      if (!is.null(world) && nrow(world) > 0) {
-        # Create bbox polygon correctly using st_polygon
-        bbox_coords <- matrix(c(
-          bbox[1], bbox[3],  # xmin, ymin
-          bbox[2], bbox[3],  # xmax, ymin
-          bbox[2], bbox[4],  # xmax, ymax
-          bbox[1], bbox[4],  # xmin, ymax
-          bbox[1], bbox[3]   # close polygon
-        ), ncol = 2, byrow = TRUE)
+        # Check if data is valid
+        if (!is.null(world) && nrow(world) > 0) {
+          # Create bbox polygon correctly using st_polygon
+          bbox_coords <- matrix(c(
+            bbox[1], bbox[3], # xmin, ymin
+            bbox[2], bbox[3], # xmax, ymin
+            bbox[2], bbox[4], # xmax, ymax
+            bbox[1], bbox[4], # xmin, ymax
+            bbox[1], bbox[3] # close polygon
+          ), ncol = 2, byrow = TRUE)
 
-        bbox_poly <- sf::st_sfc(sf::st_polygon(list(bbox_coords)), crs = 4326)
+          bbox_poly <- sf::st_sfc(sf::st_polygon(list(bbox_coords)), crs = 4326)
 
-        # Crop to region
-        coastline_data <- sf::st_crop(world, bbox_poly)
+          # Crop to region
+          coastline_data <- sf::st_crop(world, bbox_poly)
 
-        # Check if result is valid
-        if (is.null(coastline_data) || nrow(coastline_data) == 0) {
-          coastline_data <- NULL
+          # Check if result is valid
+          if (is.null(coastline_data) || nrow(coastline_data) == 0) {
+            coastline_data <- NULL
+          }
         }
+      },
+      error = function(e) {
+        message("rnaturalearth failed: ", e$message)
+        coastline_data <- NULL
       }
-    }, error = function(e) {
-      message("rnaturalearth failed: ", e$message)
-      coastline_data <- NULL
-    })
+    )
   }
 
   # Option 2: Try maps package
   if (is.null(coastline_data) && requireNamespace("maps", quietly = TRUE)) {
-    tryCatch({
-      world_map <- maps::map("world",
-                             xlim = bbox[c(1,2)],
-                             ylim = bbox[c(3,4)],
-                             plot = FALSE, fill = TRUE)
+    tryCatch(
+      {
+        world_map <- maps::map("world",
+          xlim = bbox[c(1, 2)],
+          ylim = bbox[c(3, 4)],
+          plot = FALSE, fill = TRUE
+        )
 
-      coastline_data <- sf::st_as_sf(world_map)
-    }, error = function(e) {
-      warning("Could not retrieve coastline data from maps package: ", e$message, call. = FALSE)
-    })
+        coastline_data <- sf::st_as_sf(world_map)
+      },
+      error = function(e) {
+        warning("Could not retrieve coastline data from maps package: ", e$message, call. = FALSE)
+      }
+    )
   }
 
   # Option 3: Create basic outline based on region
   if (is.null(coastline_data)) {
     warning("No coastline packages available. Install 'rnaturalearth' or 'maps' for coastline data.",
-            call. = FALSE)
+      call. = FALSE
+    )
 
     # Create basic regional outlines
     coastline_data <- create_basic_coastline(region, bbox)
@@ -259,27 +266,27 @@ get_coastline_data <- function(region, data_bbox, resolution = "medium") {
 create_basic_coastline <- function(region, bbox) {
   if (is.character(region)) {
     coords <- switch(region,
-                     nw_atlantic = data.frame(
-                       x = c(-80, -60, -40, -40, -60, -80, -80),
-                       y = c(30, 30, 40, 70, 70, 50, 30)
-                     ),
-                     pacific = data.frame(
-                       x = c(-180, -130, -100, -100, -130, -180, -180),
-                       y = c(30, 30, 35, 65, 65, 50, 30)
-                     ),
-                     gsl = data.frame(
-                       x = c(-72, -55, -55, -72, -72),
-                       y = c(45, 45, 52, 52, 45)
-                     ),
-                     arctic = data.frame(
-                       x = c(-180, -40, -40, -180, -180),
-                       y = c(65, 65, 85, 85, 65)
-                     ),
-                     # Default rectangle
-                     data.frame(
-                       x = c(bbox[1], bbox[2], bbox[2], bbox[1], bbox[1]),
-                       y = c(bbox[3], bbox[3], bbox[4], bbox[4], bbox[3])
-                     )
+      nw_atlantic = data.frame(
+        x = c(-80, -60, -40, -40, -60, -80, -80),
+        y = c(30, 30, 40, 70, 70, 50, 30)
+      ),
+      pacific = data.frame(
+        x = c(-180, -130, -100, -100, -130, -180, -180),
+        y = c(30, 30, 35, 65, 65, 50, 30)
+      ),
+      gsl = data.frame(
+        x = c(-72, -55, -55, -72, -72),
+        y = c(45, 45, 52, 52, 45)
+      ),
+      arctic = data.frame(
+        x = c(-180, -40, -40, -180, -180),
+        y = c(65, 65, 85, 85, 65)
+      ),
+      # Default rectangle
+      data.frame(
+        x = c(bbox[1], bbox[2], bbox[2], bbox[1], bbox[1]),
+        y = c(bbox[3], bbox[3], bbox[4], bbox[4], bbox[3])
+      )
     )
   } else {
     # Use provided bbox
@@ -310,33 +317,33 @@ create_contour_plot <- function(df, meta, ...) {
     }
     df <- terra::as.points(df) |> sf::st_as_sf()
   }
-  
+
   if (!inherits(df, "sf")) {
     stop("Contour plot requires 'sf' or convertible raster data.", call. = FALSE)
   }
-  
+
   if (!requireNamespace("akima", quietly = TRUE)) {
     stop("Package 'akima' is recommended for interpolation in contour plots.", call. = FALSE)
   }
-  
+
   coords <- sf::st_coordinates(sf::st_centroid(df))
   df_coords <- data.frame(x = coords[, 1], y = coords[, 2], value = df$value)
   df_coords <- df_coords[stats::complete.cases(df_coords), ]
-  
+
   # Check for duplicates, average them
   if (anyDuplicated(df_coords[, c("x", "y")])) {
     df_coords <- aggregate(value ~ x + y, data = df_coords, FUN = mean)
   }
-  
+
   # Interpolate to a grid
   interp_result <- akima::interp(
     x = df_coords$x, y = df_coords$y, z = df_coords$value,
     linear = TRUE, extrap = FALSE
   )
-  
+
   df_grid <- expand.grid(x = interp_result$x, y = interp_result$y)
   df_grid$value <- as.vector(interp_result$z)
-  
+
   ggplot2::ggplot(df_grid, ggplot2::aes(x = .data$x, y = .data$y, z = .data$value)) +
     ggplot2::geom_contour_filled(ggplot2::aes(fill = after_stat(level)), ...) +
     ggplot2::geom_contour(color = "black", ...) +
@@ -388,10 +395,10 @@ create_anomaly_plot <- function(df, meta, months.plot, years.plot, clim.dat, res
   }
 
   # Filter data
-  df_filtered <- df %>%
-    dplyr::filter(.data$year %in% years.plot, .data$month %in% months.plot) %>%
-    dplyr::left_join(month_table, by = c("month" = "month.num")) %>%
-    dplyr::mutate(plot.date = paste(.data$year, .data$month.name, sep = " ")) %>%
+  df_filtered <- df |>
+    dplyr::filter(.data$year %in% years.plot, .data$month %in% months.plot) |>
+    dplyr::left_join(month_table, by = c("month" = "month.num")) |>
+    dplyr::mutate(plot.date = paste(.data$year, .data$month.name, sep = " ")) |>
     dplyr::arrange(.data$year, .data$month)
 
   # Create factors
@@ -402,7 +409,7 @@ create_anomaly_plot <- function(df, meta, months.plot, years.plot, clim.dat, res
   plot_aesthetics <- get_anomaly_aesthetics(df_filtered$value, meta$data_type, meta$units)
 
   p <- ggplot2::ggplot()
-  
+
   # Add appropriate geom based on data type
   if (inherits(df_filtered, "sf")) {
     p <- p + ggplot2::geom_sf(data = df_filtered, ggplot2::aes(fill = .data$value), color = NA, ...)
@@ -411,8 +418,8 @@ create_anomaly_plot <- function(df, meta, months.plot, years.plot, clim.dat, res
   } else if (inherits(df_filtered, "SpatRaster")) {
     p <- p + tidyterra::geom_spatraster(data = df_filtered, ggplot2::aes(fill = .data$value), ...)
   }
-  
-  
+
+
   # Create plot
   # Add scales and other layers
   p <- p +
@@ -438,7 +445,7 @@ create_anomaly_plot <- function(df, meta, months.plot, years.plot, clim.dat, res
   if (length(months.plot) > 1 && length(years.plot) > 1) {
     p <- p + ggplot2::facet_grid(year ~ month.f)
   } else if (length(unique(df_filtered$plot.date.f)) > 1) {
-    p <- p + ggplot2::facet_wrap(~ plot.date.f)
+    p <- p + ggplot2::facet_wrap(~plot.date.f)
   }
 
   return(p)
@@ -447,9 +454,11 @@ create_anomaly_plot <- function(df, meta, months.plot, years.plot, clim.dat, res
 # Helper function to determine plot aesthetics (from pacea)
 get_anomaly_aesthetics <- function(values, data_type = NULL, units = NULL) {
   # GMT jet color palette
-  gmt_jet <- c("#000080", "#0000bf", "#0000FF", "#007fff", "#00FFFF", "#7fffff",
-               "#FFFFFF",
-               "#FFFF7F", "#FFFF00", "#ff7f00", "#FF0000", "#bf0000", "#820000")
+  gmt_jet <- c(
+    "#000080", "#0000bf", "#0000FF", "#007fff", "#00FFFF", "#7fffff",
+    "#FFFFFF",
+    "#FFFF7F", "#FFFF00", "#ff7f00", "#FF0000", "#bf0000", "#820000"
+  )
 
   # Default values
   colors <- gmt_jet
@@ -510,25 +519,31 @@ process_climatology_contours <- function(df_filtered, clim.dat, months.plot, res
   }
 
   # Filter climatology data for relevant months
-  tclim <- clim.dat %>%
+  tclim <- clim.dat |>
     dplyr::filter(.data$month %in% months.plot)
 
   # Add coordinates
-  tclim <- tclim %>%
+  df_tclim_coords <- tclim |>
+    sf::st_centroid() |>
+    sf::st_coordinates()
+  tclim  <- tclim  |> 
     dplyr::mutate(
-      lon = sf::st_coordinates(sf::st_centroid(.))[,1],
-      lat = sf::st_coordinates(sf::st_centroid(.))[,2]
-    ) %>%
+      lon = df_tclim_coords[, 1L],
+      lat = df_tclim_coords[, 2L]
+    ) |>
     sf::st_drop_geometry()
 
   # Merge with main data
-  tclim.x <- df_filtered %>%
+  df_filtered_coords <- df_filtered |> 
+    sf::st_centroid() |>
+    sf::st_coordinates()
+  tclim.x <- df_filtered |>
     dplyr::mutate(
-      lon = sf::st_coordinates(sf::st_centroid(.))[,1],
-      lat = sf::st_coordinates(sf::st_centroid(.))[,2]
-    ) %>%
-    sf::st_drop_geometry() %>%
-    dplyr::left_join(tclim, by = c("month" = "month", "lon" = "lon", "lat" = "lat")) %>%
+      lon = df_filtered_coords[, 1L],
+      lat = df_filtered_coords[, 2L]
+    ) |>
+    sf::st_drop_geometry() |>
+    dplyr::left_join(tclim, by = c("month" = "month", "lon" = "lon", "lat" = "lat")) |>
     dplyr::mutate(
       sd_1.3_pos = .data$clim_sd * 1.282,
       sd_2.3_pos = .data$clim_sd * 2.326,
@@ -544,7 +559,7 @@ process_climatology_contours <- function(df_filtered, clim.dat, months.plot, res
   # Generate contour data for each time period
   contour.dat <- data.frame()
   for (plot_date in unique(tclim.x$plot.date.f)) {
-    tdat <- tclim.x %>% dplyr::filter(.data$plot.date.f == plot_date)
+    tdat <- tclim.x |> dplyr::filter(.data$plot.date.f == plot_date)
 
     # Create contours for each percentile
     for (var in c("sd_above1.3", "sd_above2.3", "sd_below1.3", "sd_below2.3")) {
@@ -570,14 +585,18 @@ process_climatology_contours <- function(df_filtered, clim.dat, months.plot, res
 add_climatology_contours <- function(p, contour.dat, contour_type) {
   if (contour_type == "positive") {
     # For temperature anomalies, show positive contours
-    tcon1 <- contour.dat %>% dplyr::filter(.data$sd_var == "sd_above1.3")
-    tcon2 <- contour.dat %>% dplyr::filter(.data$sd_var == "sd_above2.3")
+    tcon1 <- contour.dat |> dplyr::filter(.data$sd_var == "sd_above1.3")
+    tcon2 <- contour.dat |> dplyr::filter(.data$sd_var == "sd_above2.3")
 
     p <- p +
-      ggplot2::geom_contour(data = tcon1, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_above1.3"),
-                            linewidth = 0.5, breaks = 0) +
-      ggplot2::geom_contour(data = tcon2, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_above2.3"),
-                            linewidth = 0.5, breaks = 0) +
+      ggplot2::geom_contour(
+        data = tcon1, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_above1.3"),
+        linewidth = 0.5, breaks = 0
+      ) +
+      ggplot2::geom_contour(
+        data = tcon2, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_above2.3"),
+        linewidth = 0.5, breaks = 0
+      ) +
       ggplot2::scale_colour_manual(
         name = NULL, guide = "legend",
         values = c("sd_above1.3" = "grey60", "sd_above2.3" = "black"),
@@ -585,14 +604,18 @@ add_climatology_contours <- function(p, contour.dat, contour_type) {
       )
   } else {
     # For other variables, show negative contours
-    tcon1 <- contour.dat %>% dplyr::filter(.data$sd_var == "sd_below1.3")
-    tcon2 <- contour.dat %>% dplyr::filter(.data$sd_var == "sd_below2.3")
+    tcon1 <- contour.dat |> dplyr::filter(.data$sd_var == "sd_below1.3")
+    tcon2 <- contour.dat |> dplyr::filter(.data$sd_var == "sd_below2.3")
 
     p <- p +
-      ggplot2::geom_contour(data = tcon1, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_below1.3"),
-                            linewidth = 0.5, breaks = 0) +
-      ggplot2::geom_contour(data = tcon2, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_below2.3"),
-                            linewidth = 0.5, breaks = 0) +
+      ggplot2::geom_contour(
+        data = tcon1, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_below1.3"),
+        linewidth = 0.5, breaks = 0
+      ) +
+      ggplot2::geom_contour(
+        data = tcon2, ggplot2::aes(x = .data$x, y = .data$y, z = .data$z, colour = "sd_below2.3"),
+        linewidth = 0.5, breaks = 0
+      ) +
       ggplot2::scale_colour_manual(
         name = NULL, guide = "legend",
         values = c("sd_below1.3" = "grey60", "sd_below2.3" = "black"),
@@ -607,11 +630,11 @@ add_climatology_contours <- function(p, contour.dat, contour_type) {
 prepare_stars_data <- function(stars_obj) {
   # Get the first attribute name if no 'value' attribute exists
   attr_names <- names(stars_obj)
-  
+
   if (!"value" %in% attr_names) {
     # Rename first attribute to 'value' for consistency
     names(stars_obj)[1] <- "value"
   }
-  
+
   return(stars_obj)
 }
