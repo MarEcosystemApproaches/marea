@@ -30,7 +30,7 @@ An \code{ea_data} object:
 \url{http://www.o3d.org/npgo/}
 }
 \usage{
-npgo
+data(npgo)
 }
 \description{
 The NPGO is the second dominant mode of sea-surface height anomaly variability in the northeast Pacific, correlating with nutrient/chlorophyll fluctuations.

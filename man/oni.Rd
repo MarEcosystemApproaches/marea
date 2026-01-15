@@ -32,7 +32,7 @@ An \code{ea_data} object with:
 Generated in data-raw/coastwide-indices/coastwide-indices.R
 }
 \usage{
-oni
+data(oni)
 }
 \description{
 The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern Oscillation. It is calculated as a 3-month running mean of sea surface temperature (SST) anomalies in the Niño 3.4 region (5°N–5°S, 120°W–170°W), using 30-year base periods updated every 5 years. ONI values may change for up to two months after initial posting due to data filtering.

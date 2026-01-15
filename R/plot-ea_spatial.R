@@ -1,5 +1,7 @@
 #' @title Plot an ea_spatial object with multiple styles
 #' @name plot-ea_spatial
+#' @aliases plot,ea_spatial,missing-method
+#' @docType methods
 #' @description
 #' Creates a spatial plot for an `ea_spatial` object. Styles:
 #'   * "fill": geom_sf fill by value
@@ -8,7 +10,6 @@
 #'   * "anomaly": anomaly plot with specialized color schemes and optional climatology contours
 #'
 #' @param x An `ea_spatial` object.
-#' @param y Ignored. Included for S4 generic consistency.
 #' @param style Character; one of "fill", "contour", "bubble", or "anomaly".
 #' @param months.plot For "anomaly" style: months to plot. Defaults to current month (if available)
 #' @param years.plot For "anomaly" style: years to plot. Defaults to most recent year available
@@ -28,14 +29,10 @@
 #' @param eez_data sf object with EEZ data (optional)
 #' @param resolution For "anomaly" style: resolution for rasterization when creating contours
 #' @param ... Additional args passed to the geoms.
-#' @return A ggplot object.
-#'
-setGeneric("plot")
-
-#' @rdname plot-ea_spatial
-#' @export
+#' @return A ggplot object.#' @export
 setMethod(
-  "plot", signature(x = "ea_spatial", y = "missing"),
+  "plot",
+  signature(x = "ea_spatial", y = "missing"),
   function(x,
            style = c("fill", "contour", "bubble", "anomaly"),
            months.plot = NULL,
@@ -526,7 +523,7 @@ process_climatology_contours <- function(df_filtered, clim.dat, months.plot, res
   df_tclim_coords <- tclim |>
     sf::st_centroid() |>
     sf::st_coordinates()
-  tclim  <- tclim  |> 
+  tclim <- tclim |>
     dplyr::mutate(
       lon = df_tclim_coords[, 1L],
       lat = df_tclim_coords[, 2L]
@@ -534,7 +531,7 @@ process_climatology_contours <- function(df_filtered, clim.dat, months.plot, res
     sf::st_drop_geometry()
 
   # Merge with main data
-  df_filtered_coords <- df_filtered |> 
+  df_filtered_coords <- df_filtered |>
     sf::st_centroid() |>
     sf::st_coordinates()
   tclim.x <- df_filtered |>

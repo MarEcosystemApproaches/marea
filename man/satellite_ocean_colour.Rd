@@ -28,7 +28,7 @@ An \code{ea_spatial} (stars) object:
 SOPhyE group, DFO, see data-raw/satellite-ocean-colour/satellite_ocean_colour.R
 }
 \usage{
-satellite_ocean_colour
+data(satellite_ocean_colour)
 }
 \description{
 Annual spring bloom metrics and average chlorophyll-a derived from the OC-CCI

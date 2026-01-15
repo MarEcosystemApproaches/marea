@@ -56,7 +56,6 @@ Depends:
     R (>= 4.1)
 Imports:
     akima,
-    cli,
     dplyr (>= 1.0.0),
     ggplot2 (>= 3.3.0),
     lubridate (>= 1.8.0),

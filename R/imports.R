@@ -5,6 +5,7 @@
 #' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import
 #' @import ggplot2
 #' @importFrom methods callGeneric callNextMethod new validObject
+#' @importFrom methods setClass setMethod
 #' @importFrom utils citation data head tail toBibtex
 #' @importFrom stats aggregate approx
 NULL

@@ -30,7 +30,7 @@ An \code{ea_data} object:
 \url{https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/}
 }
 \usage{
-ao
+data(ao)
 }
 \description{
 The AO Index tracks the primary mode of atmospheric circulation variability in the Northern Hemisphere, calculated via PCA of 1000 hPa geopotential anomalies north of 20°N.

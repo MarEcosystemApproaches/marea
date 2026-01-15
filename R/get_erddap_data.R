@@ -46,12 +46,12 @@
 #' plot(r)
 #' }
 get_erddap_data <- function(
-    dataset_id = "bio_remote_sensing_occci_nwa_poly4_spring_bloom", 
-    erddap_url = "https://cioosatlantic.ca/erddap/", 
-    variables = c("t_start", "t_duration", "amplitude_real", "magnitude_real", "annual_mean", "NRMSE_bloom", "percent_dineof"), 
-    xlim = NULL, 
-    ylim = NULL, 
-    timelim = NULL
+  dataset_id = "bio_remote_sensing_occci_nwa_poly4_spring_bloom",
+  erddap_url = "https://cioosatlantic.ca/erddap/",
+  variables = c("t_start", "t_duration", "amplitude_real", "magnitude_real", "annual_mean", "NRMSE_bloom", "percent_dineof"),
+  xlim = NULL,
+  ylim = NULL,
+  timelim = NULL
 ) {
   # require rerrdap
   if (!requireNamespace("rerddap", quietly = TRUE)) {

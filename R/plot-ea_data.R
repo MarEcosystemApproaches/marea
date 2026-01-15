@@ -29,7 +29,6 @@
 #'     regime periods, and standardized anomaly coloring.
 #'
 #' @param x An `ea_data` object.
-#' @param y Ignored. Included for consistency with the generic `plot` method.
 #' @param style Character; One of: `"default"`, `"ribbon"`,
 #'   `"plain"`, `"biomass"`, `"anomaly"`, `"histogram"`, `"indicator"`,
 #'   `"indicator_ref"`, `"diversity"`, `"temperature_regime"`, `"nao_enhanced"`.
@@ -54,9 +53,10 @@
 #'
 #' @return A `ggplot` object.
 #'
-#' @export
 #' @name plot-ea_data
 #' @aliases plot,ea_data,missing-method
+#' @docType methods
+#' @export
 #'
 #' @examples
 #' # Create sample data with uncertainty
@@ -85,13 +85,10 @@
 #' # Histogram with custom additions
 #' plot(biomass_obj, style = "histogram") +
 #'   ggplot2::geom_smooth(method = "lm", se = FALSE, color = "red")
-#'
-setGeneric("plot")
-
-#' @rdname plot-ea_data
 #' @export
 setMethod(
-  "plot", signature(x = "ea_data", y = "missing"),
+  "plot",
+  signature(x = "ea_data", y = "missing"),
   function(x,
            style = c(
              "default", "ribbon", "plain", "biomass", "anomaly",

@@ -30,7 +30,7 @@ An \code{ea_data} object:
 \url{https://www.cpc.ncep.noaa.gov/data/indices/soi}
 }
 \usage{
-soi
+data(soi)
 }
 \description{
 The SOI is a monthly measure of the seasonal atmospheric pressure differences between Tahiti and Darwin, a leading indicator of El Niño/La Niña conditions.
