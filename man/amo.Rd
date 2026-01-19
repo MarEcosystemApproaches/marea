@@ -30,7 +30,7 @@ An \code{ea_data} object:
 \url{https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat}
 }
 \usage{
-amo
+data(amo)
 }
 \description{
 Atlantic MultiDecadal Oscillation (AMO) Index (ea_data)

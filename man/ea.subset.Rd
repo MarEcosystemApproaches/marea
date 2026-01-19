@@ -21,12 +21,16 @@ A convenient helper function to filter the \code{data} slot of an \code{ea_data}
 based on matching values in a specified column.
 }
 \examples{
-df <- data.frame(year = rep(2000:2002, 2),
-                 temp_c = rnorm(6),
-                 group = rep(c("A", "B"), each = 3))
-obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
-               region = "Test Region", location_descriptor = "surface",
-               units = "°C")
+df <- data.frame(
+  year = rep(2000:2002, 2),
+  temp_c = rnorm(6),
+  group = rep(c("A", "B"), each = 3)
+)
+obj <- ea_data(df,
+  value_col = c("temp_c"), data_type = "temperature",
+  region = "Test Region", location_descriptor = "surface",
+  units = "°C"
+)
 
 # Filter for a single year
 ea.subset(obj, "year", 2001)

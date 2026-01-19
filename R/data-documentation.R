@@ -26,8 +26,8 @@
 #'     }
 #'   }
 #' }
-#' @name oni
 #' @docType data
+#' @usage data(oni)
 #' @author Andrew Edwards
 #' @source Generated in data-raw/coastwide-indices/coastwide-indices.R
 #' @references Ross, T. & Robert, M. (2022). In Boldt, J.L. et al. Canadian Technical Report of Fisheries and Aquatic Sciences, 3482.
@@ -59,14 +59,16 @@
 #'     }
 #'   }
 #' }
-#' 
-#' @name grey_seals
+#'
 #' @docType data
+#' @usage data(grey_seals)
 #' @author Andrew Edwards, Nell den Heyer
 #' @source Hammill et al. (2023), see data-raw/grey-seals/grey-seals.R
 "grey_seals"
 
 #' @rdname grey_seals
+#' @docType data
+#' @usage data(grey_seals_2021)
 "grey_seals_2021"
 
 #' North Atlantic Oscillation (NAO) Index (ea_data)
@@ -91,8 +93,8 @@
 #'     }
 #'   }
 #' }
-#' @name nao
 #' @docType data
+#' @usage data(nao)
 #' @author Jamie C. Tam; Chantelle Layton
 #' @source \url{https://www.ncei.noaa.gov/access/monitoring/nao/}
 "nao"
@@ -100,12 +102,12 @@
 #' GLORYS Bottom Temperature (ea_spatial)
 #'
 #' Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.
-#' The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and 
+#' The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and
 #' interim monthly) for best data coverage.
 #'
 #' Dataset IDs: cmems_mod_glo_phy_my_0.083deg_P1M-m and cmems_mod_glo_phy_myint_0.083deg_P1M-m
 #' Pulled using marea::get_CMEMS_ncdf()
-#' 
+#'
 #' @format An `ea_spatial` (sf) object:
 #' \describe{
 #'   \item{value}{Bottom temperature value (°C)}
@@ -121,8 +123,8 @@
 #'   \item{source_citation}{Character. "Copernicus Marine Service"}
 #'   \item{original_value_col}{Character. The original col used for value}
 #' }
-#' @name glorys_bottom_temperature
 #' @docType data
+#' @usage data(glorys_bottom_temperature)
 #' @author marea/DFO
 #' @source Copernicus Marine Service (GLORYS), see data-raw/glorys/glorys-bottom-temperature.R
 "glorys_bottom_temperature"
@@ -153,15 +155,15 @@
 #'   }
 #' }
 #' @docType data
-#' @name azmp_bottom_temperature
+#' @usage data(azmp_bottom_temperature)
 #' @author Jaimie Harbin and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_bottom_temperature"
 
 #' AZMP Scotian Shelf Surface Temperature (ea_data)
-#' 
+#'
 #' Surface water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#' 
+#'
 #' @format An `ea_data` object:
 #' \describe{
 #'  \item{data}{A tibble with columns:
@@ -182,22 +184,23 @@
 #'      }
 #'      }
 #'      }
-#'      @docType data
-#'      @name azmp_surface_temperature
-#'      @author Emily O'Grady and Benoit Casault
-#'      @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
+#' @docType data
+#' @usage data(azmp_surface_temperature)
+#' @name azmp_surface_temperature
+#' @author Emily O'Grady and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_surface_temperature"
 
 #' AZMP Scotian Shelf SST from Satellite (ea_data)
-#' 
+#'
 #' Sea surface temperature (SST) from satellite data for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from satellite observations and are crucial for fisheries and climate analyses.
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
 #' \itemize{
-#' \item{\code{year}:} Numeric year
-#' \item{\code{region}:} Character NAFO area name
-#' \item{\code{mean_value}:} Numeric sea surface temperature (°C)
+#'  \item{\code{year}:} Numeric year
+#'  \item{\code{region}:} Character NAFO area name
+#'  \item{\code{mean_value}:} Numeric sea surface temperature (°C)
 #' }
 #' }
 #' \item{meta}{A named list, including:
@@ -211,19 +214,18 @@
 #' }
 #' }
 #' }
-#' 
+#'
 #' @docType data
-#' @name azmp_satellite_temperature
-#' 
+#' @usage data(azmp_satellite_temperature)
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
-#' 
+#'
 "azmp_satellite_temperature"
 
 #' AZMP Scotian Shelf Stratification Index (ea_data)
-#' 
+#'
 #' Stratification index ( measured as the density difference between 0 and 50 metres) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#' 
+#'
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
@@ -245,16 +247,18 @@
 #' }
 #' }
 #' @docType data
-#' @name azmp_stratification
+#' @usage data(azmp_stratification)
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
-#' 
+#'
 "azmp_stratification"
 
 #' AZMP Surface Salinity (ea_data)
-#' 
-#' Surface salinity from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#' 
+#'
+#' Surface salinity from the Atlantic Zone Monitoring Program (AZMP) for the
+#' Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged
+#' from in situ surveys and are crucial for fisheries and climate analyses.
+#'
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
@@ -275,9 +279,9 @@
 #' }
 #' }
 #' }
-#' 
+#'
 #' @docType data
-#' @name azmp_salinity
+#' @usage data(azmp_salinity)
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_salinity"
@@ -308,7 +312,7 @@
 #'   }
 #' }
 #' @docType data
-#' @name pdo
+#' @usage data(pdo)
 #' @author Andrew Edwards
 #' @source \url{https://www.ncei.noaa.gov/access/monitoring/pdo/}
 "pdo"
@@ -338,7 +342,7 @@
 #'   }
 #' }
 #' @docType data
-#' @name soi
+#' @usage data(soi)
 #' @author Andrew Edwards
 #' @source \url{https://www.cpc.ncep.noaa.gov/data/indices/soi}
 "soi"
@@ -368,11 +372,10 @@
 #'   }
 #' }
 #' @docType data
-#' @name npgo
+#' @usage data(npgo)
 #' @author Andrew Edwards
 #' @source \url{http://www.o3d.org/npgo/}
 "npgo"
-
 
 
 #' Arctic Oscillation (AO) Index (ea_data)
@@ -399,16 +402,16 @@
 #'     }
 #'   }
 #' }
-#' 
+#'
 #' @docType data
-#' @name ao
+#' @usage data(ao)
 #' @author Andrew Edwards
 #' @source \url{https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/}
 "ao"
- 
+
 #' Atlantic MultiDecadal Oscillation (AMO) Index (ea_data)
 #'
-#' 
+#'
 #'
 #' @format An `ea_data` object:
 #' \describe{
@@ -430,16 +433,16 @@
 #'     }
 #'   }
 #' }
-#' 
+#'
 #' @docType data
-#' @name amo
+#' @usage data(amo)
 #' @author Emily O'Grady
 #' @source \url{https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat}
 "amo"
- 
+
 #' ecological indicators (ea_data)
 #'
-#'ecological indicators calculated from biomass estimates and commercial harvesting data
+#' ecological indicators calculated from biomass estimates and commercial harvesting data
 #'
 #' @format an `ea_data` object with multiple columns:
 #' \describe{
@@ -578,7 +581,7 @@
 #'   \item{BIOMASS_TL2}{biomass of trophic level 2}
 #' }
 #' @docType data
-#' @name eco_indicators
+#' @usage data(azmp_salinity)
 #' @author Jamie C. Tam
 #' @source Generated from running `data-raw/eco-indicators/eco-indicators.R`
 "eco_indicators"
@@ -587,10 +590,10 @@
 #' Satellite Ocean Colour (ea_spatial)
 #'
 #' Annual spring bloom metrics and average chlorophyll-a derived from the OC-CCI
-#'  POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data(). 
-#'  NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from 
+#'  POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data().
+#'  NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from
 #'  4.64 km to 0.1 degree resolution.
-#' 
+#'
 #' @format An `ea_spatial` (stars) object:
 #' \describe{
 #'   \item{t_start_value}{Day of year of the start of the spring phytoplankton bloom (day of year)}
@@ -605,14 +608,47 @@
 #'   \item{units}{Character. "t_start: day of year; t_duration: days; amplitude_real: mg/m3; magnitude_real: days*mg/m3; annual_mean: mg/m3"}
 #'   \item{region}{Character. "Northwest Atlantic"}
 #'   \item{time_descriptor}{Character. Year}
-#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1) [Data set]. https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
+#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1) \[Data set\]. https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
 #'   \item{temporal_coverage}{Character. "1998-2024"}
 #'   \item{variable_name}{Character. The name used for the variable}
 #' }
-#' @name satellite_ocean_colour
 #' @docType data
+#' @usage data(satellite_ocean_colour)
 #' @author marea/DFO
 #' @source SOPhyE group, DFO, see data-raw/satellite-ocean-colour/satellite_ocean_colour.R
 "satellite_ocean_colour"
 
 
+#' Coastline Data for North Atlantic Region
+#'
+#' State and province level boundaries from Natural Earth for Canada, United States,
+#' Greenland, and Saint Pierre and Miquelon. Useful for adding coastline context to
+#' spatial plots of marine data in the Northwest Atlantic region.
+#'
+#' @format An `sf` object with 72 features and 4 fields:
+#' \describe{
+#'   \item{admin}{Character. Country name (e.g., "Canada", "United States of America")}
+#'   \item{name_en}{Character. State/province name in English}
+#'   \item{name_fr}{Character. State/province name in French}
+#'   \item{geometry}{sfc_MULTIPOLYGON. Spatial geometry of the state/province boundaries}
+#' }
+#'
+#' @details
+#' This dataset includes state/province boundaries for:
+#' \itemize{
+#'   \item Canada (CA) - All provinces and territories
+#'   \item United States (US) - States bordering Atlantic coast
+#'   \item Greenland (GL)
+#'   \item Saint Pierre and Miquelon (PM)
+#' }
+#'
+#' The data is in WGS 84 coordinate reference system (EPSG:4326) and is suitable
+#' for use with ggplot2 and sf plotting functions.
+#'
+#' @docType data
+#' @name coastline
+#' @usage data(coastline)
+#' @author marea/DFO
+#' @source Natural Earth Data via rnaturalearth package, see data-raw/coastline/coastline.R
+#' @references \url{https://www.naturalearthdata.com/}
+"coastline"

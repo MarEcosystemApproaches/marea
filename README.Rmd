@@ -54,8 +54,7 @@ data("grey_seals")
 ea.print(grey_seals)
 
 # 3. Create a simple plot
- p <- plot(grey_seals)
-
+p <- plot(grey_seals)
 ```
 
 <img src="man/figures/plot_grey_seals.png" width="70%" />
@@ -66,14 +65,12 @@ data, then customize it even further by chaining on ggplot graphics grammar.
 ```{r}
 # 4. Customize it! Add a confidence ribbon and improve the labels.
 # The 'low' and 'high' columns are right there in the data frame.
-custom_plot <- plot(grey_seals, style = 'ribbon') +
+custom_plot <- plot(grey_seals, style = "ribbon") +
   labs(
-   title = "Grey Seal Abundance on Sable Island",
+    title = "Grey Seal Abundance on Sable Island",
     y = "Estimated Pup Production (count)"
   ) +
   theme_bw()
-
-
 ```
 
 <img src="man/figures/README-grey-seals.png" width="70%" />

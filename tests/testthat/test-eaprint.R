@@ -2,15 +2,15 @@
 
 test_that("ea.print prints ea_data summary and returns invisibly", {
   testthat::local_reproducible_output()
-  
+
   # Ensure minimal S4 classes exist for testing
   if (!methods::isClass("ea_data")) {
     methods::setClass("ea_data", representation(meta = "list", data = "data.frame"))
   }
-  
+
   meta <- list(
     data_type = "biological",
-    value_col = 'value',
+    value_col = "value",
     species = "Cod",
     location_descriptor = "Area51",
     region = "ATL",
@@ -21,10 +21,10 @@ test_that("ea.print prints ea_data summary and returns invisibly", {
     sp_value = c(1, 2, 3, NA_real_)
   )
   obj <- methods::new("ea_data", meta = meta, data = df)
-  
+
   vis <- NULL
   out <- testthat::capture_output(vis <- withVisible(ea.print(obj)))
-  
+
   # Output contains expected summary lines
   expect_match(out, "Ecosystem Approach \\(EA\\) Data Object")
   expect_match(out, "Class:\\s+ea_data")
@@ -37,7 +37,7 @@ test_that("ea.print prints ea_data summary and returns invisibly", {
   # Preview should include column names from data
   expect_match(out, "year")
   expect_match(out, "sp_value")
-  
+
   # Returned value is the object and is invisible
   expect_false(vis$visible)
   expect_identical(vis$value, obj)
@@ -45,14 +45,14 @@ test_that("ea.print prints ea_data summary and returns invisibly", {
 
 test_that("ea.print for ea_data omits Species line when species is NA", {
   testthat::local_reproducible_output()
-  
+
   if (!methods::isClass("ea_data")) {
     methods::setClass("ea_data", representation(meta = "list", data = "data.frame"))
   }
-  
+
   meta <- list(
     data_type = "biological",
-    value_col = 'sp',
+    value_col = "sp",
     species = NA_character_,
     location_Descriptor = "Somewhere",
     region = "PAC",
@@ -63,7 +63,7 @@ test_that("ea.print for ea_data omits Species line when species is NA", {
     sp_value = c(10, 20, 30)
   )
   obj <- methods::new("ea_data", meta = meta, data = df)
-  
+
   out <- testthat::capture_output(ea.print(obj))
   expect_match(out, "Data Type:\\s+biological")
   expect_false(grepl("\\bSpecies\\s*:", out))
@@ -87,7 +87,7 @@ create_test_sf <- function(n = 3, value_col_name = "temp_val",
     }
   }
   sf_obj <- sf::st_sf(df, geometry = sf::st_sfc(pts, crs = 4326))
-  
+
   ea_spatial(
     data = sf_obj,
     value_col = value_col_name,
@@ -100,17 +100,17 @@ create_test_sf <- function(n = 3, value_col_name = "temp_val",
 
 test_that("ea.print prints ea_spatial summary and returns invisibly", {
   testthat::local_reproducible_output()
-  
+
   if (!methods::isClass("ea_spatial")) {
     methods::setClass("ea_spatial", representation(meta = "list", data = "data.frame"))
   }
-  
+
   obj <- create_test_sf()
-  
-  
+
+
   vis <- NULL
   out <- testthat::capture_output(vis <- withVisible(ea.print(obj)))
-  
+
   expect_match(out, "Ecosystem Approach Spatio-Temporal \\(ea_spatial\\) Object")
   expect_match(out, "Temperature")
   expect_match(out, "Time:\\s+Annual")
@@ -120,7 +120,7 @@ test_that("ea.print prints ea_spatial summary and returns invisibly", {
   expect_match(out, "id")
   expect_match(out, "value")
   expect_match(out, "geometry")
-  
+
   expect_false(vis$visible)
   expect_identical(vis$value, obj)
 })

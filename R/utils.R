@@ -16,12 +16,15 @@
 filter_preserve_attrs <- function(data, ...) {
   orig_attrs <- attributes(data)
   filtered <- dplyr::filter(data, ...)
-  
+
   # Restore non-standard attributes (keep names, row.names, class from filtered)
   attrs_to_restore <- setdiff(names(orig_attrs), c("names", "row.names", "class"))
-  for(attr_name in attrs_to_restore) {
+  for (attr_name in attrs_to_restore) {
     attr(filtered, attr_name) <- orig_attrs[[attr_name]]
   }
-  
+
   return(filtered)
 }
+
+
+utils::globalVariables(c(":=", "level"))

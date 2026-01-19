@@ -7,7 +7,7 @@ library(marea)
 
 # Helper function
 make_ea_index <- function(
-    df, value_col, data_type, region, location, units, source, species = NA_character_
+  df, value_col, data_type, region, location, units, source, species = NA_character_
 ) {
   ea_data(
     data = df,
@@ -24,10 +24,13 @@ make_ea_index <- function(
 
 # ---- ONI ----
 download.file("https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
-              destfile = "oni.txt", mode = "wb", quiet = FALSE)
+  destfile = "oni.txt", mode = "wb", quiet = FALSE
+)
 oni_new <- read_table("oni.txt")
-stopifnot(colnames(oni_new) == c("SEAS", "YR", "TOTAL", "ANOM"),
-          oni_new[1, 1] == "DJF")
+stopifnot(
+  colnames(oni_new) == c("SEAS", "YR", "TOTAL", "ANOM"),
+  oni_new[1, 1] == "DJF"
+)
 colnames(oni_new) <- c("month", "year", "value", "anomaly")
 oni_new <- relocate(oni_new, year)
 oni_new$month <- as.numeric(
@@ -46,11 +49,14 @@ usethis::use_data(oni, overwrite = TRUE)
 
 # ---- PDO ----
 download.file("https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat",
-              destfile = "pdo.txt", mode = "wb", quiet = FALSE)
+  destfile = "pdo.txt", mode = "wb", quiet = FALSE
+)
 pdo_raw <- read_table("pdo.txt", skip = 1, na = "99.99")
-stopifnot(pdo_raw[1,1] == 1854)
-pdo_long <- tidyr::pivot_longer(pdo_raw, cols = "Jan":"Dec",
-                                names_to = "month", values_to = "anomaly") %>%
+stopifnot(pdo_raw[1, 1] == 1854)
+pdo_long <- tidyr::pivot_longer(pdo_raw,
+  cols = "Jan":"Dec",
+  names_to = "month", values_to = "anomaly"
+) %>%
   mutate(month = as.numeric(match(month, month.abb))) %>%
   rename(year = Year) %>%
   filter(!is.na(anomaly))
@@ -67,7 +73,8 @@ usethis::use_data(pdo, overwrite = TRUE)
 
 # ---- SOI ----
 download.file("https://www.cpc.ncep.noaa.gov/data/indices/soi",
-              destfile = "soi.txt", mode = "wb", quiet = FALSE)
+  destfile = "soi.txt", mode = "wb", quiet = FALSE
+)
 soi_new <- read.table("soi.txt", skip = 3, as.is = TRUE, header = TRUE, fill = TRUE)
 names(soi_new)[1] <- "year"
 soi_new$year <- as.numeric(soi_new$year)
@@ -90,7 +97,8 @@ usethis::use_data(soi, overwrite = TRUE)
 
 # ---- NPGO ----
 download.file("http://www.o3d.org/npgo/data/NPGO.txt",
-              destfile = "npgo.txt", mode = "wb", quiet = FALSE)
+  destfile = "npgo.txt", mode = "wb", quiet = FALSE
+)
 npgo_raw <- read.table("npgo.txt", skip = 5, as.is = TRUE, header = FALSE, fill = TRUE, comment = "#") %>%
   as_tibble() %>%
   rename(year = V1, month = V2, anomaly = V3) %>%
@@ -109,7 +117,8 @@ usethis::use_data(npgo, overwrite = TRUE)
 
 # ---- MEI ----
 download.file("https://psl.noaa.gov/enso/mei/data/meiv2.data",
-              destfile = "mei.txt", mode = "wb", quiet = FALSE)
+  destfile = "mei.txt", mode = "wb", quiet = FALSE
+)
 mei_new <- read.table("mei.txt", skip = 1, as.is = TRUE, fill = TRUE) %>% as_tibble()
 names(mei_new) <- c("year", 1:12)
 mei_new$year <- as.numeric(mei_new$year)
@@ -130,7 +139,8 @@ usethis::use_data(mei, overwrite = TRUE)
 
 # ---- AO ----
 download.file("https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/monthly.ao.index.b50.current.ascii.table",
-              destfile = "ao.txt", mode = "wb", quiet = FALSE)
+  destfile = "ao.txt", mode = "wb", quiet = FALSE
+)
 ao_raw <- read.table("ao.txt", header = TRUE, fill = TRUE)
 ao_years <- as.numeric(row.names(ao_raw))
 ao_long <- cbind(year = ao_years, ao_raw) %>%
@@ -152,10 +162,11 @@ usethis::use_data(ao, overwrite = TRUE)
 
 # ---- AMO ----
 download.file("https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat",
-              destfile = "amo.txt", mode = "wb", quiet = FALSE)
+  destfile = "amo.txt", mode = "wb", quiet = FALSE
+)
 amo_raw <- read.table("amo.txt", header = TRUE, fill = TRUE, skip = 1)
 amo_p <- amo_raw %>%
-  rename('year' = 'Year')
+  rename("year" = "Year")
 amo <- make_ea_index(
   df = amo_p,
   value_col = "SSTA",
@@ -169,4 +180,3 @@ usethis::use_data(amo, overwrite = TRUE)
 
 # ---- END ----
 message("All coastwide indices updated using ea_data class and with full metadata.")
-
