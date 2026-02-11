@@ -14,3 +14,36 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, echo = FALSE, warnings = FALSE, message = FALSE}
+library(marea)
+library(tidyverse)
+```
+
+
+## Introduction
+
+In this vignette, we will demonstrate how to extract data from the `marea` package based on a spatial range. This is particularly useful when you want to focus on a specific geographic area for your analysis.
+
+## Useful tools
+
+
+## Example: Extracting Data for a Specific Region
+
+# load in all datasets
+
+# load in spatial box of interest
+
+# check which datasets overlap with your area of interest
+
+# extract those datasets 
+
+# gather exploratory info about data availability
+
+
+## Making it reproducible
+
+
+
+
+
+
