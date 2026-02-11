@@ -1,0 +1,16 @@
+---
+title: "Extracting Data based on Spatial Range"
+author: "Emily O'Grady"
+date: '`r Sys.Date()`'
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    theme: cerulean
+vignette: >
+  %\VignetteIndexEntry{Spatial Data Extraction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
