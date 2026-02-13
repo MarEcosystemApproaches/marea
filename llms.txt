@@ -1,0 +1,325 @@
+# marea: Curated Ecosystem Data for the Maritimes Region
+
+![](reference/figures/marea_logo_jupijkam.png)
+
+`marea` provides curated data sets to support an Ecosystem Approach to
+Fisheries Management (EAFM) in Canada’s Maritimes Region. It offers
+standardized, analysis-ready time series of oceanographic,
+environmental, and biological data crucial for research and stock
+assessment.
+
+## Philosophy
+
+1.  **A Single, Simple Data Structure**: All time series data in `marea`
+    are stored in simple and robust `ea`class objects. This provides a
+    consistent, predictable format, whether you are working with
+    temperature, survey indices, or commercial catch.
+2.  **User-Controlled Plotting**: We provide a basic, clean plot for
+    every dataset. From there, **you are in control**. Because our plots
+    are standard `ggplot2` objects, you can easily customize them, add
+    new layers, and create the exact visualization you need for your
+    analysis or report.
+
+## Installation
+
+You can install the development version of `marea` from GitHub:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("MarEcosystemApproaches/marea")
+```
+
+For users on the DFO network who may experience connection timeouts:
+
+``` r
+# Set a longer timeout period
+options(timeout = 1200)
+remotes::install_github("MarEcosystemApproaches/marea")
+```
+
+## Quick Start: A Simple Workflow
+
+The workflow for any dataset in marea is the same: load, inspect, plot,
+and customize.
+
+``` r
+library(marea)
+```
+
+``` R
+## Thank you for using marea. Type citation('marea') for citation information.
+```
+
+``` r
+library(ggplot2) # For customization
+
+# 1. Load a dataset of interest (e.g., grey seal abundance)
+data("grey_seals")
+
+# 2. Inspect the object - it's a clean 'ea_data' object
+ea.print(grey_seals)
+```
+
+``` R
+## --- Ecosystem Approach (EA) Data Object --- 
+## Class:  ea_data 
+## Data Type:  Grey Seal Abundance 
+## Species:   grey seal 
+## Location:    ( Scotian Shelf  Region ) 
+## Time Range:   1960  -  2021 
+## Units:  number of seals 
+## --------------------------------------------
+## Data Preview:
+##   year      low median_value     high
+## 1 1960 1.652570     1.860824 2.396134
+## 2 1961 2.032521     2.263192 2.809171
+## 3 1962 2.407304     2.659018 3.214911
+## 4 1963 2.700793     2.972982 3.541202
+## 5 1964 2.785795     3.088971 3.684344
+## 6 1965 3.126289     3.449040 4.053713
+```
+
+``` r
+# 3. Create a simple plot
+ p <- plot(grey_seals)
+```
+
+![](reference/figures/plot_grey_seals.png)
+
+You can use the style argument to create a default whichis an
+appropriate base for your data, then customize it even further by
+chaining on ggplot graphics grammar.
+
+``` r
+# 4. Customize it! Add a confidence ribbon and improve the labels.
+# The 'low' and 'high' columns are right there in the data frame.
+custom_plot <- plot(grey_seals, style = 'ribbon') +
+  labs(
+   title = "Grey Seal Abundance on Sable Island",
+    y = "Estimated Pup Production (count)"
+  ) +
+  theme_bw()
+```
+
+![](reference/figures/README-grey-seals.png)
+
+## Available Data
+
+marea includes a growing list of curated data products. Use
+marea_metadata() to see what’s available.
+
+``` r
+library(knitr)
+kable(marea_metadata())
+```
+
+| Dataset                   | Region                      | TimeSpan  | Source                                                                                                                                                                                                                                                       |
+|:--------------------------|:----------------------------|:----------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| amo                       | Northern Hemisphere (0-60N) | 1854-2025 | NOAA , <https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat>                                                                                                                                                                             |
+| ao                        | Northern Hemisphere         | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/>                                                                                                                                                                             |
+| azmp_bottom_temperature   | Scotian Shelf (4X, 4V, 4W)  | 1950-2024 | DFO Atlantic Zone Monitoring Program via azmpdata                                                                                                                                                                                                            |
+| coastline                 | Unknown                     | Unknown   | Unknown                                                                                                                                                                                                                                                      |
+| eco_indicators            | Maritimes                   | 1970-2022 | Bundy et al. 2017                                                                                                                                                                                                                                            |
+| food_habits               | Not specified               | 1995-2016 | pacea object                                                                                                                                                                                                                                                 |
+| glorys_bottom_temperature | Northwest Atlantic          | Unknown   | CMEMS Global Ocean Physics Reanalysis                                                                                                                                                                                                                        |
+| grey_seals                | Scotian Shelf               | 1960-2021 | den Heyer, C. E., Mosnier, A., Stenson, G. B., Lidgard, D. C., Bowen, W. D., & Hammill, M. O. (2024). Grey seal pup production in Canada (DFO Can. Sci. Advis. Sec. Res. Doc. 2023/078). Fisheries and Oceans Canada, Canadian Science Advisory Secretariat. |
+| grey_seals_2021           | Maritimes                   | 1960-2021 | No citation provided                                                                                                                                                                                                                                         |
+| mei                       | Equatorial Pacific          | 1979-2025 | NOAA ESRL/PSL, <https://psl.noaa.gov/enso/mei/>                                                                                                                                                                                                              |
+| nao                       | North Atlantic              | 1951-2024 | NOAA NCEP via azmpdata; <https://www.ncei.noaa.gov/access/monitoring/nao/>                                                                                                                                                                                   |
+| npgo                      | North Pacific Gyre          | 1950-2025 | Di Lorenzo et al., <http://www.o3d.org/npgo/>                                                                                                                                                                                                                |
+| oni                       | Niño 3.4 Region (Pacific)   | 1950-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml>                                                                                                                                                             |
+| pdo                       | North Pacific               | 1854-2025 | NOAA ERSST, <https://www.ncei.noaa.gov/access/monitoring/pdo/>                                                                                                                                                                                               |
+| soi                       | Equatorial Pacific          | 1951-2025 | NOAA CPC, <https://www.cpc.ncep.noaa.gov/data/indices/soi>                                                                                                                                                                                                   |
+
+## Documentation
+
+For detailed examples, data sources, and methodologies, please see our
+vignettes:
+
+*Understanding Generic EA Data Classes*: A guide to the ea classes and
+the package philosophy.
+
+*Plotting EA Classes*: Examples and details of how to plot ea class
+objects.
+
+## Citation
+
+If you use marea in a publication, please cite it. You can get the
+current citation information by running:
+
+``` r
+citation("marea")
+```
+
+## Contributing
+
+We welcome contributions! If you have suggestions, find a bug, or would
+like to contribute a new dataset, please see our contribution guidelines
+and open an issue on GitHub.
+
+[CONTRIBUTING](https://marecosystemapproaches.github.io/marea/CONTRIBUTING.md)
+
+## Related Work
+
+This package is part of a coordinated effort across DFO regions to
+standardize access to ecosystem data for fisheries management:
+
+[pacea](https://github.com/pbs-assess/PACea/) - Pacific ecosystem data
+
+[gslea](https://github.com/duplisea/gslea/) - Gulf of St. Lawrence
+ecosystem data
+
+## Acknowledgments
+
+We acknowledge that this work is done in the traditional and unceded
+territory of indigenous people who have cared for this land and water
+for time immemorial. We thank Fisheries and Oceans Canada for funding
+and acknowledge the many data providers and scientists whose work makes
+this package possible.
+
+Special thanks to the oce package team for inspiring the design of the
+`ea` class system.
+
+Kelley D, Richards C (2025). oce: Analysis of Oceanographic Data. R
+package version 1.8-4, <https://dankelley.github.io/oce/>.
+
+# Package index
+
+## All functions
+
+- [`` `[[`( ``*`<ea_data>`*`)`](https://marecosystemapproaches.github.io/marea/reference/S4-accessors.md)
+  [`` `[`( ``*`<ea_data>`*`,`*`<ANY>`*`,`*`<missing>`*`,`*`<missing>`*`)`](https://marecosystemapproaches.github.io/marea/reference/S4-accessors.md)
+  [`` `[`( ``*`<ea_data>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://marecosystemapproaches.github.io/marea/reference/S4-accessors.md)
+  : Extract or Access Parts of an ea_data Object
+
+- [`` `[[`( ``*`<ea_spatial>`*`)`](https://marecosystemapproaches.github.io/marea/reference/S4-spatial-accessors.md)
+  [`` `[`( ``*`<ea_spatial>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://marecosystemapproaches.github.io/marea/reference/S4-spatial-accessors.md)
+  : Extract or Access Parts of an ea_spatial Object
+
+- [`amo`](https://marecosystemapproaches.github.io/marea/reference/amo.md)
+  : Atlantic MultiDecadal Oscillation (AMO) Index (ea_data)
+
+- [`ao`](https://marecosystemapproaches.github.io/marea/reference/ao.md)
+  : Arctic Oscillation (AO) Index (ea_data)
+
+- [`as_ea_data()`](https://marecosystemapproaches.github.io/marea/reference/as_ea_data.md)
+  :
+
+  Coerce a data frame to an `ea_data` S4 object
+
+- [`as_ea_spatial()`](https://marecosystemapproaches.github.io/marea/reference/as_ea_spatial.md)
+  :
+
+  Coerce a spatial object to an `ea_spatial` S4 object
+
+- [`azmp_bottom_temperature`](https://marecosystemapproaches.github.io/marea/reference/azmp_bottom_temperature.md)
+  : AZMP Scotian Shelf Bottom Temperature (ea_data)
+
+- [`azmp_salinity`](https://marecosystemapproaches.github.io/marea/reference/azmp_salinity.md)
+  : AZMP Surface Salinity (ea_data)
+
+- [`azmp_satellite_temperature`](https://marecosystemapproaches.github.io/marea/reference/azmp_satellite_temperature.md)
+  : AZMP Scotian Shelf SST from Satellite (ea_data)
+
+- [`azmp_stratification`](https://marecosystemapproaches.github.io/marea/reference/azmp_stratification.md)
+  : AZMP Scotian Shelf Stratification Index (ea_data)
+
+- [`azmp_surface_temperature`](https://marecosystemapproaches.github.io/marea/reference/azmp_surface_temperature.md)
+  : AZMP Scotian Shelf Surface Temperature (ea_data)
+
+- [`cite_marea()`](https://marecosystemapproaches.github.io/marea/reference/cite_marea.md)
+  : Get citation information for marea
+
+- [`coastline`](https://marecosystemapproaches.github.io/marea/reference/coastline.md)
+  : Coastline Data for North Atlantic Region
+
+- [`ea.print()`](https://marecosystemapproaches.github.io/marea/reference/ea.print.md)
+  : Print an ea_data or ea_spatial Object
+
+- [`ea.subset()`](https://marecosystemapproaches.github.io/marea/reference/ea.subset.md)
+  :
+
+  Filter an `ea_data` Object by Column and Value
+
+- [`ea.subset.spatial()`](https://marecosystemapproaches.github.io/marea/reference/ea.subset.spatial.md)
+  :
+
+  Filter an `ea_spatial` Object by Attribute
+
+- [`ea.summary()`](https://marecosystemapproaches.github.io/marea/reference/ea.summary.md)
+  : Summary method for an ea_data or ea_spatial object
+
+- [`ea_data-class`](https://marecosystemapproaches.github.io/marea/reference/ea_data-class.md)
+  : An S4 Class for Environmental Assessment Data
+
+- [`ea_data()`](https://marecosystemapproaches.github.io/marea/reference/ea_data.md)
+  :
+
+  Constructor for `ea_data` Objects
+
+- [`ea_spatial-class`](https://marecosystemapproaches.github.io/marea/reference/ea_spatial-class.md)
+  : An S4 Class for Spatio-Temporal Environmental Assessment Data
+
+- [`ea_spatial()`](https://marecosystemapproaches.github.io/marea/reference/ea_spatial.md)
+  :
+
+  Constructor for `ea_spatial` Objects
+
+- [`azmp_salinity`](https://marecosystemapproaches.github.io/marea/reference/eco_indicators.md)
+  : ecological indicators (ea_data)
+
+- [`get_CMEMS_ncdf()`](https://marecosystemapproaches.github.io/marea/reference/get_CMEMS_ncdf.md)
+  : Download Copernicus Marine (CMEMS) data
+
+- [`get_erddap_data()`](https://marecosystemapproaches.github.io/marea/reference/get_erddap_data.md)
+  : Download satellite ocean colour data
+
+- [`glorys_bottom_temperature`](https://marecosystemapproaches.github.io/marea/reference/glorys_bottom_temperature.md)
+  : GLORYS Bottom Temperature (ea_spatial)
+
+- [`grey_seals`](https://marecosystemapproaches.github.io/marea/reference/grey_seals.md)
+  [`grey_seals_2021`](https://marecosystemapproaches.github.io/marea/reference/grey_seals.md)
+  : Estimated Grey Seal Abundance (ea_data)
+
+- [`marea_citation_reminder()`](https://marecosystemapproaches.github.io/marea/reference/marea_citation_reminder.md)
+  : Print a reminder to cite marea
+
+- [`marea_metadata()`](https://marecosystemapproaches.github.io/marea/reference/marea_metadata.md)
+  : Get metadata for all datasets in marea
+
+- [`nao`](https://marecosystemapproaches.github.io/marea/reference/nao.md)
+  : North Atlantic Oscillation (NAO) Index (ea_data)
+
+- [`npgo`](https://marecosystemapproaches.github.io/marea/reference/npgo.md)
+  : North Pacific Gyre Oscillation (NPGO) Index (ea_data)
+
+- [`oni`](https://marecosystemapproaches.github.io/marea/reference/oni.md)
+  : Oceanic Niño Index (ONI)
+
+- [`pdo`](https://marecosystemapproaches.github.io/marea/reference/pdo.md)
+  : Pacific Decadal Oscillation (PDO) Index (ea_data)
+
+- [`plot(`*`<ea_data>`*`,`*`<missing>`*`)`](https://marecosystemapproaches.github.io/marea/reference/plot-ea_data.md)
+  : Plot an ea_data object with multiple styles
+
+- [`plot(`*`<ea_spatial>`*`,`*`<missing>`*`)`](https://marecosystemapproaches.github.io/marea/reference/plot-ea_spatial.md)
+  : Plot an ea_spatial object with multiple styles
+
+- [`satellite_ocean_colour`](https://marecosystemapproaches.github.io/marea/reference/satellite_ocean_colour.md)
+  : Satellite Ocean Colour (ea_spatial)
+
+- [`soi`](https://marecosystemapproaches.github.io/marea/reference/soi.md)
+  : Southern Oscillation Index (SOI) (ea_data)
+
+# Articles
+
+### All vignettes
+
+- [Fisheries Science Advisory Report (FSAR) four panel plot example in
+  marea](https://marecosystemapproaches.github.io/marea/articles/FSAR_4plot_example.md):
+- [How to: Update
+  Datasets](https://marecosystemapproaches.github.io/marea/articles/how-to-update-datasets.md):
+- [Plotting EA
+  Classes](https://marecosystemapproaches.github.io/marea/articles/plotting_ea.md):
+- [Understanding Generic EA Data
+  Classes](https://marecosystemapproaches.github.io/marea/articles/understanding_ea_classes.md):
