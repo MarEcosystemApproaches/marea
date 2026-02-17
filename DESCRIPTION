@@ -48,7 +48,7 @@ Description: Provides access to maritime ecosystem data and model outputs from
     and environmental time series. The package wrangles data into standardized 
     formats and provides visualization functions to support ecosystem approach 
     to fisheries management.
-License: MIT + file LICENSE
+License: MIT + file LICENSE.md
 URL: https://github.com/MarEcosystemApproaches/marea
 BugReports: https://github.com/MarEcosystemApproaches/marea/issues
 DOI: 10.5281/zenodo.15706086

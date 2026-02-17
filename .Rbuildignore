@@ -21,4 +21,10 @@
 # CI/CD
 ^codecov\.yml$
 ^doc$
+<<<<<<< Updated upstream
 ^Meta$
+=======
+^docs$
+^_pkgdown\.yml$
+^pkgdown$
+>>>>>>> Stashed changes
