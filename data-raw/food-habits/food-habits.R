@@ -2,7 +2,6 @@
 # Run code line-by-line.
 
 library(dplyr)
-library(stringr)
 library(here)
 
 # From Manon Cassista-Da-Ros from January 2025
@@ -21,278 +20,56 @@ library(here)
 # year = {2010}
 # }
 
+# Exported food-habits databases created by this script:
+# - food_habits_full: primary cleaned stomach-record table.
+# - food_habits_stomach: detailed standardized stomach/prey table with joined species names.
+# - food_habits_species: species code dictionary used for predator/prey lookups.
+# - food_habits_mean_diet_stratified: stratified mean diet estimates (area + length strata).
+# - food_habits_dominant_prey_timeseries: dominant prey species over time.
+# - food_habits_prey_predation: predator contributions to focal prey consumption.
+
+# ---- Source utility functions ----
+source(here("data-raw", "food-habits", "food-habits-utils.R"))
+source(here("data-raw", "food-habits", "food-habits-estimate-mean-diet.R"))
+source(here("data-raw", "food-habits", "food-habits-estimate-dominant-prey.R"))
+source(here("data-raw", "food-habits", "food-habits-estimate-predator-contribution.R"))
+source(here("data-raw", "food-habits", "food-habits-checks.R"))
+
+# ---- User-configurable settings ----
+
 # Set source_mode to "mar_datawrangling" when client credentials/code are available.
 source_mode <- "local_rdata"
 
-# Exported food-habits databases created by this script:
-# - food_habits: primary cleaned stomach-record table (backward-compatible object name).
-# - food_habits_stomach: detailed standardized stomach/prey table with joined species names.
-# - food_habits_species: species code dictionary used for predator/prey lookups.
-# - food_habits_diet_composition: predator-focused prey composition summaries.
-# - food_habits_prey_pressure: prey-focused predator contribution summaries.
+# Priority species discussed with managers/assessment leads.
+priority_predators <- c(
+  "ATLANTIC COD", "HADDOCK", "POLLOCK", "SILVER HAKE", "REDFISH", "AMERICAN PLAICE"
+)
+priority_prey <- c(
+  "ATLANTIC HERRING", "PANDALUS BOREALIS", "GREEN SEA URCHIN", "SEA URCHIN"
+)
 
-# Resolve the location of an input .RData file from installed package data
-# or local project files.
-resolve_food_habits_path <- function(file_name) {
-  pkg_path <- system.file("data-raw", "food-habits", file_name, package = "marea")
-  if (nzchar(pkg_path) && file.exists(pkg_path)) {
-    return(pkg_path)
-  }
+# Grouping controls for summary products.
+# Add/remove fields based on desired output granularity.
+mean_diet_group_vars <- c("year", "strat", "pred_code")
+dominant_prey_group_vars <- c("year", "pred_code")
+prey_predation_group_vars <- c("year", "nafo_zone", "prey_code")
 
-  local_path <- file.path("data-raw", "food-habits", file_name)
-  if (file.exists(local_path)) {
-    return(local_path)
-  }
+# Set TRUE to automatically include name labels for code groupings
+# (e.g., pred_common for pred_code).
+include_label_cols <- TRUE
 
-  stop("Could not locate file: ", file_name, call. = FALSE)
-}
+# Dominance/predation reporting thresholds.
+dominant_prey_top_n <- 5
+dominant_prey_min_prop <- NULL
+dominant_prey_min_occurrence <- NULL
+prey_predation_top_n_predators <- NULL
+prey_predation_min_contribution <- NULL
 
-# Load raw food-habits inputs from local .RData files, with a placeholder
-# branch for authenticated Mar.datawrangling retrieval.
-load_food_habits_inputs <- function(source_mode = "local_rdata") {
-  if (identical(source_mode, "mar_datawrangling")) {
-    # TODO(client): Replace this placeholder with authenticated Mar.datawrangling code.
-    # Example intent:
-    # 1) Authenticate to internal data services.
-    # 2) Pull groundfish stomach dataset (STOMACH_DATA_VW equivalent).
-    # 3) Pull species dictionary (GSSPECIES equivalent).
-    stop(
-      "source_mode = 'mar_datawrangling' is a placeholder. ",
-      "Client-provided authenticated retrieval code is still required.",
-      call. = FALSE
-    )
-  }
-
-  if (!identical(source_mode, "local_rdata")) {
-    stop("source_mode must be either 'local_rdata' or 'mar_datawrangling'.", call. = FALSE)
-  }
-
-  stomach_fp <- resolve_food_habits_path("GROUNDFISH_STOMACH_DATA_VW.RData")
-  species_fp <- resolve_food_habits_path("GROUNDFISH_GSSPECIES.RData")
-
-  load(stomach_fp)
-  load(species_fp)
-
-  if (!exists("STOMACH_DATA_VW") || !exists("GSSPECIES")) {
-    stop("Loaded files do not contain STOMACH_DATA_VW and/or GSSPECIES.", call. = FALSE)
-  }
-
-  list(
-    STOMACH_DATA_VW = STOMACH_DATA_VW,
-    GSSPECIES = GSSPECIES
-  )
-}
-
-# Standardize raw stomach and species data into analysis-ready tables,
-# including predator/prey species-name joins.
-standardize_food_habits <- function(stomach_raw, species_raw) {
-  species_lookup <- species_raw %>%
-    mutate(
-      species_code = as.integer(CODE),
-      common_name = str_squish(as.character(COMM)),
-      latin_name = str_squish(as.character(SPEC))
-    ) %>%
-    select(species_code, common_name, latin_name)
-
-  pred_species <- species_lookup %>%
-    rename(
-      pred_code = species_code,
-      pred_common = common_name,
-      pred_latin = latin_name
-    )
-
-  prey_species <- species_lookup %>%
-    rename(
-      prey_code = species_code,
-      prey_common = common_name,
-      prey_latin = latin_name
-    )
-
-  food_habits_stomach <- stomach_raw %>%
-    mutate(
-      SDATE = as.Date(SDATE),
-      year = as.integer(format(SDATE, "%Y")),
-      month = as.integer(format(SDATE, "%m")),
-      pred_code = as.integer(SPEC),
-      prey_code = as.integer(PREYSPECCD)
-    ) %>%
-    left_join(pred_species, by = "pred_code") %>%
-    left_join(prey_species, by = "prey_code") %>%
-    mutate(
-      stomach_content_wt = if_else(!is.na(STOWGT) & !is.na(EMPTYWGT), STOWGT - EMPTYWGT, NA_real_),
-      has_prey_record = !is.na(prey_code)
-    ) %>%
-    select(
-      set_seq = SET_SEQ,
-      pred_seq = PRED_SEQ,
-      prey_seq = PREY_SEQ,
-      datasource = DATASOURCE,
-      mission = MISSION,
-      setno = SETNO,
-      sdate = SDATE,
-      year = year,
-      month = month,
-      strat = STRAT,
-      bottom_temperature = BOTTOM_TEMPERATURE,
-      depth = DEPTH,
-      status_flag = STATUS_FLAG,
-      gear = GEAR,
-      slatdd = SLATDD,
-      slongdd = SLONGDD,
-      nafo_zone = NAFO_ZONE,
-      nafo_subunit = NAFO_SUBUNIT,
-      pred_code = pred_code,
-      pred_common = pred_common,
-      pred_latin = pred_latin,
-      fshno = FSHNO,
-      fwt = FWT,
-      flen = FLEN,
-      tech = TECH,
-      stowgt = STOWGT,
-      emptywgt = EMPTYWGT,
-      stomach_content_wt = stomach_content_wt,
-      fullness = FULLNESS,
-      fgen = FGEN,
-      fwt_calculated = FWT_CALCULATED,
-      prey_code = prey_code,
-      prey_common = prey_common,
-      prey_latin = prey_latin,
-      pwt = PWT,
-      plen = PLEN,
-      pnum = PNUM,
-      rank = RANK,
-      digestion = DIGESTION,
-      remarks = REMARKS,
-      preyvalue = PREYVALUE,
-      has_prey_record = has_prey_record
-    )
-
-  list(
-    stomach = food_habits_stomach,
-    species_lookup = species_lookup
-  )
-}
-
-# Run basic QA checks on key fields and code-join coverage, and print a
-# compact QC summary to the console.
-food_habits_qc <- function(food_habits_stomach, species_lookup) {
-  prey_codes <- sort(unique(food_habits_stomach$prey_code[!is.na(food_habits_stomach$prey_code)]))
-  pred_codes <- sort(unique(food_habits_stomach$pred_code[!is.na(food_habits_stomach$pred_code)]))
-  species_codes <- sort(unique(species_lookup$species_code))
-
-  unmatched_prey <- setdiff(prey_codes, species_codes)
-  unmatched_pred <- setdiff(pred_codes, species_codes)
-
-  message("Food habits QC summary")
-  message("  rows: ", nrow(food_habits_stomach))
-  message("  year range: ", min(food_habits_stomach$year, na.rm = TRUE), "-", max(food_habits_stomach$year, na.rm = TRUE))
-  message("  missing prey in gut content (prey_code): ", sum(is.na(food_habits_stomach$prey_code)))
-  message("  missing prey weight (pwt): ", sum(is.na(food_habits_stomach$pwt)))
-  message("  unmatched predator codes: ", length(unmatched_pred))
-  message("  unmatched prey codes: ", length(unmatched_prey))
-
-  if (length(unmatched_prey) > 0) {
-    message("  unmatched prey code examples: ", paste(utils::head(unmatched_prey, 10), collapse = ", "))
-  }
-
-  if (length(unmatched_pred) > 0) {
-    warning("Some predator codes do not map to species dictionary.", call. = FALSE)
-  }
-
-  invisible(
-    list(
-      unmatched_prey_codes = unmatched_prey,
-      unmatched_pred_codes = unmatched_pred
-    )
-  )
-}
-
-# Convert species common names to species codes for filtering/grouping.
-lookup_species_codes <- function(species_lookup, common_names) {
-  if (length(common_names) == 0) {
-    return(integer())
-  }
-
-  species_lookup %>%
-    filter(toupper(common_name) %in% toupper(common_names)) %>%
-    pull(species_code) %>%
-    unique() %>%
-    sort()
-}
-
-# Filter stomach records by predator/prey codes and optional species groups.
-filter_food_habits <- function(
-    food_habits_stomach,
-    predator_codes = NULL,
-    prey_codes = NULL,
-    predator_groups = NULL,
-    prey_groups = NULL) {
-  out <- food_habits_stomach
-
-  if (!is.null(predator_groups) && length(predator_groups) > 0) {
-    out <- out %>% filter(pred_code %in% unique(unlist(predator_groups)))
-  }
-
-  if (!is.null(prey_groups) && length(prey_groups) > 0) {
-    out <- out %>% filter(prey_code %in% unique(unlist(prey_groups)))
-  }
-
-  if (!is.null(predator_codes) && length(predator_codes) > 0) {
-    out <- out %>% filter(pred_code %in% predator_codes)
-  }
-
-  if (!is.null(prey_codes) && length(prey_codes) > 0) {
-    out <- out %>% filter(prey_code %in% prey_codes)
-  }
-
-  out
-}
-
-# Summarize prey composition from a predator perspective, including prey
-# proportions and within-group ranking by prey weight.
-summarise_diet_composition <- function(food_habits_stomach, by = c("year", "nafo_zone", "pred_code", "pred_common")) {
-  grouping <- intersect(by, names(food_habits_stomach))
-
-  diet <- food_habits_stomach %>%
-    filter(!is.na(prey_code), !is.na(pwt), pwt >= 0) %>%
-    group_by(across(all_of(c(grouping, "prey_code", "prey_common")))) %>%
-    summarise(
-      prey_weight_total = sum(pwt, na.rm = TRUE),
-      n_prey_records = dplyr::n(),
-      n_stomachs = n_distinct(pred_seq),
-      .groups = "drop"
-    ) %>%
-    group_by(across(all_of(grouping))) %>%
-    mutate(
-      prey_weight_prop = prey_weight_total / sum(prey_weight_total, na.rm = TRUE),
-      prey_rank = dplyr::dense_rank(dplyr::desc(prey_weight_total))
-    ) %>%
-    ungroup()
-
-  diet
-}
-
-# Summarize predation pressure from a prey perspective, including predator
-# proportions and within-group ranking by prey weight.
-summarise_prey_pressure <- function(food_habits_stomach, by = c("year", "nafo_zone", "prey_code", "prey_common")) {
-  grouping <- intersect(by, names(food_habits_stomach))
-
-  food_habits_stomach %>%
-    filter(!is.na(prey_code), !is.na(pwt), pwt >= 0) %>%
-    group_by(across(all_of(c(grouping, "pred_code", "pred_common")))) %>%
-    summarise(
-      prey_weight_total = sum(pwt, na.rm = TRUE),
-      n_prey_records = dplyr::n(),
-      n_stomachs = n_distinct(pred_seq),
-      .groups = "drop"
-    ) %>%
-    group_by(across(all_of(grouping))) %>%
-    mutate(
-      predator_weight_prop = prey_weight_total / sum(prey_weight_total, na.rm = TRUE),
-      predator_rank = dplyr::dense_rank(dplyr::desc(prey_weight_total))
-    ) %>%
-    ungroup()
-}
+# Plot export mode:
+# - "per_species": one figure per species of interest (default).
+# - "aggregated": one figure per output aggregating all selected species.
+plot_export_mode <- "per_species"
+run_contract_checks <- TRUE
 
 # ---- Build data products ----
 
@@ -307,29 +84,83 @@ food_habits_species <- std$species_lookup
 
 food_habits_qc(food_habits_stomach, food_habits_species)
 
-# Priority species discussed with managers/assessment leads
-priority_predators <- c(
-  "ATLANTIC COD", "HADDOCK", "POLLOCK", "SILVER HAKE", "REDFISH", "AMERICAN PLAICE"
-)
-priority_prey <- c(
-  "ATLANTIC HERRING", "NORTHERN SHRIMP", "GREEN SEA URCHIN", "SEA URCHIN"
-)
-
-priority_predator_codes <- lookup_species_codes(food_habits_species, priority_predators)
-priority_prey_codes <- lookup_species_codes(food_habits_species, priority_prey)
+priority_predator_codes <- resolve_priority_codes(food_habits_species, priority_predators)
+priority_prey_codes <- resolve_priority_codes(food_habits_species, priority_prey)
 
 food_habits_priority <- filter_food_habits(
   food_habits_stomach,
   predator_codes = priority_predator_codes
 )
 
-food_habits_diet_composition <- summarise_diet_composition(food_habits_priority)
-food_habits_prey_pressure <- summarise_prey_pressure(
-  filter_food_habits(food_habits_stomach, prey_codes = priority_prey_codes)
+# Output table 1 (stratified mean diet):
+# - Uses only priority predator species selected above.
+# - Computes mean diet by prey with default grouping in `mean_diet_group_vars`
+#   (currently year + survey stratum + predator code).
+# - Length structure is handled inside `estimate_mean_diet()` to reflect
+#   length-stratified stomach sampling.
+food_habits_mean_diet_stratified <- estimate_mean_diet(
+  food_habits_stomach = food_habits_priority,
+  group_vars = mean_diet_group_vars,
+  include_label_cols = include_label_cols
 )
 
-# Keep a package-facing object named `food_habits` for backwards continuity.
-# This is now the detailed cleaned table rather than the previous CSV-derived format.
+# Output table 2 (dominant prey):
+# - Starts from the same priority-predator filtered data.
+# - Aggregates using `dominant_prey_group_vars` (currently year + predator code)
+#   to create a time-series-style table.
+# - Keeps dominant prey using configurable thresholds (`dominant_prey_top_n`,
+#   `dominant_prey_min_prop`, `dominant_prey_min_occurrence`).
+food_habits_dominant_prey_timeseries <- estimate_dominant_prey(
+  food_habits_stomach = food_habits_priority,
+  group_vars = dominant_prey_group_vars,
+  top_n = dominant_prey_top_n,
+  min_diet_prop = dominant_prey_min_prop,
+  min_occurrence_prop = dominant_prey_min_occurrence,
+  include_label_cols = include_label_cols
+)
+
+# Output table 3 (predator contribution on focal prey):
+# - Filters to priority prey species before estimation.
+# - Aggregates predator contribution with `prey_predation_group_vars`
+#   (currently year + NAFO zone + prey code), which gives spatially aggregated
+#   prey-centric predation summaries.
+# - Optional filters keep only dominant predator contributors by rank or minimum
+#   contribution proportion.
+food_habits_prey_predation <- estimate_predator_contribution(
+  food_habits_stomach = filter_food_habits(food_habits_stomach, prey_codes = priority_prey_codes),
+  group_vars = prey_predation_group_vars,
+  include_label_cols = include_label_cols,
+  top_n_predators = prey_predation_top_n_predators,
+  min_predator_contribution = prey_predation_min_contribution
+)
+
+if (isTRUE(run_contract_checks)) {
+  run_food_habits_contract_checks(
+    food_habits_stomach = food_habits_stomach,
+    food_habits_species = food_habits_species,
+    food_habits_mean_diet_stratified = food_habits_mean_diet_stratified,
+    food_habits_dominant_prey_timeseries = food_habits_dominant_prey_timeseries,
+    food_habits_prey_predation = food_habits_prey_predation,
+    priority_predator_codes = priority_predator_codes,
+    priority_prey_codes = priority_prey_codes,
+    mean_diet_group_vars = mean_diet_group_vars,
+    dominant_prey_group_vars = dominant_prey_group_vars,
+    prey_predation_group_vars = prey_predation_group_vars
+  )
+}
+
+# ---- Export summary figures ----
+export_food_habits_plots(
+  food_habits_mean_diet_stratified = food_habits_mean_diet_stratified,
+  food_habits_dominant_prey_timeseries = food_habits_dominant_prey_timeseries,
+  food_habits_prey_predation = food_habits_prey_predation,
+  food_habits_species = food_habits_species,
+  priority_predator_codes = priority_predator_codes,
+  priority_prey_codes = priority_prey_codes,
+  plot_export_mode = plot_export_mode,
+  out_dir = here("data-raw", "food-habits")
+)
+
 food_habits_full <- food_habits_stomach
 attr(food_habits_full, "source_citation") <- "Cook and Bundy 2010; Mar.datawrangling extraction workflow"
 attr(food_habits_full, "region") <- "Maritimes"
@@ -337,14 +168,16 @@ attr(food_habits_full, "region") <- "Maritimes"
 save(food_habits_full, file = here("data-raw", "food-habits", "food_habits_full.rda"))
 save(food_habits_stomach, file = here("data-raw", "food-habits", "food_habits_stomach.rda"))
 save(food_habits_species, file = here("data-raw", "food-habits", "food_habits_species.rda"))
-save(food_habits_diet_composition, file = here("data-raw", "food-habits", "food_habits_diet_composition.rda"))
-save(food_habits_prey_pressure, file = here("data-raw", "food-habits", "food_habits_prey_pressure.rda"))
+save(food_habits_mean_diet_stratified, file = here("data-raw", "food-habits", "food_habits_mean_diet_stratified.rda"))
+save(food_habits_dominant_prey_timeseries, file = here("data-raw", "food-habits", "food_habits_dominant_prey_timeseries.rda"))
+save(food_habits_prey_predation, file = here("data-raw", "food-habits", "food_habits_prey_predation.rda"))
 
 usethis::use_data(
   food_habits_full,
   food_habits_stomach,
   food_habits_species,
-  food_habits_diet_composition,
-  food_habits_prey_pressure,
+  food_habits_mean_diet_stratified,
+  food_habits_dominant_prey_timeseries,
+  food_habits_prey_predation,
   overwrite = TRUE
 )
