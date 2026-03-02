@@ -76,6 +76,7 @@ Suggests:
     doParallel,
     here,
     foreach,
+    janitor,
     knitr,
     magrittr,
     mockery,
