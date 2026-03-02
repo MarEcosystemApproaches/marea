@@ -32,7 +32,7 @@ An \code{ea_data} object with:
 Generated in data-raw/coastwide-indices/coastwide-indices.R
 }
 \usage{
-oni
+data(oni)
 }
 \description{
 The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern

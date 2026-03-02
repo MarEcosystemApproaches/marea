@@ -28,7 +28,7 @@ An \code{ea_data} object:
 \url{https://www.ncei.noaa.gov/access/monitoring/nao/}
 }
 \usage{
-nao
+data(nao)
 }
 \description{
 The NAO Index represents the difference in sea-level atmospheric pressures between the Azores and Iceland, calculated by PCA of 500 mb height anomalies.

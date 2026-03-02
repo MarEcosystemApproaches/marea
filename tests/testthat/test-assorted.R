@@ -4,7 +4,7 @@ library(testthat)
 
 test_that("marea_citation_reminder emits messages and prints a citation", {
   testthat::local_reproducible_output()
-  
+
   # Messages are sent to stderr
   msgs <- testthat::capture_messages(marea_citation_reminder())
   expect_true(any(grepl("Thank you for using marea!", msgs)))
@@ -16,7 +16,7 @@ test_that("marea_citation_reminder emits messages and prints a citation", {
 
 test_that("cite_marea returns a citation object by default", {
   testthat::local_reproducible_output()
-  
+
   expect_silent(cit <- cite_marea())
   expect_s3_class(cit, "citation")
   expect_equal(cit, citation("marea"))
@@ -24,7 +24,7 @@ test_that("cite_marea returns a citation object by default", {
 
 test_that("cite_marea returns BibTeX when requested", {
   testthat::local_reproducible_output()
-  
+
   expect_silent(bib <- cite_marea(TRUE))
   expect_true(is.character(bib))
   expect_s3_class(bib, "Bibtex")

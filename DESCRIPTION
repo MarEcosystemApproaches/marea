@@ -1,7 +1,7 @@
 Package: marea
 Type: Package
 Title: Maritime Ecosystem Information for Ecosystem Approach to Fisheries Management
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: c(
     person("Jamie C.", "Tam",
         email = "jamie.tam@dfo-mpo.gc.ca",
@@ -53,40 +53,39 @@ URL: https://github.com/MarEcosystemApproaches/marea
 BugReports: https://github.com/MarEcosystemApproaches/marea/issues
 DOI: 10.5281/zenodo.15706086
 Depends:
-    R (>= 4.0.0)
+    R (>= 4.1)
 Imports:
-    dplyr (>= 1.0.0),
-    lubridate (>= 1.8.0),
-    reticulate (>= 1.20),
-    stats,
-    utils,
-    magrittr,
-    tibble,
-    ggplot2 (>= 3.3.0),
-    sf,
     akima,
+    dplyr (>= 1.0.0),
+    ggplot2 (>= 3.3.0),
+    lubridate (>= 1.8.0),
     maps,
+    methods,
     pals,
+    reticulate (>= 1.20),
     rnaturalearth,
+    sf,
     stars,
+    stats,
     terra,
+    tibble,
     tidyterra,
-    methods
+    utils,
 Suggests:
-    devtools,
+    covr,
     doParallel,
+    here,
     foreach,
     knitr,
+    magrittr,
+    mockery,
+    pacea,
+    patchwork,
     raster,
     rmarkdown,
-    testthat (>= 3.0.0),
-    covr,
-    pacea,
-    tidyverse,
-    mockery,
     rerddap,
-    patchwork,
-    here
+    testthat (>= 3.0.0),
+    tidyverse
 Remotes: 
     pbs-assess/pacea
 Encoding: UTF-8
