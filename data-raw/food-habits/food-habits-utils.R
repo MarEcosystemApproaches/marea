@@ -425,3 +425,59 @@ export_food_habits_plots <- function(
 
   stop("plot_export_mode must be either 'per_species' or 'aggregated'.", call. = FALSE)
 }
+
+# Export unaggregated mean-diet example figures (by strata and by length),
+# one figure per predator species.
+export_food_habits_mean_diet_unaggregated_plots <- function(
+    food_habits_mean_diet_by_strata_example,
+    food_habits_mean_diet_by_length_example,
+    out_dir = file.path("data-raw", "food-habits"),
+    top_n = 12,
+    length_bin_var = "length_bin") {
+
+  if (!dir.exists(out_dir)) {
+    stop("Output directory does not exist: ", out_dir, call. = FALSE)
+  }
+
+  old_files <- list.files(
+    out_dir,
+    pattern = "^food_habits_mean_diet_by_(strata|length)_.+[.]png$",
+    full.names = TRUE
+  )
+  if (length(old_files) > 0) {
+    unlink(old_files)
+  }
+
+  pred_species_col <- if ("pred_common" %in% names(food_habits_mean_diet_by_strata_example)) "pred_common" else "pred_code"
+  pred_species_values <- food_habits_mean_diet_by_strata_example %>%
+    dplyr::filter(!is.na(.data[[pred_species_col]])) %>%
+    dplyr::distinct(.data[[pred_species_col]]) %>%
+    dplyr::pull(.data[[pred_species_col]])
+
+  for (sp in pred_species_values) {
+    sp_suffix <- sanitize_plot_suffix(sp)
+
+    strata_dat <- food_habits_mean_diet_by_strata_example %>%
+      dplyr::filter(.data[[pred_species_col]] == sp)
+    length_dat <- food_habits_mean_diet_by_length_example %>%
+      dplyr::filter(.data[[pred_species_col]] == sp)
+
+    if (nrow(strata_dat) > 0) {
+      save_plot_file(
+        plot_mean_diet_by_strata(strata_dat, top_n = top_n),
+        out_dir,
+        paste0("food_habits_mean_diet_by_strata_", sp_suffix)
+      )
+    }
+
+    if (nrow(length_dat) > 0) {
+      save_plot_file(
+        plot_mean_diet_by_length(length_dat, top_n = top_n, length_bin_var = length_bin_var),
+        out_dir,
+        paste0("food_habits_mean_diet_by_length_", sp_suffix)
+      )
+    }
+  }
+
+  invisible(NULL)
+}

@@ -1,53 +1,3 @@
-# build_length_bins()
-# Purpose:
-#   Create predator length classes used for length-stratified estimation.
-# Behavior:
-#   - If `breaks` are provided, use them directly with `cut()`.
-#   - Otherwise create regular bins from min/max observed length using `bin_width`.
-#   - Return a character vector of bin labels (e.g., "[30,35)").
-# Why:
-#   Supports length-stratified stomach sampling by assigning each predator to a
-#   length stratum before weighted aggregation.
-build_length_bins <- function(x, bin_width = 5, breaks = NULL, right = FALSE) {
-  if (!is.null(breaks)) {
-    return(as.character(cut(x, breaks = breaks, include.lowest = TRUE, right = right)))
-  }
-
-  if (all(is.na(x))) {
-    return(rep(NA_character_, length(x)))
-  }
-
-  lo <- floor(min(x, na.rm = TRUE) / bin_width) * bin_width
-  hi <- ceiling(max(x, na.rm = TRUE) / bin_width) * bin_width
-  if (lo == hi) {
-    hi <- lo + bin_width
-  }
-  auto_breaks <- seq(lo, hi, by = bin_width)
-  as.character(cut(x, breaks = auto_breaks, include.lowest = TRUE, right = right))
-}
-
-# safe_weighted_mean()
-# Purpose:
-#   Compute a weighted mean robustly during multi-stage aggregation.
-# Behavior:
-#   - Remove rows with missing values in either `x` or `w`.
-#   - Return `NA` when no valid rows remain or total weight is <= 0.
-#   - Otherwise compute sum(x * w) / sum(w).
-# Why:
-#   Prevents divide-by-zero and empty-group failures in length- and
-#   stratum-weighted summaries.
-safe_weighted_mean <- function(x, w) {
-  ok <- !is.na(x) & !is.na(w)
-  if (!any(ok)) {
-    return(NA_real_)
-  }
-  sw <- sum(w[ok])
-  if (sw <= 0) {
-    return(NA_real_)
-  }
-  sum(x[ok] * w[ok]) / sw
-}
-
 #' Stratified Mean Diet Estimator by Area and Predator Length
 #'
 #' Estimate mean diet composition under a stratified survey framework by combining
@@ -119,6 +69,10 @@ safe_weighted_mean <- function(x, w) {
 #' @param strata_weights Optional table of strata-level weights.
 #' @param strata_weight_var Character scalar naming the strata-weight column in
 #' `strata_weights`.
+#' @param retain_strata Logical. If `TRUE`, keep survey strata separated in
+#' output instead of collapsing across strata.
+#' @param retain_length_bins Logical. If `TRUE`, keep predator length bins
+#' separated in output instead of collapsing across length bins.
 #'
 #' @return A tibble with one row per group-by-prey combination, including:
 #' \describe{
@@ -155,8 +109,9 @@ estimate_mean_diet <- function(
     length_weights = NULL,
     length_weight_var = "weight",
     strata_weights = NULL,
-    strata_weight_var = "weight") {
-
+    strata_weight_var = "weight",
+    retain_strata = FALSE,
+    retain_length_bins = FALSE) {
   group_vars <- existing_cols(food_habits_stomach, group_vars)
   prey_var <- existing_cols(food_habits_stomach, prey_var)
 
@@ -226,6 +181,11 @@ estimate_mean_diet <- function(
       prey_occurrence_prop = n_predators_with_prey / n_predators_total
     )
 
+  # if strata/length are explicitly requested in
+  # group_vars, keep them in final output even if retain_* flags are FALSE.
+  retain_strata <- isTRUE(retain_strata) || strata_var %in% group_vars
+  retain_length_bins <- isTRUE(retain_length_bins) || length_bin_var %in% group_vars
+
   if (is.null(length_weights)) {
     length_weight_tbl <- pred_counts %>%
       dplyr::transmute(
@@ -239,46 +199,127 @@ estimate_mean_diet <- function(
       dplyr::rename(length_weight = dplyr::all_of(length_weight_var))
   }
 
-  stratum_prey <- prey_length_stratum %>%
-    dplyr::left_join(length_weight_tbl, by = unique(c(group_vars, strata_var, length_bin_var))) %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, prey_group_vars))))) %>%
-    dplyr::summarise(
-      stratum_mean_prey_weight = safe_weighted_mean(mean_prey_weight, length_weight),
-      stratum_mean_prey_prop = safe_weighted_mean(mean_prey_prop, length_weight),
-      stratum_mean_occurrence = safe_weighted_mean(prey_occurrence_prop, length_weight),
-      n_predators_stratum = sum(n_predators_total, na.rm = TRUE),
-      .groups = "drop"
-    )
-
-  if (is.null(strata_weights)) {
-    strata_weight_tbl <- pred_counts %>%
-      dplyr::group_by(dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var))))) %>%
-      dplyr::summarise(strata_weight = sum(n_predators_total, na.rm = TRUE), .groups = "drop")
+  if (retain_length_bins) {
+    level_prey <- prey_length_stratum %>%
+      dplyr::transmute(
+        dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, length_bin_var, prey_group_vars)))),
+        level_mean_prey_weight = mean_prey_weight,
+        level_mean_prey_prop = mean_prey_prop,
+        level_mean_occurrence = prey_occurrence_prop,
+        n_predators_level = n_predators_total
+      )
   } else {
-    strata_weight_keys <- existing_cols(strata_weights, unique(c(group_vars, strata_var)))
-    strata_weight_tbl <- strata_weights %>%
-      dplyr::select(dplyr::all_of(c(strata_weight_keys, strata_weight_var))) %>%
-      dplyr::rename(strata_weight = dplyr::all_of(strata_weight_var))
+    level_prey <- prey_length_stratum %>%
+      dplyr::left_join(length_weight_tbl, by = unique(c(group_vars, strata_var, length_bin_var))) %>%
+      dplyr::group_by(dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, prey_group_vars))))) %>%
+      dplyr::summarise(
+        level_mean_prey_weight = safe_weighted_mean(mean_prey_weight, length_weight),
+        level_mean_prey_prop = safe_weighted_mean(mean_prey_prop, length_weight),
+        level_mean_occurrence = safe_weighted_mean(prey_occurrence_prop, length_weight),
+        n_predators_level = sum(n_predators_total, na.rm = TRUE),
+        .groups = "drop"
+      )
   }
 
-  out <- stratum_prey %>%
-    dplyr::left_join(strata_weight_tbl, by = unique(c(group_vars, strata_var))) %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(unique(c(group_vars, prey_group_vars))))) %>%
-    dplyr::summarise(
-      mean_diet_weight = safe_weighted_mean(stratum_mean_prey_weight, strata_weight),
-      mean_diet_prop = safe_weighted_mean(stratum_mean_prey_prop, strata_weight),
-      mean_occurrence_prop = safe_weighted_mean(stratum_mean_occurrence, strata_weight),
-      n_predators = sum(n_predators_stratum, na.rm = TRUE),
-      n_strata = dplyr::n_distinct(.data[[strata_var]]),
-      .groups = "drop"
-    ) %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) %>%
+  if (retain_strata) {
+    final_dat <- level_prey %>%
+      dplyr::transmute(
+        dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, if (retain_length_bins) length_bin_var, prey_group_vars)))),
+        mean_diet_weight = level_mean_prey_weight,
+        mean_diet_prop = level_mean_prey_prop,
+        mean_occurrence_prop = level_mean_occurrence,
+        n_predators = n_predators_level,
+        n_strata = 1L
+      )
+  } else {
+    strata_weight_keys <- unique(c(group_vars, if (retain_length_bins) length_bin_var, strata_var))
+    if (is.null(strata_weights)) {
+      strata_weight_tbl <- pred_counts %>%
+        dplyr::group_by(dplyr::across(dplyr::all_of(strata_weight_keys))) %>%
+        dplyr::summarise(strata_weight = sum(n_predators_total, na.rm = TRUE), .groups = "drop")
+    } else {
+      strata_weight_keys_in <- existing_cols(strata_weights, strata_weight_keys)
+      strata_weight_tbl <- strata_weights %>%
+        dplyr::select(dplyr::all_of(c(strata_weight_keys_in, strata_weight_var))) %>%
+        dplyr::rename(strata_weight = dplyr::all_of(strata_weight_var))
+    }
+
+    final_dat <- level_prey %>%
+      dplyr::left_join(strata_weight_tbl, by = strata_weight_keys) %>%
+      dplyr::group_by(dplyr::across(dplyr::all_of(unique(c(group_vars, if (retain_length_bins) length_bin_var, prey_group_vars))))) %>%
+      dplyr::summarise(
+        mean_diet_weight = safe_weighted_mean(level_mean_prey_weight, strata_weight),
+        mean_diet_prop = safe_weighted_mean(level_mean_prey_prop, strata_weight),
+        mean_occurrence_prop = safe_weighted_mean(level_mean_occurrence, strata_weight),
+        n_predators = sum(n_predators_level, na.rm = TRUE),
+        n_strata = dplyr::n_distinct(.data[[strata_var]]),
+        .groups = "drop"
+      )
+  }
+
+  rank_group_vars <- unique(c(group_vars, if (retain_strata) strata_var, if (retain_length_bins) length_bin_var))
+
+  out <- final_dat %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(rank_group_vars))) %>%
     dplyr::mutate(
       prey_rank = dplyr::dense_rank(dplyr::desc(mean_diet_weight))
     ) %>%
     dplyr::ungroup()
 
   out
+}
+
+# --------------------------------------------------------------------------------
+# utils
+
+# build_length_bins()
+# Purpose:
+#   Create predator length classes used for length-stratified estimation.
+# Behavior:
+#   - If `breaks` are provided, use them directly with `cut()`.
+#   - Otherwise create regular bins from min/max observed length using `bin_width`.
+#   - Return a character vector of bin labels (e.g., "[30,35)").
+# Why:
+#   Supports length-stratified stomach sampling by assigning each predator to a
+#   length stratum before weighted aggregation.
+build_length_bins <- function(x, bin_width = 5, breaks = NULL, right = FALSE) {
+  if (!is.null(breaks)) {
+    return(as.character(cut(x, breaks = breaks, include.lowest = TRUE, right = right)))
+  }
+
+  if (all(is.na(x))) {
+    return(rep(NA_character_, length(x)))
+  }
+
+  lo <- floor(min(x, na.rm = TRUE) / bin_width) * bin_width
+  hi <- ceiling(max(x, na.rm = TRUE) / bin_width) * bin_width
+  if (lo == hi) {
+    hi <- lo + bin_width
+  }
+  auto_breaks <- seq(lo, hi, by = bin_width)
+  as.character(cut(x, breaks = auto_breaks, include.lowest = TRUE, right = right))
+}
+
+# safe_weighted_mean()
+# Purpose:
+#   Compute a weighted mean robustly during multi-stage aggregation.
+# Behavior:
+#   - Remove rows with missing values in either `x` or `w`.
+#   - Return `NA` when no valid rows remain or total weight is <= 0.
+#   - Otherwise compute sum(x * w) / sum(w).
+# Why:
+#   Prevents divide-by-zero and empty-group failures in length- and
+#   stratum-weighted summaries.
+safe_weighted_mean <- function(x, w) {
+  ok <- !is.na(x) & !is.na(w)
+  if (!any(ok)) {
+    return(NA_real_)
+  }
+  sw <- sum(w[ok])
+  if (sw <= 0) {
+    return(NA_real_)
+  }
+  sum(x[ok] * w[ok]) / sw
 }
 
 # Plot summary for mean-diet estimates: top prey by aggregated mean diet weight.
@@ -302,4 +343,108 @@ plot_mean_diet <- function(mean_diet_data, top_n = 12) {
       y = "Aggregated mean diet weight"
     ) +
     ggplot2::theme_minimal(base_size = 12)
+}
+
+# Plot unaggregated mean-diet output by survey strata as a prey x strata bubble plot.
+# Color encodes mean_diet_prop, bubble size encodes mean_diet_weight.
+plot_mean_diet_by_strata <- function(mean_diet_data, top_n = 12) {
+  prey_label_var <- if ("prey_common" %in% names(mean_diet_data)) "prey_common" else "prey_code"
+  if (!("strat" %in% names(mean_diet_data))) {
+    stop("plot_mean_diet_by_strata() requires a 'strat' column.", call. = FALSE)
+  }
+  if (!all(c("mean_diet_weight", "mean_diet_prop") %in% names(mean_diet_data))) {
+    stop("plot_mean_diet_by_strata() requires mean_diet_weight and mean_diet_prop.", call. = FALSE)
+  }
+
+  keep_prey <- mean_diet_data %>%
+    dplyr::group_by(.data[[prey_label_var]]) %>%
+    dplyr::summarise(score = sum(mean_diet_weight, na.rm = TRUE), .groups = "drop") %>%
+    dplyr::arrange(dplyr::desc(score)) %>%
+    dplyr::slice_head(n = top_n) %>%
+    dplyr::pull(.data[[prey_label_var]])
+
+  plot_dat <- mean_diet_data %>%
+    dplyr::filter(.data[[prey_label_var]] %in% keep_prey) %>%
+    dplyr::group_by(.data[[prey_label_var]], strat) %>%
+    dplyr::summarise(
+      plot_weight = sum(mean_diet_weight, na.rm = TRUE),
+      plot_prop = safe_weighted_mean(mean_diet_prop, n_predators),
+      .groups = "drop"
+    )
+
+  ggplot2::ggplot(plot_dat, ggplot2::aes(x = .data[[prey_label_var]], y = strat)) +
+    ggplot2::geom_point(
+      ggplot2::aes(size = plot_weight, colour = plot_prop),
+      alpha = 0.9
+    ) +
+    ggplot2::scale_colour_viridis_c(option = "C", limits = c(0, 1), oob = scales::squish) +
+    ggplot2::scale_size_continuous(trans = "sqrt", range = c(1.5, 12)) +
+    ggplot2::labs(
+      title = "Mean Diet by Survey Strata",
+      subtitle = "Bubble plot: colour = mean diet proportion, size = mean diet weight",
+      x = "Prey",
+      y = "Survey stratum",
+      colour = "mean_diet_prop",
+      size = "mean_diet_weight"
+    ) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
+    )
+}
+
+# Plot unaggregated mean-diet output by length bin as a prey x length bubble plot.
+# Color encodes mean_diet_prop, bubble size encodes mean_diet_weight.
+plot_mean_diet_by_length <- function(mean_diet_data, top_n = 12, length_bin_var = "length_bin") {
+  prey_label_var <- if ("prey_common" %in% names(mean_diet_data)) "prey_common" else "prey_code"
+  if (!(length_bin_var %in% names(mean_diet_data))) {
+    stop("plot_mean_diet_by_length() requires the specified length_bin_var column.", call. = FALSE)
+  }
+  if (!all(c("mean_diet_weight", "mean_diet_prop") %in% names(mean_diet_data))) {
+    stop("plot_mean_diet_by_length() requires mean_diet_weight and mean_diet_prop.", call. = FALSE)
+  }
+
+  keep_prey <- mean_diet_data %>%
+    dplyr::group_by(.data[[prey_label_var]]) %>%
+    dplyr::summarise(score = sum(mean_diet_weight, na.rm = TRUE), .groups = "drop") %>%
+    dplyr::arrange(dplyr::desc(score)) %>%
+    dplyr::slice_head(n = top_n) %>%
+    dplyr::pull(.data[[prey_label_var]])
+
+  plot_dat <- mean_diet_data %>%
+    dplyr::filter(.data[[prey_label_var]] %in% keep_prey) %>%
+    dplyr::group_by(.data[[prey_label_var]], .data[[length_bin_var]]) %>%
+    dplyr::summarise(
+      plot_weight = sum(mean_diet_weight, na.rm = TRUE),
+      plot_prop = safe_weighted_mean(mean_diet_prop, n_predators),
+      .groups = "drop"
+    ) %>%
+    dplyr::mutate(
+      length_bin_chr = as.character(.data[[length_bin_var]]),
+      length_bin_start = suppressWarnings(as.numeric(sub("^\\s*\\[?\\(?\\s*([-+]?[0-9]*\\.?[0-9]+).*$", "\\1", length_bin_chr)))
+    ) %>%
+    dplyr::arrange(length_bin_start, length_bin_chr) %>%
+    dplyr::mutate(
+      length_bin_ordered = factor(length_bin_chr, levels = unique(length_bin_chr), ordered = TRUE)
+    )
+
+  ggplot2::ggplot(plot_dat, ggplot2::aes(x = .data[[prey_label_var]], y = length_bin_ordered)) +
+    ggplot2::geom_point(
+      ggplot2::aes(size = plot_weight, colour = plot_prop),
+      alpha = 0.9
+    ) +
+    ggplot2::scale_colour_viridis_c(option = "C", limits = c(0, 1), oob = scales::squish) +
+    ggplot2::scale_size_continuous(trans = "sqrt", range = c(1.5, 12)) +
+    ggplot2::labs(
+      title = "Mean Diet by Predator Length Bin",
+      subtitle = "Bubble plot: colour = mean diet proportion, size = mean diet weight",
+      x = "Prey",
+      y = "Length bin",
+      colour = "mean_diet_prop",
+      size = "mean_diet_weight"
+    ) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
+    )
 }

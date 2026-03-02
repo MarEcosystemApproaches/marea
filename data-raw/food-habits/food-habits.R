@@ -54,6 +54,11 @@ mean_diet_group_vars <- c("year", "strat", "pred_code")
 dominant_prey_group_vars <- c("year", "pred_code")
 prey_predation_group_vars <- c("year", "nafo_zone", "prey_code")
 
+# Length-bin settings used by methods that rely on `estimate_mean_diet()`.
+# Clients can modify these directly to change length stratification behavior.
+mean_diet_length_breaks <- seq(0, 150, by = 5)
+dominant_prey_length_breaks <- mean_diet_length_breaks
+
 # Set TRUE to automatically include name labels for code groupings
 # (e.g., pred_common for pred_code).
 include_label_cols <- TRUE
@@ -101,6 +106,37 @@ food_habits_priority <- filter_food_habits(
 food_habits_mean_diet_stratified <- estimate_mean_diet(
   food_habits_stomach = food_habits_priority,
   group_vars = mean_diet_group_vars,
+  length_breaks = mean_diet_length_breaks,
+  include_label_cols = include_label_cols
+)
+
+# Example output A (aggregated): collapse both strata and length bins.
+food_habits_mean_diet_aggregated_example <- estimate_mean_diet(
+  food_habits_stomach = food_habits_priority,
+  group_vars = c("pred_code"),
+  length_breaks = mean_diet_length_breaks,
+  retain_strata = FALSE,
+  retain_length_bins = FALSE,
+  include_label_cols = include_label_cols
+)
+
+# Example output B (unaggregated by strata): keep strata, collapse length bins.
+food_habits_mean_diet_by_strata_example <- estimate_mean_diet(
+  food_habits_stomach = food_habits_priority,
+  group_vars = c("pred_code"),
+  length_breaks = mean_diet_length_breaks,
+  retain_strata = TRUE,
+  retain_length_bins = FALSE,
+  include_label_cols = include_label_cols
+)
+
+# Example output C (unaggregated by length): keep length bins, collapse strata.
+food_habits_mean_diet_by_length_example <- estimate_mean_diet(
+  food_habits_stomach = food_habits_priority,
+  group_vars = c("pred_code"),
+  length_breaks = mean_diet_length_breaks,
+  retain_strata = FALSE,
+  retain_length_bins = TRUE,
   include_label_cols = include_label_cols
 )
 
@@ -113,6 +149,7 @@ food_habits_mean_diet_stratified <- estimate_mean_diet(
 food_habits_dominant_prey_timeseries <- estimate_dominant_prey(
   food_habits_stomach = food_habits_priority,
   group_vars = dominant_prey_group_vars,
+  length_breaks = dominant_prey_length_breaks,
   top_n = dominant_prey_top_n,
   min_diet_prop = dominant_prey_min_prop,
   min_occurrence_prop = dominant_prey_min_occurrence,
@@ -159,6 +196,15 @@ export_food_habits_plots(
   priority_prey_codes = priority_prey_codes,
   plot_export_mode = plot_export_mode,
   out_dir = here("data-raw", "food-habits")
+)
+
+# Additional example figures for unaggregated mean-diet outputs.
+export_food_habits_mean_diet_unaggregated_plots(
+  food_habits_mean_diet_by_strata_example = food_habits_mean_diet_by_strata_example,
+  food_habits_mean_diet_by_length_example = food_habits_mean_diet_by_length_example,
+  out_dir = here("data-raw", "food-habits"),
+  top_n = 12,
+  length_bin_var = "length_bin"
 )
 
 food_habits_full <- food_habits_stomach
