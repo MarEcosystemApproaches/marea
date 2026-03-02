@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2026 His Majesty the King in Right of Canada
+Copyright (c) 2025 His Majesty the King in Right of Canada
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

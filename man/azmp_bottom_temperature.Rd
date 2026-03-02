@@ -31,7 +31,7 @@ An \code{ea_data} object:
 Generated from running \code{data-raw/azmpdata/azmpdata-load.R}
 }
 \usage{
-data(azmp_bottom_temperature)
+azmp_bottom_temperature
 }
 \description{
 Bottom water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.

@@ -25,17 +25,15 @@ An \code{ea_data} object:
 }
 }
 }
-}
-\source{
-Generated from running \code{data-raw/azmpdata/azmpdata-load.R}
+@docType data
+@name azmp_surface_temperature
+@author Emily O'Grady and Benoit Casault
+@source Generated from running \code{data-raw/azmpdata/azmpdata-load.R}
 }
 \usage{
-data(azmp_surface_temperature)
+azmp_surface_temperature
 }
 \description{
 Surface water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-}
-\author{
-Emily O'Grady and Benoit Casault
 }
 \keyword{datasets}

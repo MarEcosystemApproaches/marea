@@ -6,7 +6,7 @@ library(marea)
 
 # Helper function
 make_ea_index <- function(
-  df, value_col, data_type, region, location, units, source, species = NA_character_, ...
+    df, value_col, data_type, region, location, units, source, species = NA_character_, ...
 ) {
   ea_data(
     data = df,
@@ -16,7 +16,7 @@ make_ea_index <- function(
     location_descriptor = location,
     units = units,
     species = species,
-    source_citation = source,
+    source_citation = source, 
     ...
   )
 }
@@ -37,7 +37,7 @@ nao <- make_ea_index(
   data_type = "North Atlantic Oscillation Index",
   region = "North Atlantic",
   location = "Azores–Iceland SLP difference",
-  units = "", # Standardized index
+  units = "",  # Standardized index
   source = "NOAA NCEP via azmpdata; https://www.ncei.noaa.gov/access/monitoring/nao/"
 )
 usethis::use_data(nao, overwrite = TRUE)
@@ -138,3 +138,5 @@ azmp_salinity <- make_ea_index(
   source = "DFO Atlantic Zone Monitoring Program via azmpdata"
 )
 usethis::use_data(azmp_salinity, overwrite = TRUE)
+  
+  

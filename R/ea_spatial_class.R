@@ -1,3 +1,4 @@
+
 #' An S4 Class for Spatio-Temporal Environmental Assessment Data
 #'
 #' @description
@@ -26,7 +27,7 @@ setClass(
   Class = "ea_spatial",
   slots = list(
     meta = "list",
-    data = "ANY" # Constrained by the validity check
+    data = "ANY"  # Constrained by the validity check
   )
 )
 
@@ -90,103 +91,102 @@ setGeneric("ea_spatial", function(data, value_col, data_type, region,
 
 #' @rdname ea_spatial
 #' @export
-setMethod(
-  "ea_spatial", signature(data = "ANY", value_col = "character"),
-  function(data, value_col, data_type, region,
-           time_descriptor, units,
-           source_citation = "No citation provided", ...) {
-    # --- Validation and Standardization ---
-    if (!inherits(data, c("sf", "stars", "SpatRaster"))) {
-      stop("`data` must be of class `sf`, `stars`, or `SpatRaster`.", call. = FALSE)
-    }
-
-    missing_cols <- setdiff(value_col, names(data))
-    if (length(missing_cols) > 0) {
-      stop(paste("Column(s) not found in object:", paste(missing_cols, collapse = ", ")), call. = FALSE)
-    }
-
-    # Check for numeric only for sf, as stars/SpatRaster handle types differently
-    if (inherits(data, "sf") && !is.numeric(data[[value_col]])) {
-      stop(paste0("Column '", value_col, "' must be numeric for sf objects."), call. = FALSE)
-    }
-
-    # rename value columns with _value
-
-    # For sf objects
-    if (inherits(data, "sf")) {
-      if (is.list(value_col) || length(value_col) > 1) {
-        # Handle multiple value columns
-        value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
-
-        # Rename columns to originalname_value
-        for (col in value_cols) {
-          new_name <- paste0(col, "_value")
-          names(data)[names(data) == col] <- new_name
-        }
-      } else {
-        # Handle single value column (existing logic)
-        names(data)[names(data) == value_col] <- "value"
-      }
-    }
-
-    # For stars objects
-    if (inherits(data, "stars")) {
-      if (is.list(value_col) || length(value_col) > 1) {
-        # Handle multiple value attributes
-        value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
-
-        # Rename attributes to originalname_value
-        current_names <- names(data)
-        new_names <- current_names
-        for (col in value_cols) {
-          attr_index <- which(current_names == col)
-          if (length(attr_index) > 0) {
-            new_names[attr_index] <- paste0(col, "_value")
-          }
-        }
-        names(data) <- new_names
-      } else {
-        # Handle single value attribute (existing logic)
-        names(data)[names(data) == value_col] <- "value"
-      }
-    }
-
-    # For SpatRaster objects
-    if (inherits(data, "SpatRaster")) {
-      if (is.list(value_col) || length(value_col) > 1) {
-        # Handle multiple value layers
-        value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
-
-        # Rename layers to originalname_value
-        current_names <- names(data)
-        new_names <- current_names
-        for (col in value_cols) {
-          layer_indices <- which(current_names == col)
-          if (length(layer_indices) > 0) {
-            new_names[layer_indices] <- paste0(col, "_value")
-          }
-        }
-        names(data) <- new_names
-      } else {
-        # Handle single value layer (existing logic)
-        names(data)[names(data) == value_col] <- "value"
-      }
-    }
-    # --- Metadata ---
-    meta <- list(
-      data_type = as.character(data_type),
-      region = as.character(region),
-      time_descriptor = as.character(time_descriptor),
-      units = as.character(units),
-      source_citation = as.character(source_citation),
-      original_value_col = value_col,
-      ...
-    )
-
-    # --- Construct S4 object ---
-    new("ea_spatial", data = data, meta = meta)
-  }
-)
+setMethod("ea_spatial", signature(data = "ANY", value_col = "character"),
+          function(data, value_col, data_type, region,
+                   time_descriptor, units,
+                   source_citation = "No citation provided", ...) {
+            
+            # --- Validation and Standardization ---
+            if (!inherits(data, c("sf", "stars", "SpatRaster"))) {
+              stop("`data` must be of class `sf`, `stars`, or `SpatRaster`.", call. = FALSE)
+            }
+            
+            missing_cols <- setdiff(value_col, names(data))
+            if (length(missing_cols) > 0) {
+              stop(paste("Column(s) not found in object:", paste(missing_cols, collapse = ", ")), call. = FALSE)
+            }
+            
+            # Check for numeric only for sf, as stars/SpatRaster handle types differently
+            if (inherits(data, "sf") && !is.numeric(data[[value_col]])) {
+              stop(paste0("Column '", value_col, "' must be numeric for sf objects."), call. = FALSE)
+            }
+            
+            # rename value columns with _value
+            
+            # For sf objects
+            if (inherits(data, "sf")) {
+              if (is.list(value_col) || length(value_col) > 1) {
+                # Handle multiple value columns
+                value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
+                
+                # Rename columns to originalname_value
+                for (col in value_cols) {
+                  new_name <- paste0(col, "_value")
+                  names(data)[names(data) == col] <- new_name
+                }
+              } else {
+                # Handle single value column (existing logic)
+                names(data)[names(data) == value_col] <- "value"
+              }
+            }
+            
+            # For stars objects
+            if (inherits(data, "stars")) {
+              if (is.list(value_col) || length(value_col) > 1) {
+                # Handle multiple value attributes
+                value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
+                
+                # Rename attributes to originalname_value
+                current_names <- names(data)
+                new_names <- current_names
+                for (col in value_cols) {
+                  attr_index <- which(current_names == col)
+                  if (length(attr_index) > 0) {
+                    new_names[attr_index] <- paste0(col, "_value")
+                  }
+                }
+                names(data) <- new_names
+              } else {
+                # Handle single value attribute (existing logic)
+                names(data)[names(data) == value_col] <- "value"
+              }
+            }
+            
+            # For SpatRaster objects
+            if (inherits(data, "SpatRaster")) {
+              if (is.list(value_col) || length(value_col) > 1) {
+                # Handle multiple value layers
+                value_cols <- if (is.list(value_col)) unlist(value_col) else value_col
+                
+                # Rename layers to originalname_value
+                current_names <- names(data)
+                new_names <- current_names
+                for (col in value_cols) {
+                  layer_indices <- which(current_names == col)
+                  if (length(layer_indices) > 0) {
+                    new_names[layer_indices] <- paste0(col, "_value")
+                  }
+                }
+                names(data) <- new_names
+              } else {
+                # Handle single value layer (existing logic)
+                names(data)[names(data) == value_col] <- "value"
+              }
+            }
+            # --- Metadata ---
+            meta <- list(
+              data_type = as.character(data_type),
+              region = as.character(region),
+              time_descriptor = as.character(time_descriptor),
+              units = as.character(units),
+              source_citation = as.character(source_citation),
+              original_value_col = value_col,
+              ...
+            )
+            
+            # --- Construct S4 object ---
+            new("ea_spatial", data = data, meta = meta)
+          })
 
 
 #' Extract or Access Parts of an ea_spatial Object
@@ -241,7 +241,7 @@ setMethod(
       if (inherits(x@data, "SpatRaster")) {
         value_matrix <- x@data[[i]]
         return(as.vector(value_matrix))
-      } else {
+        } else {
         # Works for both sf and stars
         return(x@data[[i]])
       }
@@ -289,6 +289,7 @@ setMethod(
   f = "[",
   signature(x = "ea_spatial", i = "ANY", j = "ANY"),
   definition = function(x, i, j, ..., drop = FALSE) {
+    
     # Handle different object types
     if (inherits(x@data, c("sf", "stars"))) {
       if (!missing(j)) {
@@ -299,11 +300,11 @@ setMethod(
     } else if (inherits(x@data, "SpatRaster")) {
       # Capture the layer arguments passed via ...
       dots <- list(...)
-
+      
       # The base case is subsetting all rows and columns
       if (missing(i)) i <- TRUE
       if (missing(j)) j <- TRUE
-
+      
       # If layers were passed, use them. Otherwise, use all layers.
       if (length(dots) > 0) {
         # Assumes the first element in ... is the layer index
@@ -315,13 +316,13 @@ setMethod(
     } else {
       stop("Unsupported spatial data type for '[' subsetting.", call. = FALSE)
     }
-
+    
     new("ea_spatial", data = subset_data, meta = x@meta)
   }
 )
 
 #' Spatial Data Validity
-#'
+#' 
 #' @description
 #' The validity method for the `ea_spatial` class ensures that:
 #' 1. The `data` slot contains a supported spatial object (`sf`, `stars`, `SpatRaster`).
@@ -333,17 +334,17 @@ setMethod(
 setValidity("ea_spatial", function(object) {
   errors <- character()
   data <- object@data
-
+  
   if (!inherits(data, c("sf", "stars", "SpatRaster"))) {
     msg <- "The 'data' slot must be an object of class `sf`, `stars`, or `SpatRaster`."
     errors <- c(errors, msg)
   }
-
+  
   # if (!"value" %in% names(data)) {
   #   msg <- "The 'data' object must contain a 'value' column or layer."
   #   errors <- c(errors, msg)
   # }
-
+  
   if (length(errors) == 0) TRUE else errors
 })
 
@@ -357,7 +358,7 @@ setValidity("ea_spatial", function(object) {
 #' This masks the `data` slot of the `ea_spatial` object, setting the attributes
 #' to `NA` for features or cells that do not match the specified value(s).
 #' This is useful for subsetting spatial data based on specific criteria,
-#' such as filtering by region or time. It is different than the ea.subset method for
+#' such as filtering by region or time. It is different than the ea.subset method for 
 #' ea_data which removes features that do not match the criteria.
 #'
 #' @param x An `ea_spatial` object.
@@ -384,22 +385,22 @@ setValidity("ea_spatial", function(object) {
 ea.subset.spatial <- function(x, column, value) {
   if (!inherits(x, "ea_spatial")) stop("x must be an ea_spatial object.", call. = FALSE)
   if (!column %in% names(x@data)) stop(paste("Column/layer", column, "not found in data."), call. = FALSE)
-
+  
   data_obj <- x@data
-
+  
   if (inherits(data_obj, "sf")) {
     # For sf, mask attribute data for features not matching the condition.
     # Geometries are preserved, but attributes are set to NA.
     col_data <- sf::st_drop_geometry(data_obj)[[column]]
     # Identify rows where the condition is NOT met.
     rows_to_mask <- !(col_data %in% value)
-
+    
     subset_data <- data_obj
-
+    
     # Get all column names except for the geometry column.
     geom_col_name <- attr(subset_data, "sf_column")
     attr_cols <- setdiff(names(subset_data), geom_col_name)
-
+    
     # Set the attributes of the masked rows to NA.
     # A loop is used to safely handle different column data types.
     for (col in attr_cols) {
@@ -413,24 +414,24 @@ ea.subset.spatial <- function(x, column, value) {
     # For stars, we create a logical mask and apply it.
     # The mask itself is a stars object.
     mask <- data_obj[[column]] %in% value
-    # Applying the mask
+    # Applying the mask 
     mask_for_na <- !mask
     subset_data <- data_obj
     for (attr_name in names(subset_data)) {
       subset_data[[attr_name]][!mask] <- NA
-    }
-  } else if (inherits(data_obj, "SpatRaster")) {
-    # This should be verified by a spatial person
-    # For SpatRaster, we create a mask and apply it.
-    # Create a mask where the values match
-    mask <- as.vector(data_obj[[column]]) %in% as.vector(value) # this is not working as expected
-    subset_data <- data_obj
-    for (attr_name in names(subset_data)) {
-      subset_data[[attr_name]][!mask] <- NA
-    }
-  } else {
+      } 
+    } else if (inherits(data_obj, "SpatRaster")) {
+      # This should be verified by a spatial person
+      # For SpatRaster, we create a mask and apply it.
+      # Create a mask where the values match
+      mask <- as.vector(data_obj[[column]]) %in% as.vector(value) # this is not working as expected
+      subset_data <- data_obj
+      for (attr_name in names(subset_data)) {
+        subset_data[[attr_name]][!mask] <- NA
+      }
+         } else {
     stop("Unsupported spatial data type for subsetting.", call. = FALSE)
   }
-
+  
   new("ea_spatial", data = subset_data, meta = x@meta)
 }

@@ -35,9 +35,9 @@ An object of class \code{ea_data} of length 1.
 Hammill et al. (2023), see data-raw/grey-seals/grey-seals.R
 }
 \usage{
-data(grey_seals)
+grey_seals
 
-data(grey_seals_2021)
+grey_seals_2021
 }
 \description{
 Abundance of grey seals in Canadian waters, assessed as a single stock. Derived from aerial surveys, corrected for survey timing, coverage, and haul-out proportion.

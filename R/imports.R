@@ -3,9 +3,11 @@
 #' @importFrom graphics axis par abline plot.default points polygon
 #' @importFrom dplyr group_by summarise mutate across filter
 #' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import
+#' @importFrom stats approx 
+#' @importFrom utils citation data tail toBibtex
+#' @importFrom magrittr %>%
 #' @import ggplot2
 #' @importFrom methods callGeneric callNextMethod new validObject
-#' @importFrom methods setClass setMethod
-#' @importFrom utils citation data head tail toBibtex
-#' @importFrom stats aggregate approx
+#' @importFrom stats aggregate
+#' @importFrom utils head
 NULL
