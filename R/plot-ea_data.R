@@ -457,7 +457,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 p
               }
             )
-        }
+        
         p
       },
       histogram = {
