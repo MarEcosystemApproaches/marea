@@ -47,14 +47,14 @@
 #'
 #' @export
 estimate_dominant_prey <- function(
-    food_habits_stomach,
-    group_vars = c("year", "pred_code"),
-    top_n = 5,
-    min_diet_prop = NULL,
-    min_occurrence_prop = NULL,
-    include_label_cols = TRUE,
-    ...) {
-
+  food_habits_stomach,
+  group_vars = c("year", "pred_code"),
+  top_n = 5,
+  min_diet_prop = NULL,
+  min_occurrence_prop = NULL,
+  include_label_cols = TRUE,
+  ...
+) {
   diet <- estimate_mean_diet(
     food_habits_stomach = food_habits_stomach,
     group_vars = group_vars,
@@ -63,35 +63,56 @@ estimate_dominant_prey <- function(
   )
 
   if (!is.null(min_diet_prop)) {
-    diet <- diet %>% dplyr::filter(mean_diet_prop >= min_diet_prop)
+    diet <- diet |>
+      dplyr::filter(mean_diet_prop >= min_diet_prop)
   }
 
   if (!is.null(min_occurrence_prop)) {
-    diet <- diet %>% dplyr::filter(mean_occurrence_prop >= min_occurrence_prop)
+    diet <- diet |>
+      dplyr::filter(mean_occurrence_prop >= min_occurrence_prop)
   }
 
   if (!is.null(top_n)) {
-    diet <- diet %>% dplyr::filter(prey_rank <= top_n)
+    diet <- diet |>
+      dplyr::filter(prey_rank <= top_n)
   }
 
-  diet %>%
-    dplyr::arrange(dplyr::across(dplyr::all_of(existing_cols(diet, group_vars))), prey_rank)
+  diet |>
+    dplyr::arrange(
+      dplyr::across(dplyr::all_of(existing_cols(diet, group_vars))),
+      prey_rank
+    )
 }
 
 # Plot summary for dominant prey estimates.
 # Uses stacked bars by year for readability in multi-prey time series.
 plot_dominant_prey <- function(dominant_prey_data, top_n = 8, facet_by_predator = TRUE) {
-  prey_label_var <- if ("prey_common" %in% names(dominant_prey_data)) "prey_common" else "prey_code"
-  pred_label_var <- if ("pred_common" %in% names(dominant_prey_data)) "pred_common" else if ("pred_code" %in% names(dominant_prey_data)) "pred_code" else NULL
+  prey_label_var <- ifelse(
+    "prey_common" %in% names(dominant_prey_data),
+    "prey_common",
+    "prey_code"
+  )
+  pred_label_var <- ifelse(
+    "pred_common" %in% names(dominant_prey_data),
+    "pred_common",
+    ifelse(
+      "pred_code" %in% names(dominant_prey_data),
+      "pred_code",
+      NULL
+    )
+  )
 
-  keep_prey <- dominant_prey_data %>%
-    dplyr::group_by(.data[[prey_label_var]]) %>%
-    dplyr::summarise(score = sum(mean_diet_prop, na.rm = TRUE), .groups = "drop") %>%
-    dplyr::arrange(dplyr::desc(score)) %>%
-    dplyr::slice_head(n = top_n) %>%
+  keep_prey <- dominant_prey_data |>
+    dplyr::group_by(.data[[prey_label_var]]) |>
+    dplyr::summarise(
+      score = sum(mean_diet_prop, na.rm = TRUE),
+      .groups = "drop"
+    ) |>
+    dplyr::arrange(dplyr::desc(score)) |>
+    dplyr::slice_head(n = top_n) |>
     dplyr::pull(.data[[prey_label_var]])
 
-  plot_dat <- dominant_prey_data %>%
+  plot_dat <- dominant_prey_data |>
     dplyr::filter(.data[[prey_label_var]] %in% keep_prey)
 
   if ("year" %in% names(plot_dat)) {
@@ -100,9 +121,12 @@ plot_dominant_prey <- function(dominant_prey_data, top_n = 8, facet_by_predator 
       group_cols <- c(group_cols, pred_label_var)
     }
 
-    ts_dat <- plot_dat %>%
-      dplyr::group_by(dplyr::across(dplyr::all_of(group_cols))) %>%
-      dplyr::summarise(plot_value = sum(mean_diet_prop, na.rm = TRUE), .groups = "drop")
+    ts_dat <- plot_dat |>
+      dplyr::group_by(dplyr::across(dplyr::all_of(group_cols))) |>
+      dplyr::summarise(
+        plot_value = sum(mean_diet_prop, na.rm = TRUE),
+        .groups = "drop"
+      )
 
     p <- ggplot2::ggplot(
       ts_dat,
@@ -116,7 +140,10 @@ plot_dominant_prey <- function(dominant_prey_data, top_n = 8, facet_by_predator 
         y = "Summed estimated mean diet proportion",
         fill = "Prey"
       ) +
-      ggplot2::theme_minimal(base_size = 12)
+      ggplot2::theme_minimal(base_size = 12) +
+      ggplot2::theme(
+        axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
+      )
 
     if (isTRUE(facet_by_predator) && !is.null(pred_label_var) && dplyr::n_distinct(ts_dat[[pred_label_var]]) > 1) {
       p <- p + ggplot2::facet_wrap(stats::as.formula(paste("~", pred_label_var)), scales = "free_y")
@@ -124,8 +151,8 @@ plot_dominant_prey <- function(dominant_prey_data, top_n = 8, facet_by_predator 
 
     p
   } else {
-    bar_dat <- plot_dat %>%
-      dplyr::group_by(.data[[prey_label_var]]) %>%
+    bar_dat <- plot_dat |>
+      dplyr::group_by(.data[[prey_label_var]]) |>
       dplyr::summarise(value = sum(mean_diet_prop, na.rm = TRUE), .groups = "drop")
 
     ggplot2::ggplot(bar_dat, ggplot2::aes(x = stats::reorder(.data[[prey_label_var]], value), y = value)) +

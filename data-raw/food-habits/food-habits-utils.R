@@ -16,7 +16,9 @@ resolve_food_habits_path <- function(file_name) {
 
 # Load raw food-habits inputs from local .RData files, with a placeholder
 # branch for authenticated Mar.datawrangling retrieval.
-load_food_habits_inputs <- function(source_mode = "local_rdata") {
+load_food_habits_inputs <- function(source_mode = c("local_rdata", "mar_datawrangling")) {
+  source_mode <- match.arg(source_mode)
+
   if (identical(source_mode, "mar_datawrangling")) {
     # TODO(client): Replace this placeholder with authenticated Mar.datawrangling code.
     stop(
@@ -26,9 +28,6 @@ load_food_habits_inputs <- function(source_mode = "local_rdata") {
     )
   }
 
-  if (!identical(source_mode, "local_rdata")) {
-    stop("source_mode must be either 'local_rdata' or 'mar_datawrangling'.", call. = FALSE)
-  }
 
   stomach_fp <- resolve_food_habits_path("GROUNDFISH_STOMACH_DATA_VW.RData")
   species_fp <- resolve_food_habits_path("GROUNDFISH_GSSPECIES.RData")
@@ -49,85 +48,45 @@ load_food_habits_inputs <- function(source_mode = "local_rdata") {
 # Standardize raw stomach and species data into analysis-ready tables,
 # including predator/prey species-name joins.
 standardize_food_habits <- function(stomach_raw, species_raw) {
-  species_lookup <- species_raw %>%
+  species_lookup <- species_raw |>
     dplyr::mutate(
       species_code = as.integer(CODE),
       common_name = stringr::str_squish(as.character(COMM)),
       latin_name = stringr::str_squish(as.character(SPEC))
-    ) %>%
+    ) |>
     dplyr::select(species_code, common_name, latin_name)
 
-  pred_species <- species_lookup %>%
+  pred_species <- species_lookup |>
     dplyr::rename(
       pred_code = species_code,
       pred_common = common_name,
       pred_latin = latin_name
     )
 
-  prey_species <- species_lookup %>%
+  prey_species <- species_lookup |>
     dplyr::rename(
       prey_code = species_code,
       prey_common = common_name,
       prey_latin = latin_name
     )
 
-  food_habits_stomach <- stomach_raw %>%
+  food_habits_stomach <- stomach_raw |>
     dplyr::mutate(
       SDATE = as.Date(SDATE),
       year = as.integer(format(SDATE, "%Y")),
       month = as.integer(format(SDATE, "%m")),
       pred_code = as.integer(SPEC),
       prey_code = as.integer(PREYSPECCD)
-    ) %>%
-    dplyr::left_join(pred_species, by = "pred_code") %>%
-    dplyr::left_join(prey_species, by = "prey_code") %>%
+    ) |>
+    dplyr::left_join(pred_species, by = "pred_code") |>
+    dplyr::left_join(prey_species, by = "prey_code") |>
     dplyr::mutate(
       stomach_content_wt = dplyr::if_else(!is.na(STOWGT) & !is.na(EMPTYWGT), STOWGT - EMPTYWGT, NA_real_),
       has_prey_record = !is.na(prey_code)
-    ) %>%
+    ) |>
+    janitor::clean_names() |>
     dplyr::select(
-      set_seq = SET_SEQ,
-      pred_seq = PRED_SEQ,
-      prey_seq = PREY_SEQ,
-      datasource = DATASOURCE,
-      mission = MISSION,
-      setno = SETNO,
-      sdate = SDATE,
-      year = year,
-      month = month,
-      strat = STRAT,
-      bottom_temperature = BOTTOM_TEMPERATURE,
-      depth = DEPTH,
-      status_flag = STATUS_FLAG,
-      gear = GEAR,
-      slatdd = SLATDD,
-      slongdd = SLONGDD,
-      nafo_zone = NAFO_ZONE,
-      nafo_subunit = NAFO_SUBUNIT,
-      pred_code = pred_code,
-      pred_common = pred_common,
-      pred_latin = pred_latin,
-      fshno = FSHNO,
-      fwt = FWT,
-      flen = FLEN,
-      tech = TECH,
-      stowgt = STOWGT,
-      emptywgt = EMPTYWGT,
-      stomach_content_wt = stomach_content_wt,
-      fullness = FULLNESS,
-      fgen = FGEN,
-      fwt_calculated = FWT_CALCULATED,
-      prey_code = prey_code,
-      prey_common = prey_common,
-      prey_latin = prey_latin,
-      pwt = PWT,
-      plen = PLEN,
-      pnum = PNUM,
-      rank = RANK,
-      digestion = DIGESTION,
-      remarks = REMARKS,
-      preyvalue = PREYVALUE,
-      has_prey_record = has_prey_record
+      !c("stime", "spec", "preyspeccd")
     )
 
   list(
@@ -139,9 +98,12 @@ standardize_food_habits <- function(stomach_raw, species_raw) {
 # Run basic QA checks on key fields and code-join coverage, and print a
 # compact QC summary to the console.
 food_habits_qc <- function(food_habits_stomach, species_lookup) {
-  prey_codes <- sort(unique(food_habits_stomach$prey_code[!is.na(food_habits_stomach$prey_code)]))
-  pred_codes <- sort(unique(food_habits_stomach$pred_code[!is.na(food_habits_stomach$pred_code)]))
-  species_codes <- sort(unique(species_lookup$species_code))
+  prey_codes <- unique(food_habits_stomach$prey_code[!is.na(food_habits_stomach$prey_code)]) |>
+    sort()
+  pred_codes <- unique(food_habits_stomach$pred_code[!is.na(food_habits_stomach$pred_code)]) |>
+    sort()
+  species_codes <- unique(species_lookup$species_code) |>
+    sort()
 
   unmatched_prey <- setdiff(prey_codes, species_codes)
   unmatched_pred <- setdiff(pred_codes, species_codes)
@@ -184,36 +146,37 @@ lookup_species_codes <- function(species_lookup, common_names) {
     return(integer())
   }
 
-  species_lookup %>%
-    dplyr::filter(toupper(common_name) %in% toupper(common_names)) %>%
-    dplyr::pull(species_code) %>%
-    unique() %>%
+  species_lookup |>
+    dplyr::filter(toupper(common_name) %in% toupper(common_names)) |>
+    dplyr::pull(species_code) |>
+    unique() |>
     sort()
 }
 
 # Filter stomach records by predator/prey codes and optional species groups.
 filter_food_habits <- function(
-    food_habits_stomach,
-    predator_codes = NULL,
-    prey_codes = NULL,
-    predator_groups = NULL,
-    prey_groups = NULL) {
+  food_habits_stomach,
+  predator_codes = NULL,
+  prey_codes = NULL,
+  predator_groups = NULL,
+  prey_groups = NULL
+) {
   out <- food_habits_stomach
 
-  if (!is.null(predator_groups) && length(predator_groups) > 0) {
-    out <- out %>% dplyr::filter(pred_code %in% unique(unlist(predator_groups)))
+  if (!is.null(predator_groups) && length(predator_groups)) {
+    out <- out |> dplyr::filter(pred_code %in% unique(unlist(predator_groups)))
   }
 
-  if (!is.null(prey_groups) && length(prey_groups) > 0) {
-    out <- out %>% dplyr::filter(prey_code %in% unique(unlist(prey_groups)))
+  if (!is.null(prey_groups) && length(prey_groups)) {
+    out <- out |> dplyr::filter(prey_code %in% unique(unlist(prey_groups)))
   }
 
-  if (!is.null(predator_codes) && length(predator_codes) > 0) {
-    out <- out %>% dplyr::filter(pred_code %in% predator_codes)
+  if (!is.null(predator_codes) && length(predator_codes)) {
+    out <- out |> dplyr::filter(pred_code %in% predator_codes)
   }
 
-  if (!is.null(prey_codes) && length(prey_codes) > 0) {
-    out <- out %>% dplyr::filter(prey_code %in% prey_codes)
+  if (!is.null(prey_codes) && length(prey_codes)) {
+    out <- out |> dplyr::filter(prey_code %in% prey_codes)
   }
 
   out
@@ -247,9 +210,9 @@ resolve_priority_codes <- function(species_lookup, common_names) {
   for (nm in common_names) {
     nm_upper <- toupper(stringr::str_squish(nm))
 
-    exact <- species_lookup %>%
-      dplyr::filter(toupper(common_name) == nm_upper) %>%
-      dplyr::pull(species_code) %>%
+    exact <- species_lookup |>
+      dplyr::filter(toupper(common_name) == nm_upper) |>
+      dplyr::pull(species_code) |>
       unique()
 
     if (length(exact) > 0) {
@@ -263,15 +226,15 @@ resolve_priority_codes <- function(species_lookup, common_names) {
       next
     }
 
-    token_hits <- species_lookup %>%
-      dplyr::filter(!is.na(common_name)) %>%
-      dplyr::mutate(common_upper = toupper(common_name)) %>%
+    token_hits <- species_lookup |>
+      dplyr::filter(!is.na(common_name)) |>
+      dplyr::mutate(common_upper = toupper(common_name)) |>
       dplyr::filter(vapply(
         common_upper,
         function(x) all(vapply(tokens, grepl, logical(1), x = x, fixed = TRUE)),
         logical(1)
-      )) %>%
-      dplyr::pull(species_code) %>%
+      )) |>
+      dplyr::pull(species_code) |>
       unique()
 
     if (length(token_hits) > 0) {
@@ -302,15 +265,15 @@ save_plot_file <- function(plot_obj, out_dir, file_stub) {
 # Export food-habits summary plots either as one plot per species of interest
 # or one aggregated plot per output.
 export_food_habits_plots <- function(
-    food_habits_mean_diet_stratified,
-    food_habits_dominant_prey_timeseries,
-    food_habits_prey_predation,
-    food_habits_species,
-    priority_predator_codes,
-    priority_prey_codes,
-    plot_export_mode = "per_species",
-    out_dir = file.path("data-raw", "food-habits")) {
-
+  food_habits_mean_diet_stratified,
+  food_habits_dominant_prey_timeseries,
+  food_habits_prey_predation,
+  food_habits_species,
+  priority_predator_codes,
+  priority_prey_codes,
+  plot_export_mode = "per_species",
+  out_dir = file.path("data-raw", "food-habits")
+) {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }
@@ -347,8 +310,8 @@ export_food_habits_plots <- function(
       )
     }
 
-    species_labels <- food_habits_species %>%
-      dplyr::select(species_code, common_name) %>%
+    species_labels <- food_habits_species |>
+      dplyr::select(species_code, common_name) |>
       dplyr::rename(code = species_code, label = common_name)
 
     for (code in priority_predator_codes) {
@@ -358,11 +321,12 @@ export_food_habits_plots <- function(
         sp_label <- as.character(code)
       }
       sp_suffix <- sanitize_plot_suffix(sp_label)
+      md_dat <- food_habits_mean_diet_stratified |>
+        dplyr::filter(pred_code == {{ code }})
+      dp_dat <- food_habits_dominant_prey_timeseries |>
+        dplyr::filter(pred_code == {{ code }})
 
-      md_dat <- food_habits_mean_diet_stratified %>% dplyr::filter(pred_code == code)
-      dp_dat <- food_habits_dominant_prey_timeseries %>% dplyr::filter(pred_code == code)
-
-      if (nrow(md_dat) > 0) {
+      if (nrow(md_dat)) {
         save_plot_file(
           plot_mean_diet(md_dat),
           out_dir,
@@ -370,7 +334,7 @@ export_food_habits_plots <- function(
         )
       }
 
-      if (nrow(dp_dat) > 0) {
+      if (nrow(dp_dat)) {
         save_plot_file(
           plot_dominant_prey(dp_dat, facet_by_predator = FALSE),
           out_dir,
@@ -387,7 +351,8 @@ export_food_habits_plots <- function(
       }
       sp_suffix <- sanitize_plot_suffix(sp_label)
 
-      pc_dat <- food_habits_prey_predation %>% dplyr::filter(prey_code == code)
+      pc_dat <- food_habits_prey_predation |>
+        dplyr::filter(prey_code == {{ code }})
       if (nrow(pc_dat) > 0) {
         save_plot_file(
           plot_predator_contribution(pc_dat, facet_by_prey = FALSE),
@@ -429,12 +394,12 @@ export_food_habits_plots <- function(
 # Export unaggregated mean-diet example figures (by strata and by length),
 # one figure per predator species.
 export_food_habits_mean_diet_unaggregated_plots <- function(
-    food_habits_mean_diet_by_strata_example,
-    food_habits_mean_diet_by_length_example,
-    out_dir = file.path("data-raw", "food-habits"),
-    top_n = 12,
-    length_bin_var = "length_bin") {
-
+  food_habits_mean_diet_by_strata_example,
+  food_habits_mean_diet_by_length_example,
+  out_dir = file.path("data-raw", "food-habits"),
+  top_n = 12,
+  length_bin_var = "length_bin"
+) {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }
@@ -448,21 +413,26 @@ export_food_habits_mean_diet_unaggregated_plots <- function(
     unlink(old_files)
   }
 
-  pred_species_col <- if ("pred_common" %in% names(food_habits_mean_diet_by_strata_example)) "pred_common" else "pred_code"
-  pred_species_values <- food_habits_mean_diet_by_strata_example %>%
-    dplyr::filter(!is.na(.data[[pred_species_col]])) %>%
-    dplyr::distinct(.data[[pred_species_col]]) %>%
-    dplyr::pull(.data[[pred_species_col]])
+  pred_species_col <- if ("pred_common" %in% names(food_habits_mean_diet_by_strata_example)) {
+    "pred_common"
+  } else {
+    "pred_code"
+  }
+
+  pred_species_values <- food_habits_mean_diet_by_strata_example |>
+    dplyr::filter(!is.na(.data[[pred_species_col]])) |>
+    dplyr::pull(.data[[pred_species_col]]) |>
+    unique()
 
   for (sp in pred_species_values) {
     sp_suffix <- sanitize_plot_suffix(sp)
 
-    strata_dat <- food_habits_mean_diet_by_strata_example %>%
+    strata_dat <- food_habits_mean_diet_by_strata_example |>
       dplyr::filter(.data[[pred_species_col]] == sp)
-    length_dat <- food_habits_mean_diet_by_length_example %>%
+    length_dat <- food_habits_mean_diet_by_length_example |>
       dplyr::filter(.data[[pred_species_col]] == sp)
 
-    if (nrow(strata_dat) > 0) {
+    if (nrow(strata_dat)) {
       save_plot_file(
         plot_mean_diet_by_strata(strata_dat, top_n = top_n),
         out_dir,
@@ -470,7 +440,7 @@ export_food_habits_mean_diet_unaggregated_plots <- function(
       )
     }
 
-    if (nrow(length_dat) > 0) {
+    if (nrow(length_dat)) {
       save_plot_file(
         plot_mean_diet_by_length(length_dat, top_n = top_n, length_bin_var = length_bin_var),
         out_dir,

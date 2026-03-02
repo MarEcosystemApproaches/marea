@@ -1,14 +1,14 @@
 # Internal helper: summarize predator contributions to each prey
 # group and compute within-group predator ranks.
 summarise_prey_pressure <- function(
-    food_habits_stomach,
-    group_vars = c("year", "nafo_zone", "prey_code"),
-    predator_var = "pred_code",
-    weight_var = "pwt",
-    stomach_id_var = "pred_seq",
-    include_label_cols = TRUE,
-    label_map = food_habits_default_label_map()) {
-
+  food_habits_stomach,
+  group_vars = c("year", "nafo_zone", "prey_code"),
+  predator_var = "pred_code",
+  weight_var = "pwt",
+  stomach_id_var = "pred_seq",
+  include_label_cols = TRUE,
+  label_map = food_habits_default_label_map()
+) {
   group_vars <- existing_cols(food_habits_stomach, group_vars)
   predator_var <- existing_cols(food_habits_stomach, predator_var)
   if (length(predator_var) != 1) {
@@ -24,20 +24,20 @@ summarise_prey_pressure <- function(
 
   full_group <- unique(c(group_vars, predator_var_with_labels))
 
-  out <- food_habits_stomach %>%
-    dplyr::filter(!is.na(.data[[predator_var]]), !is.na(.data[[weight_var]]), .data[[weight_var]] >= 0) %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(full_group))) %>%
+  out <- food_habits_stomach |>
+    dplyr::filter(!is.na(.data[[predator_var]]), !is.na(.data[[weight_var]]), .data[[weight_var]] >= 0) |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(full_group))) |>
     dplyr::summarise(
       prey_weight_total = sum(.data[[weight_var]], na.rm = TRUE),
       n_prey_records = dplyr::n(),
       n_stomachs = dplyr::n_distinct(.data[[stomach_id_var]]),
       .groups = "drop"
-    ) %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) %>%
+    ) |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) |>
     dplyr::mutate(
       predator_weight_prop = prey_weight_total / sum(prey_weight_total, na.rm = TRUE),
       predator_rank = dplyr::dense_rank(dplyr::desc(prey_weight_total))
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
   out
@@ -102,16 +102,16 @@ summarise_prey_pressure <- function(
 #'
 #' @export
 estimate_predator_contribution <- function(
-    food_habits_stomach,
-    group_vars = c("year", "nafo_zone", "prey_code"),
-    predator_var = "pred_code",
-    weight_var = "pwt",
-    stomach_id_var = "pred_seq",
-    include_label_cols = TRUE,
-    label_map = food_habits_default_label_map(),
-    top_n_predators = NULL,
-    min_predator_contribution = NULL) {
-
+  food_habits_stomach,
+  group_vars = c("year", "nafo_zone", "prey_code"),
+  predator_var = "pred_code",
+  weight_var = "pwt",
+  stomach_id_var = "pred_seq",
+  include_label_cols = TRUE,
+  label_map = food_habits_default_label_map(),
+  top_n_predators = NULL,
+  min_predator_contribution = NULL
+) {
   out <- summarise_prey_pressure(
     food_habits_stomach = food_habits_stomach,
     group_vars = group_vars,
@@ -123,11 +123,11 @@ estimate_predator_contribution <- function(
   )
 
   if (!is.null(min_predator_contribution)) {
-    out <- out %>% dplyr::filter(predator_weight_prop >= min_predator_contribution)
+    out <- out |> dplyr::filter(predator_weight_prop >= min_predator_contribution)
   }
 
   if (!is.null(top_n_predators)) {
-    out <- out %>% dplyr::filter(predator_rank <= top_n_predators)
+    out <- out |> dplyr::filter(predator_rank <= top_n_predators)
   }
 
   out
@@ -135,19 +135,27 @@ estimate_predator_contribution <- function(
 
 # Plot summary for predator contribution estimates.
 plot_predator_contribution <- function(predator_contribution_data, top_n = 8, facet_by_prey = TRUE) {
-  pred_label_var <- if ("pred_common" %in% names(predator_contribution_data)) "pred_common" else "pred_code"
-  prey_label_var <- if ("prey_common" %in% names(predator_contribution_data)) "prey_common" else "prey_code"
+  pred_label_var <- if ("pred_common" %in% names(predator_contribution_data)) {
+    "pred_common"
+  } else {
+    "pred_code"
+  }
+  prey_label_var <- if ("prey_common" %in% names(predator_contribution_data)) {
+    "prey_common"
+  } else {
+    "prey_code"
+  }
 
-  plot_dat <- predator_contribution_data %>%
+  plot_dat <- predator_contribution_data |>
     dplyr::filter(
       !is.na(.data[[pred_label_var]]),
       !is.na(.data[[prey_label_var]]),
       !is.na(prey_weight_total)
-    ) %>%
-    dplyr::group_by(.data[[prey_label_var]], .data[[pred_label_var]]) %>%
-    dplyr::summarise(plot_value = sum(prey_weight_total, na.rm = TRUE), .groups = "drop_last") %>%
-    dplyr::slice_max(order_by = plot_value, n = top_n, with_ties = FALSE) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::group_by(.data[[prey_label_var]], .data[[pred_label_var]]) |>
+    dplyr::summarise(plot_value = sum(prey_weight_total, na.rm = TRUE), .groups = "drop_last") |>
+    dplyr::slice_max(order_by = plot_value, n = top_n, with_ties = FALSE) |>
+    dplyr::ungroup() |>
     dplyr::mutate(
       predator_f = stats::reorder(.data[[pred_label_var]], plot_value)
     )

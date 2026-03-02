@@ -40,17 +40,17 @@ make_food_habits_fixture <- function() {
 }
 
 run_food_habits_contract_checks <- function(
-    food_habits_stomach,
-    food_habits_species,
-    food_habits_mean_diet_stratified,
-    food_habits_dominant_prey_timeseries,
-    food_habits_prey_predation,
-    priority_predator_codes,
-    priority_prey_codes,
-    mean_diet_group_vars,
-    dominant_prey_group_vars,
-    prey_predation_group_vars) {
-
+  food_habits_stomach,
+  food_habits_species,
+  food_habits_mean_diet_stratified,
+  food_habits_dominant_prey_timeseries,
+  food_habits_prey_predation,
+  priority_predator_codes,
+  priority_prey_codes,
+  mean_diet_group_vars,
+  dominant_prey_group_vars,
+  prey_predation_group_vars
+) {
   message("=== Food Habits Contract Checks ===")
 
   # ---- Real-data structure checks ----
@@ -103,10 +103,10 @@ run_food_habits_contract_checks <- function(
     include_label_cols = TRUE
   )
   dom_groups <- existing_cols(fx_dom, c("year", "pred_code", "pred_common"))
-  dom_max_n <- fx_dom %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(dom_groups))) %>%
-    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
-    dplyr::summarise(max_n = max(n), .groups = "drop") %>%
+  dom_max_n <- fx_dom |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(dom_groups))) |>
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") |>
+    dplyr::summarise(max_n = max(n), .groups = "drop") |>
     dplyr::pull(max_n)
   check_msg(all(fx_dom$prey_rank <= 1), "estimate_dominant_prey(top_n=1) keeps prey_rank <= 1")
   check_msg(length(dom_max_n) == 1 && dom_max_n <= 1, "estimate_dominant_prey(top_n=1) keeps <=1 prey per group")
@@ -118,10 +118,10 @@ run_food_habits_contract_checks <- function(
     include_label_cols = TRUE
   )
   pred_groups <- existing_cols(fx_pred, c("year", "prey_code", "prey_common"))
-  pred_max_n <- fx_pred %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(pred_groups))) %>%
-    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
-    dplyr::summarise(max_n = max(n), .groups = "drop") %>%
+  pred_max_n <- fx_pred |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(pred_groups))) |>
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") |>
+    dplyr::summarise(max_n = max(n), .groups = "drop") |>
     dplyr::pull(max_n)
   check_msg(all(fx_pred$predator_rank <= 1), "estimate_predator_contribution(top_n_predators=1) keeps predator_rank <= 1")
   check_msg(length(pred_max_n) == 1 && pred_max_n <= 1, "estimate_predator_contribution(top_n_predators=1) keeps <=1 predator per group")
