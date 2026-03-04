@@ -1,6 +1,12 @@
 #' Oceanic Niño Index (ONI)
 #'
-#' The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern Oscillation. It is calculated as a 3-month running mean of sea surface temperature (SST) anomalies in the Niño 3.4 region (5°N–5°S, 120°W–170°W), using 30-year base periods updated every 5 years. ONI values may change for up to two months after initial posting due to data filtering.
+#' The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern 
+#' Oscillation. It is calculated as a 3-month running mean of sea surface 
+#' temperature (SST) anomalies in the Niño 3.4 region (5°N–5°S, 120°W–170°W),
+#' using 30-year base periods updated every 5 years. ONI values may change for
+#' up to two months after initial posting due to data filtering.
+#' 
+#' This dataset was last queried from NOAA source March 2 2026. 
 #'
 #' For more information, see \href{http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml}{NOAA ONI} and \href{https://www.ncei.noaa.gov/access/monitoring/enso/sst}{NOAA ENSO SST}.
 #'
@@ -152,6 +158,9 @@
 #'     }
 #'   }
 #' }
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229.
+#' 
 #' @docType data
 #' @name azmp_bottom_temperature
 #' @author Jaimie Harbin and Benoit Casault
@@ -182,6 +191,10 @@
 #'      }
 #'      }
 #'      }
+#'      
+#'      Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+#'      
+#'      
 #'      @docType data
 #'      @name azmp_surface_temperature
 #'      @author Emily O'Grady and Benoit Casault
@@ -211,6 +224,9 @@
 #' }
 #' }
 #' }
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+#' 
 #' 
 #' @docType data
 #' @name azmp_satellite_temperature
@@ -244,6 +260,9 @@
 #' }
 #' }
 #' }
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+#' 
 #' @docType data
 #' @name azmp_stratification
 #' @author Emily O'Grady and Benoit Casault
@@ -275,6 +294,8 @@
 #' }
 #' }
 #' }
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
 #' 
 #' @docType data
 #' @name azmp_salinity
