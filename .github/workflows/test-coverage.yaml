@@ -27,6 +27,22 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Configure Python for R
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install copernicusmarine
+        shell: bash
+
+      - name: Initialize reticulate
+        run: |
+          Sys.setenv(RETICULATE_PYTHON = Sys.which("python"))
+        shell: Rscript {0}
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr, any::reticulate
+          needs: coverage
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::covr

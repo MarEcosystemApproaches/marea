@@ -23,12 +23,23 @@ jobs:
         with:
           use-public-rspm: true
 
+      - uses: r-lib/actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Configure Python for R
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install copernicusmarine
+        shell: bash
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::rcmdcheck
             any::testthat
             any::devtools
+            any::reticulate
           needs: check
           
       - name: Install GitHub dependencies
