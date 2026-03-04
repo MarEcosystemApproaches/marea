@@ -25,10 +25,15 @@ An \code{ea_data} object:
 }
 }
 }
-@docType data
-@name azmp_surface_temperature
-@author Emily O'Grady and Benoit Casault
-@source Generated from running \code{data-raw/azmpdata/azmpdata-load.R}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{ Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+ 
+ 
+ @docType data
+ @name azmp_surface_temperature
+ @author Emily O'Grady and Benoit Casault
+ @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
+}\if{html}{\out{</div>}}
 }
 \usage{
 azmp_surface_temperature
