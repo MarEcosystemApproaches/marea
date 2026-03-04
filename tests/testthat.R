@@ -8,4 +8,7 @@
 
 library(testthat)
 
+Sys.setenv(RETICULATE_PYTHON = Sys.which("python"))
+reticulate::use_python(Sys.which("python"))
+
 test_check("marea")
