@@ -61,10 +61,9 @@ data, so this is the appropriate resolution to use).
 \examples{
 \dontrun{
 df <- get_erddap_data(
-  variables = c("t_start", "t_duration"),
-  timelim = c("2023-01-01T00:00:00Z", "2024-01-01T00:00:00Z")
-)
-r <- stars::st_as_stars(df, dims = c("longitude", "latitude", "time"))
+variables=c("t_start","t_duration"),
+ timelim=c("2023-01-01T00:00:00Z","2024-01-01T00:00:00Z"))
+r <- stars::st_as_stars(df, dims = c("longitude","latitude","time"))
 plot(r)
 }
 }

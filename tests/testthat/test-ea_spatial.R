@@ -1,6 +1,6 @@
 # Setup: Load necessary libraries
 library(testthat)
-library(methods)
+library(methods) 
 library(sf)
 
 # --- Helper functions for test setup ---
@@ -24,7 +24,7 @@ create_test_sf <- function(n = 3, value_col_name = "temp_val",
     }
   }
   sf_obj <- sf::st_sf(df, geometry = sf::st_sfc(pts, crs = 4326))
-
+  
   ea_spatial(
     data = sf_obj,
     value_col = value_col_name,
@@ -45,24 +45,24 @@ create_test_stars <- function(nx = 2, ny = 2, value_col_name = "raster_val",
   if (!requireNamespace("stars", quietly = TRUE)) {
     testthat::skip("stars package not installed")
   }
-
+  
   # Create the base stars object
   mat <- matrix(rnorm(nx * ny, mean = 20, sd = 5), nrow = nx, ncol = ny)
   st_obj <- stars::st_as_stars(mat)
   names(st_obj) <- value_col_name
   st_obj <- stars::st_set_dimensions(st_obj, names = c("x", "y"))
-
+  
   # Add extra layers as new, separate attributes
   if (!is.null(extra_layers)) {
     for (layer_name in names(extra_layers)) {
       # Create the new layer as a stars object
       new_layer_mat <- matrix(extra_layers[[layer_name]], nrow = nx, ncol = ny)
       new_layer_st <- stars::st_as_stars(new_layer_mat)
-      names(new_layer_st) <- layer_name
+      names(new_layer_st) <- layer_name 
       st_obj <- c(st_obj, new_layer_st)
     }
   }
-
+  
   # st_obj has multiple attributes: "raster_val", "category", etc.
   ea_spatial(
     data = st_obj,
@@ -84,13 +84,11 @@ create_test_spatraster <- function(ncols = 2, nrows = 2, value_col_name = "spat_
   if (!requireNamespace("terra", quietly = TRUE)) {
     testthat::skip("terra package not installed")
   }
-  r <- terra::rast(
-    ncols = ncols, nrows = nrows,
-    xmin = 0, xmax = ncols, ymin = 0, ymax = nrows
-  )
+  r <- terra::rast(ncols = ncols, nrows = nrows,
+                   xmin = 0, xmax = ncols, ymin = 0, ymax = nrows)
   terra::values(r) <- rnorm(ncols * nrows, mean = 50, sd = 10)
   names(r) <- value_col_name
-
+  
   if (!is.null(extra_layers)) {
     for (layer_name in names(extra_layers)) {
       r_new <- r
@@ -99,7 +97,7 @@ create_test_spatraster <- function(ncols = 2, nrows = 2, value_col_name = "spat_
       r <- c(r, r_new)
     }
   }
-
+  
   ea_spatial(
     data = r,
     value_col = value_col_name,
@@ -116,7 +114,7 @@ test_that("ea_spatial S4 class definition is correct", {
   # Requires at least one supported spatial package to create a valid object
   # for validity check.
   if (requireNamespace("sf", quietly = TRUE)) {
-    sf_obj <- sf::st_sf(data.frame(value = 1), geometry = sf::st_sfc(sf::st_point(c(0, 0)), crs = 4326))
+    sf_obj <- sf::st_sf(data.frame(value = 1), geometry = sf::st_sfc(sf::st_point(c(0,0)), crs=4326))
     obj <- methods::new("ea_spatial", meta = list(a = 1), data = sf_obj)
     expect_s4_class(obj, "ea_spatial")
     expect_true(is.list(obj@meta))
@@ -132,15 +130,13 @@ test_that("ea_spatial constructor creates valid object with sf data", {
   obj <- create_test_sf()
   expect_s4_class(obj, "ea_spatial")
   expect_true(all(c("meta", "data") %in% slotNames(obj)))
-
+  
   expect_true(is.list(obj@meta))
-  expect_true(all(c(
-    "data_type", "region", "time_descriptor", "units",
-    "source_citation", "original_value_col"
-  ) %in% names(obj@meta)))
+  expect_true(all(c("data_type", "region", "time_descriptor", "units",
+                    "source_citation", "original_value_col") %in% names(obj@meta)))
   expect_equal(obj@meta$data_type, "Temperature")
   expect_equal(obj@meta$original_value_col, "temp_val")
-
+  
   expect_s3_class(obj@data, "sf")
   expect_true("value" %in% names(obj@data))
   expect_true(inherits(obj@data$geometry, "sfc"))
@@ -171,14 +167,14 @@ test_that("ea_spatial constructor handles optional arguments and extra metadata"
     lon = seq(-66, -64, by = 0.5),
     lat = seq(43, 45, by = 0.5)
   )
-
+  
   # Convert to sf object
   spatial_data <- st_as_sf(grid_points, coords = c("lon", "lat"), crs = 4326)
-
+  
   # Add some simulated chlorophyll data
   spatial_data$chl_concentration <- runif(nrow(spatial_data), 0.5, 3.2)
   spatial_data$depth_zone <- "surface"
-
+  
   # Create ea_st object
   obj <- ea_spatial(
     data = spatial_data,
@@ -188,7 +184,7 @@ test_that("ea_spatial constructor handles optional arguments and extra metadata"
     time_descriptor = "July 2023 Survey",
     units = "mg/m³",
     source_citation = "DFO Ecosystem Survey Program",
-    project_name = "Global Marine Census"
+    project_name = 'Global Marine Census'
   )
   expect_equal(obj@meta$source_citation, "DFO Ecosystem Survey Program")
   expect_equal(obj@meta$project_name, "Global Marine Census")
@@ -208,7 +204,7 @@ test_that("ea_spatial constructor throws errors for invalid data type", {
 
 test_that("ea_spatial constructor throws errors for missing value_col", {
   if (requireNamespace("sf", quietly = TRUE)) {
-    sf_df_no_val <- sf::st_sf(data.frame(x = 1), geometry = sf::st_sfc(sf::st_point(c(0, 0)), crs = 4326))
+    sf_df_no_val <- sf::st_sf(data.frame(x = 1), geometry = sf::st_sfc(sf::st_point(c(0,0)), crs=4326))
     expect_error(
       ea_spatial(
         data = sf_df_no_val,
@@ -223,7 +219,7 @@ test_that("ea_spatial constructor throws errors for missing value_col", {
 
 test_that("ea_spatial constructor throws error for non-numeric value_col in sf", {
   if (requireNamespace("sf", quietly = TRUE)) {
-    sf_df_char_val <- sf::st_sf(data.frame(char_val = "A"), geometry = sf::st_sfc(sf::st_point(c(0, 0)), crs = 4326))
+    sf_df_char_val <- sf::st_sf(data.frame(char_val = "A"), geometry = sf::st_sfc(sf::st_point(c(0,0)), crs=4326))
     expect_error(
       ea_spatial(
         data = sf_df_char_val,
@@ -241,12 +237,12 @@ test_that("ea_spatial constructor correctly renames value column/layer", {
   expect_true("value" %in% names(obj_sf@data))
   expect_false("my_custom_value" %in% names(obj_sf@data))
   expect_equal(obj_sf@meta$original_value_col, "my_custom_value")
-
+  
   obj_stars <- create_test_stars(value_col_name = "my_stars_value")
   expect_true("value" %in% names(obj_stars@data))
   expect_false("my_stars_value" %in% names(obj_stars@data))
   expect_equal(obj_stars@meta$original_value_col, "my_stars_value")
-
+  
   obj_spatraster <- create_test_spatraster(value_col_name = "my_raster_value")
   expect_true("value" %in% names(obj_spatraster@data))
   expect_false("my_raster_value" %in% names(obj_spatraster@data))
@@ -278,6 +274,7 @@ test_that("[[ operator extracts data columns directly (sf)", {
   obj_sf <- create_test_sf(n = 2, extra_cols = list(sample_id = c("A", "B")))
   expect_equal(obj_sf[["sample_id"]], c("A", "B"))
   expect_type(obj_sf[["value"]], "double")
+  
 })
 
 test_that("[[ operator extracts data columns directly (stars)", {
@@ -311,7 +308,7 @@ test_that("[ operator subsets sf rows correctly (numeric index)", {
 })
 
 test_that("[ operator subsets sf rows correctly (logical index)", {
-  obj_sf <- create_test_sf(n = 5, extra_cols = list(active = c(T, F, T, F, T)))
+  obj_sf <- create_test_sf(n = 5, extra_cols = list(active = c(T,F,T,F,T)))
   subset_obj <- obj_sf[obj_sf@data$active, ]
   expect_equal(nrow(subset_obj@data), 3)
 })
@@ -324,13 +321,13 @@ test_that("[ operator subsets stars objects correctly ", {
 })
 
 test_that("[ operator subsets SpatRaster objects correctly (using terrra method)", {
-  obj_spatraster <- create_test_spatraster(ncols = 3, nrows = 3, extra_layers = list(type = rep(c(1, 2, 3), each = 3)))
-  subset_obj_layers <- obj_spatraster[, 2:3] # Subset layers (j for layers, not columns)
+  obj_spatraster <- create_test_spatraster(ncols = 3, nrows = 3, extra_layers = list(type = rep(c(1,2,3), each=3)))
+  subset_obj_layers <- obj_spatraster[ , 2:3] # Subset layers (j for layers, not columns)
   expect_s4_class(subset_obj_layers, "ea_spatial")
   expect_true(inherits(subset_obj_layers@data, "SpatRaster"))
   expect_equal(terra::nlyr(subset_obj_layers@data), 2)
   expect_equal(names(subset_obj_layers@data), c("value", "type")) # value is first, type is second in original
-
+  
   # For spatial subsetting (cropping)
   if (requireNamespace("terra", quietly = TRUE)) {
     ext <- terra::ext(0, 1, 0, 3) # Subset a region
@@ -358,7 +355,7 @@ test_that("[ operator preserves object structure when subsetting to zero rows/fe
   expect_equal(nrow(subset_obj_sf@data), 0)
   expect_equal(names(subset_obj_sf@data), names(obj_sf@data))
   expect_equal(subset_obj_sf@meta, obj_sf@meta)
-
+  
   obj_stars <- create_test_stars(nx = 1, ny = 1)
   # stars doesn't subset to 0 rows easily like sf, usually `stars::st_empty()` for empty
   # or specific dimension subsetting that makes it empty.
@@ -396,7 +393,7 @@ test_that("ea.subset.spatial filters sf objects correctly by multiple attributes
 })
 
 test_that("ea.subset.spatial filters stars objects correctly by attribute layer", {
-  obj_stars <- create_test_stars(extra_layers = list(category = c("X", "Y", "X", "Z")))
+  obj_stars <- create_test_stars( extra_layers = list(category = c("X", "Y", "X", "Z")))
   filtered_obj <- ea.subset.spatial(obj_stars, "category", "X")
   expect_s4_class(filtered_obj, "ea_spatial")
   expect_true(inherits(filtered_obj@data, "stars"))
@@ -420,13 +417,13 @@ test_that("ea.subset.spatial returns object with 0 features/cells if no matches"
   obj_sf <- create_test_sf(n = 2, extra_cols = list(type = c("A", "B")))
   filtered_obj_sf <- ea.subset.spatial(obj_sf, "type", "Z")
   expect_equal(nrow(filtered_obj_sf@data), 2)
-
+  
   obj_stars <- create_test_stars(nx = 1, ny = 1, extra_layers = list(type = c("A")))
   filtered_obj_stars <- ea.subset.spatial(obj_stars, "type", "Z")
   # stars will result in all NA if no match, not 0 dimensions
   expect_true(all(is.na(filtered_obj_stars@data$value)))
   expect_true(all(is.na(filtered_obj_stars@data$type)))
-
+  
   obj_spatraster <- create_test_spatraster(ncols = 1, nrows = 1, extra_layers = list(type = c(1)))
   filtered_obj_spatraster <- ea.subset.spatial(obj_spatraster, "type", 99)
   expect_true(all(is.na(terra::values(filtered_obj_spatraster@data$value))))
@@ -434,7 +431,7 @@ test_that("ea.subset.spatial returns object with 0 features/cells if no matches"
 
 test_that("ea.subset.spatial throws error for non-ea_spatial object", {
   if (requireNamespace("sf", quietly = TRUE)) {
-    df <- sf::st_sf(data.frame(val = 1), geometry = sf::st_sfc(sf::st_point(c(0, 0)), crs = 4326))
+    df <- sf::st_sf(data.frame(val = 1), geometry = sf::st_sfc(sf::st_point(c(0,0)), crs=4326))
     expect_error(
       ea.subset.spatial(df, "val", 1),
       "x must be an ea_spatial object.",
@@ -458,10 +455,10 @@ test_that("ea_spatial validity method works correctly for supported types", {
   expect_no_error(create_test_sf())
   expect_no_error(create_test_stars())
   expect_no_error(create_test_spatraster())
-
+  
   # Test valid object via new()
   if (requireNamespace("sf", quietly = TRUE)) {
-    valid_sf_data <- sf::st_sf(data.frame(value = 1), geometry = sf::st_sfc(sf::st_point(c(0, 0)), crs = 4326))
+    valid_sf_data <- sf::st_sf(data.frame(value = 1), geometry = sf::st_sfc(sf::st_point(c(0,0)), crs=4326))
     valid_obj_new <- methods::new("ea_spatial", meta = list(), data = valid_sf_data)
     expect_true(methods::validObject(valid_obj_new))
   }
@@ -470,8 +467,10 @@ test_that("ea_spatial validity method works correctly for supported types", {
 
 test_that("ea_spatial validity method identifies unsupported data class", {
   expect_error(
-    invalid_obj <- methods::new("ea_spatial", meta = list(), data = data.frame(value = 1)),
+    invalid_obj <- methods::new("ea_spatial", meta = list(), data = data.frame(value = 1))
+    ,
     "The 'data' slot must be an object of class `sf`, `stars`, or `SpatRaster`.",
     fixed = TRUE
   )
 })
+

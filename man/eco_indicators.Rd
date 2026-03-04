@@ -146,7 +146,7 @@ an \code{ea_data} object with multiple columns:
 Generated from running \code{data-raw/eco-indicators/eco-indicators.R}
 }
 \usage{
-data(azmp_salinity)
+eco_indicators
 }
 \description{
 ecological indicators calculated from biomass estimates and commercial harvesting data
