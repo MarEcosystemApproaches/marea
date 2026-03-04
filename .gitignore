@@ -9,4 +9,5 @@ lib/
 .Rhistory
 inst/doc
 .Rhistory
-docs
+/doc/
+/Meta/

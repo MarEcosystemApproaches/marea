@@ -14,7 +14,7 @@ create_test_ea_data <- function(years = 2000:2005, values = rnorm(6),
       df[[col_name]] <- extra_cols[[col_name]]
     }
   }
-
+  
   ea_data(
     data = df,
     value_col = value_col_name,
@@ -43,7 +43,7 @@ create_test_sf <- function(n = 3, value_col_name = "temp_val",
     }
   }
   sf_obj <- sf::st_sf(df, geometry = sf::st_sfc(pts, crs = 4326))
-
+  
   ea_spatial(
     data = sf_obj,
     value_col = value_col_name,
@@ -56,12 +56,12 @@ create_test_sf <- function(n = 3, value_col_name = "temp_val",
 test_that("marea_metadata collects dataset metadata across classes", {
   skip_if_not_installed("mockery")
   library(mockery)
-
+  
   # Define a minimal ea_data S4 class if not present
   if (!methods::isClass("ea_data")) {
     methods::setClass("ea_data", representation(meta = "list", data = "data.frame"))
   }
-
+  
   # Create fake datasets covering all branches:
   # 1) ea_data S4 with slots and year column
   ds1 <- create_test_ea_data(
@@ -73,68 +73,68 @@ test_that("marea_metadata collects dataset metadata across classes", {
     location_descriptor = "Area51",
     units = "kg",
     extra_cols = list(year = 1990:1995)
-  )
+  ) 
   # 2) ea_spatial-like: regular data.frame with class "ea_spatial" and meta attribute
   ds2 <- create_test_sf()
-
+  
   # 3) Other data.frame with Year column and attrs for region and source
   ds3 <- data.frame(Year = c(1999, 2001), value = c(10, 20))
   attr(ds3, "region") <- "NE"
   attr(ds3, "source") <- "my-source"
-
+  
   # 4) Other data.frame with no time/attrs to trigger Unknowns
   ds4 <- data.frame(foo = 1:2)
-
+  
   # Mock data() to return our dataset names
   data_mock <- function(package) {
     expect_equal(package, "marea")
     list(results = data.frame(Item = c("d1", "d2", "d3", "d4"), stringsAsFactors = FALSE))
   }
-
+  
   # Mock get() to return each dataset by name
   get_mock <- function(x, envir) {
     switch(x,
-      d1 = ds1,
-      d2 = ds2,
-      d3 = ds3,
-      d4 = ds4,
-      stop("unexpected dataset name in test: ", x)
+           d1 = ds1,
+           d2 = ds2,
+           d3 = ds3,
+           d4 = ds4,
+           stop("unexpected dataset name in test: ", x)
     )
   }
-
+  
   # Stub the functions used inside marea_metadata()
   stub(marea_metadata, "data", data_mock)
-  stub(marea_metadata, "get", get_mock)
-
+  stub(marea_metadata, "get",  get_mock)
+  
   # Act
   md <- marea_metadata()
-
+  
   # Basic structure
   expect_s3_class(md, "data.frame")
   expect_identical(names(md), c("Dataset", "Region", "TimeSpan", "Source"))
   expect_identical(md$Dataset, c("d1", "d2", "d3", "d4"))
-
+  
   # d1: ea_data branch
   r1 <- md[md$Dataset == "d1", , drop = FALSE]
-  expect_identical(r1$Region, "ATL")
+  expect_identical(r1$Region,   "ATL")
   expect_identical(r1$TimeSpan, "1990-1995")
-  expect_identical(r1$Source, "No citation provided")
-
+  expect_identical(r1$Source,   "No citation provided")
+  
   # d2: ea_spatial branch with Date range and meta attribute
   r2 <- md[md$Dataset == "d2", , drop = FALSE]
-  expect_identical(r2$Region, "Test Region")
+  expect_identical(r2$Region,   "Test Region")
   expect_identical(r2$TimeSpan, "Unknown")
-  expect_identical(r2$Source, "No citation provided")
-
+  expect_identical(r2$Source,   "No citation provided")
+  
   # d3: other data.frame branch with Year column and source attr
   r3 <- md[md$Dataset == "d3", , drop = FALSE]
-  expect_identical(r3$Region, "NE")
+  expect_identical(r3$Region,   "NE")
   expect_identical(r3$TimeSpan, "1999-2001")
-  expect_identical(r3$Source, "my-source")
-
+  expect_identical(r3$Source,   "my-source")
+  
   # d4: other data.frame with no time/attrs -> Unknowns
   r4 <- md[md$Dataset == "d4", , drop = FALSE]
-  expect_identical(r4$Region, "Unknown")
+  expect_identical(r4$Region,   "Unknown")
   expect_identical(r4$TimeSpan, "Unknown")
-  expect_identical(r4$Source, "Unknown")
+  expect_identical(r4$Source,   "Unknown")
 })

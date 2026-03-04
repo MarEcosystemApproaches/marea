@@ -17,7 +17,7 @@ create_test_ea_data <- function(years = 2000:2005, values = rnorm(6),
       df[[col_name]] <- extra_cols[[col_name]]
     }
   }
-
+  
   ea_data(
     data = df,
     value_col = value_col_name,
@@ -41,22 +41,20 @@ test_that("ea_data S4 class definition is correct", {
 
 test_that("ea_data constructor creates valid object with required slots", {
   obj <- create_test_ea_data()
-
+  
   expect_s4_class(obj, "ea_data")
   expect_true(all(c("meta", "data") %in% slotNames(obj)))
-
+  
   # Check meta slot
   expect_true(is.list(obj@meta))
-  expect_true(all(c(
-    "data_type", "region", "location_descriptor", "units",
-    "species", "source_citation", "original_value_col"
-  ) %in% names(obj@meta)))
+  expect_true(all(c("data_type", "region", "location_descriptor", "units",
+                    "species", "source_citation", "original_value_col") %in% names(obj@meta)))
   expect_equal(obj@meta$data_type, "temperature")
   expect_equal(obj@meta$region, "Scotian Shelf")
   expect_equal(obj@meta$original_value_col, "temp_c")
   expect_equal(obj@meta$species, NA_character_)
   expect_equal(obj@meta$source_citation, "No citation provided")
-
+  
   # Check data slot
   expect_s3_class(obj@data, c("tbl_df", "tbl", "data.frame")) # Should be a tibble
   expect_true(all(c("year", "temp_c_value") %in% names(obj@data)))
@@ -81,7 +79,7 @@ test_that("ea_data constructor handles optional arguments and extra metadata", {
     project_id = "ABC",
     sampling_freq = "annual"
   )
-
+  
   expect_equal(obj@meta$species, "Cod")
   expect_equal(obj@meta$source_citation, "Smith et al. 2020")
   expect_equal(obj@meta$project_id, "ABC")
@@ -95,20 +93,21 @@ test_that("ea_data constructor throws errors for missing/invalid columns", {
     "`data` must contain a 'year' column.",
     fixed = TRUE
   )
-
+  
   df_no_value_col <- data.frame(year = 1:5, x = rnorm(5))
   expect_error(
     ea_data(df_no_value_col, "temp_c", "t", "r", "l", "u"),
     "Column 'temp_c' not found in the data.",
     fixed = TRUE
   )
-
+  
   df_non_numeric_year <- data.frame(year = letters[1:5], temp_c = rnorm(5))
   expect_error(
     ea_data(df_non_numeric_year, "temp_c", "t", "r", "l", "u"),
     "Columns 'year' must be numeric.",
     fixed = TRUE
   )
+  
 })
 
 test_that("ea_data constructor correctly renames value column", {
@@ -255,10 +254,8 @@ test_that("[ operator warns and ignores column subsetting (j)", {
     "Column subsetting"
   )
   expect_equal(subset_obj@data, obj@data) # Should return the whole data frame
-  expect_warning(
-    subset_obj <- subset_obj[1:3, "year"],
-    "Column subsetting"
-  )
+  expect_warning(subset_obj <- subset_obj[1:3, "year"],
+                 "Column subsetting")
   expect_equal(subset_obj@data$year, obj@data$year[1:3])
   expect_equal(subset_obj@data$temp_c_value, obj@data$temp_c_value[1:3])
   expect_true(all(c("year", "temp_c_value") %in% names(subset_obj@data))) # Still has both
@@ -368,6 +365,7 @@ test_that("ea.subset handles NA values in column gracefully", {
   # Filter for non-NA
   filtered_obj_A <- ea.subset(obj, "flag", "A")
   expect_equal(filtered_obj_A@data$year, c(2000, 2003))
+  
 })
 
 
@@ -376,43 +374,39 @@ test_that("ea.subset handles NA values in column gracefully", {
 test_that("ea_data validity method works correctly", {
   # Valid object creation implicitly calls validity
   expect_no_error(create_test_ea_data())
-
+  
   # Missing 'year'
-
+  
   expect_error(
     invalid_obj_no_year <- new("ea_data",
-      meta = list(),
-      data = data.frame(value = 1:5)
-    ),
+                               meta = list(),
+                               data = data.frame(value = 1:5)),
     "Missing 'year' column in the data slot.",
     fixed = TRUE
   )
-
+  
   # Missing 'value'
-
+  
   expect_error(
     invalid_obj_no_value <- new("ea_data",
-      meta = list(),
-      data = data.frame(year = 1:5)
-    ),
+                                meta = list(),
+                                data = data.frame(year = 1:5)),
     "Missing value column in the data slot.",
     fixed = TRUE
   )
-
+  
   # Missing both
-
+  
   expect_error(
     invalid_obj_no_both <- new("ea_data",
-      meta = list(),
-      data = data.frame(x = 1:5)
-    )
+                               meta = list(),
+                               data = data.frame(x = 1:5))
   )
-
+  
   # Valid object via new()
   valid_obj_new <- new("ea_data",
-    meta = list(),
-    data = data.frame(year = 1, test_value = 1)
-  )
+                       meta = list(),
+                       data = data.frame(year = 1, test_value = 1))
   expect_true(validObject(valid_obj_new))
 })
 
@@ -428,25 +422,22 @@ test_that("ea_data constructor handles original_value_col renaming consistently"
   expect_false("int_val" %in% names(obj@data))
   expect_equal(obj@data$int_val_value, c(10, 20)) # Stored as double in tibble
   expect_equal(obj@meta$original_value_col, "int_val")
+  
 })
 
 # Test `ea.subset` with factors
 test_that("ea.subset works with factor columns", {
-  df <- data.frame(
-    year = 2000:2005, temp_c = rnorm(6),
-    site = factor(rep(c("A", "B"), each = 3))
-  )
-  obj <- ea_data(df,
-    value_col = "temp_c", data_type = "temperature",
-    region = "Test Region", location_descriptor = "surface",
-    units = "°C"
-  )
-
+  df <- data.frame(year = 2000:2005, temp_c = rnorm(6),
+                   site = factor(rep(c("A", "B"), each = 3)))
+  obj <- ea_data(df, value_col = "temp_c", data_type = "temperature",
+                 region = "Test Region", location_descriptor = "surface",
+                 units = "°C")
+  
   filtered_obj <- ea.subset(obj, "site", "A")
   expect_s4_class(filtered_obj, "ea_data")
   expect_equal(filtered_obj@data$site, factor(rep("A", 3), levels = c("A", "B")))
   expect_equal(nrow(filtered_obj@data), 3)
-
+  
   # Filtering by a factor level not present in the data
   filtered_obj_C <- ea.subset(obj, "site", "C")
   expect_equal(nrow(filtered_obj_C@data), 0)

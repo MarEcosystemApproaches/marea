@@ -4,8 +4,9 @@ require(rnaturalearth)
 require(ggplot2)
 require(dplyr)
 
-coastline <- rnaturalearth::ne_states(iso_a2 = c("CA", "US", "GL", "PM"), returnclass = "sf") |>
-  select(admin, name_en, name_fr, geometry)
+coastline <- rnaturalearth::ne_states(iso_a2=c("CA","US","GL","PM"),returnclass = "sf") |> 
+  select(admin,name_en,name_fr,geometry)
+
 
 
 usethis::use_data(coastline, overwrite = TRUE)
