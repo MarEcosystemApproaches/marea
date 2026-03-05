@@ -35,7 +35,9 @@ jobs:
         shell: bash
 
       - name: Set RETICULATE_PYTHON to full path
-        run: echo "RETICULATE_PYTHON=$(where.exe python)" >> $env:GITHUB_ENV
+        run: |
+          $pypath = (where.exe python | Select-Object -First 1).Trim()
+          echo "RETICULATE_PYTHON=$pypath" >> $env:GITHUB_ENV
         shell: pwsh
 
       - uses: r-lib/actions/setup-r-dependencies@v2
