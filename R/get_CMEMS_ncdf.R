@@ -91,6 +91,8 @@ get_CMEMS_ncdf <- function(
     )
   }
 
+  cmt <- reticulate::import("copernicusmarine")
+
   # Login function to create your configuration file
   if (!is.na(username) | !is.na(password)) {
     cmt$login(username, password)
