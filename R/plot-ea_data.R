@@ -49,6 +49,8 @@
 #' @param trend_line_color Color for trend line. Default is "blue".
 #' @param warm_color Color for warm/positive anomalies. Default is "red".
 #' @param cold_color Color for cold/negative anomalies. Default is "blue".
+#' @param value_col Character. Optional. Name of the column in the data slot 
+#' that contains the main values to plot.
 #' @param ... Additional arguments passed to the underlying geoms
 #'   (`geom_line`, `geom_point`, `geom_ribbon`, `geom_col`, `geom_errorbar`).
 #'
@@ -91,7 +93,7 @@ setGeneric("plot")
 #' @export
 setMethod("plot", signature(x = "ea_data", y = "missing"),
           function(x,
-
+                   
                    style = c("default", "ribbon", "plain", "biomass", "anomaly",
                              "histogram", "indicator", "indicator_ref", "diversity", 
                              "temperature_regime", "nao_enhanced"),
@@ -104,6 +106,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                    trend_line_color = "blue", 
                    warm_color = "red",
                    cold_color = "blue",
+                   value_col = NULL,
                    ...) {
             style <- match.arg(style)
             
@@ -111,18 +114,23 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
             df <- x[["data"]]
             m <- x[["meta"]]
             
-            # Rename value column
-            val_ind <- grep(names(df), pattern = '_value$')
-            
-            if (length(val_ind) == 0) {
-              stop("No value column found in data. Value column must end with '_value'.", call. = FALSE)
-            } else if (length(val_ind) > 1) {
-              warning("Multiple value columns found. Using the first one: ", names(df)[val_ind[1]], call. = FALSE)
+            if (is.null(value_col)){
+              # Rename value column
+              val_ind <- grep(names(df), pattern = '_value$')
+              
+              if (length(val_ind) == 0) {
+                stop("No value column found in data. Value column must end with '_value'.", call. = FALSE)
+              } else if (length(val_ind) > 1) {
+                warning("Multiple value columns found. Using the first one: ", names(df)[val_ind[1]], call. = FALSE)
+                df <- df %>%
+                  dplyr::rename(value = dplyr::all_of(names(df)[val_ind[1]]))
+              } else {
+                df <- df %>%
+                  dplyr::rename(value = dplyr::all_of(names(df)[val_ind]))
+              }
+            } else{
               df <- df %>%
-                dplyr::rename(value = dplyr::all_of(names(df)[val_ind[1]]))
-            } else {
-              df <- df %>%
-                dplyr::rename(value = dplyr::all_of(names(df)[val_ind]))
+                dplyr::rename(value = any_of(value_col))
             }
             
             # Base ggplot mapping
@@ -225,7 +233,7 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                 p +
                   ggplot2::geom_col(fill = "steelblue", color = NA, width = 0.8, ...)
               },
-
+              
               
               # MAReco-inspired styles
               indicator = {
@@ -259,16 +267,16 @@ setMethod("plot", signature(x = "ea_data", y = "missing"),
                     name = "Status",
                     na.translate = FALSE
                   )
-                  
-
-                  
+                
+                
+                
                 # Highlight recent period
                 if (highlight_recent && nrow(recent_data) > 0) {
                   p <- p +
                     ggplot2::annotate(geom = "rect",
-                             xmin = min(recent_years), xmax = max(recent_years),
-                             ymin = -Inf, ymax = Inf,
-                             fill = "purple2", alpha = 0.2)
+                                      xmin = min(recent_years), xmax = max(recent_years),
+                                      ymin = -Inf, ymax = Inf,
+                                      fill = "purple2", alpha = 0.2)
                 }
                 
                 # Add trend line

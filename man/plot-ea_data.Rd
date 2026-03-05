@@ -20,6 +20,7 @@ plot(x, y, ...)
   trend_line_color = "blue",
   warm_color = "red",
   cold_color = "blue",
+  value_col = NULL,
   ...
 )
 }
@@ -59,6 +60,9 @@ standardized units. Default is 0.5 standard deviations.}
 \item{warm_color}{Color for warm/positive anomalies. Default is "red".}
 
 \item{cold_color}{Color for cold/negative anomalies. Default is "blue".}
+
+\item{value_col}{Character. Optional. Name of the column in the data slot
+that contains the main values to plot.}
 }
 \value{
 A \code{ggplot} object.
