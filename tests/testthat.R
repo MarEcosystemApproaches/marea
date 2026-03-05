@@ -7,8 +7,11 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
+library(reticulate)
 
-Sys.setenv(RETICULATE_PYTHON = Sys.which("python"))
-reticulate::use_python(Sys.which("python"))
+python_path <- Sys.getenv("RETICULATE_PYTHON", unset = "")
+if (nchar(python_path) > 0) {
+  reticulate::use_python(python_path, required = FALSE)
+}
 
 test_check("marea")
