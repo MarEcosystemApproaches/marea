@@ -35,8 +35,13 @@ jobs:
         shell: bash
 
       - name: Set RETICULATE_PYTHON to full path
-        run: echo "RETICULATE_PYTHON=$(which python)" >> $GITHUB_ENV
-        shell: bash
+        run: echo "RETICULATE_PYTHON=$(where.exe python)" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr, any::reticulate
+          needs: coverage
 
       - name: Debug Python detection
         run: |
@@ -45,11 +50,6 @@ jobs:
           cat("py_available(initialize=TRUE):", reticulate::py_available(initialize = TRUE), "\n")
         shell: Rscript {0}
         
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::covr, any::reticulate
-          needs: coverage
-
       - name: Test coverage
         run: |
           token <- Sys.getenv("CODECOV_TOKEN", "")
