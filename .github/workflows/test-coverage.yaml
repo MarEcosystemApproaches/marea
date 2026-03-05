@@ -34,6 +34,17 @@ jobs:
           python -m pip install copernicusmarine
         shell: bash
 
+      - name: Set RETICULATE_PYTHON to full path
+        run: echo "RETICULATE_PYTHON=$(which python)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Debug Python detection
+        run: |
+          cat("RETICULATE_PYTHON:", Sys.getenv("RETICULATE_PYTHON"), "\n")
+          cat("which python:", Sys.which("python"), "\n")
+          cat("py_available(initialize=TRUE):", reticulate::py_available(initialize = TRUE), "\n")
+        shell: Rscript {0}
+        
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::covr, any::reticulate
