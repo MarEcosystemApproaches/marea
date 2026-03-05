@@ -36,7 +36,12 @@ get_CMEMS_ncdf <- function(
   output_filename = tempfile(fileext = ".nc")
 ) {
   # Check if Python is available
-  if (!reticulate::py_available()) {
+  python_path <- Sys.getenv("RETICULATE_PYTHON", unset = "")
+  if (nchar(python_path) > 0) {
+    reticulate::use_python(python_path, required = FALSE)
+  }
+
+  if (!reticulate::py_available(initialize = TRUE)) {
     stop(
       "Python is not installed. Please install Python from https://www.python.org or contact your system administrator.",
       call. = FALSE
@@ -87,22 +92,21 @@ get_CMEMS_ncdf <- function(
   }
 
   # Login function to create your configuration file
-  if(!is.na(username)|!is.na(password)){
+  if (!is.na(username) | !is.na(password)) {
     cmt$login(username, password)
   }
   tmpdirnc <- tempdir()
   tmpnc <- tempfile(fileext = ".nc")
   cmt$subset(
-    dataset_id=dataset_id,
-    variables=variables,
-    minimum_longitude=minimum_longitude,
-    maximum_longitude=maximum_longitude,
-    minimum_latitude=minimum_latitude,
-    maximum_latitude=maximum_latitude,
-    start_datetime=start_datetime,
-    end_datetime=end_datetime,
+    dataset_id = dataset_id,
+    variables = variables,
+    minimum_longitude = minimum_longitude,
+    maximum_longitude = maximum_longitude,
+    minimum_latitude = minimum_latitude,
+    maximum_latitude = maximum_latitude,
+    start_datetime = start_datetime,
+    end_datetime = end_datetime,
     output_directory = dirname(output_filename),
     output_filename = basename(output_filename)
   )
-  
 }
