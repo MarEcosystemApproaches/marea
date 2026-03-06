@@ -43,6 +43,8 @@ oni <- make_ea_index(
   source = "NOAA CPC, https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml"
 )
 usethis::use_data(oni, overwrite = TRUE)
+# clean up txt file
+file.remove("oni.txt")
 
 # ---- PDO ----
 download.file("https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat",
@@ -64,6 +66,8 @@ pdo <- make_ea_index(
   source = "NOAA ERSST, https://www.ncei.noaa.gov/access/monitoring/pdo/"
 )
 usethis::use_data(pdo, overwrite = TRUE)
+#clean up txt file
+file.remove("pdo.txt")
 
 # ---- SOI ----
 download.file("https://www.cpc.ncep.noaa.gov/data/indices/soi",
@@ -87,6 +91,8 @@ soi <- make_ea_index(
   source = "NOAA CPC, https://www.cpc.ncep.noaa.gov/data/indices/soi"
 )
 usethis::use_data(soi, overwrite = TRUE)
+# clean up txt file
+file.remove("soi.txt")
 
 # ---- NPGO ----
 download.file("http://www.o3d.org/npgo/data/NPGO.txt",
@@ -106,6 +112,8 @@ npgo <- make_ea_index(
   source = "Di Lorenzo et al., http://www.o3d.org/npgo/"
 )
 usethis::use_data(npgo, overwrite = TRUE)
+# clean up txt file
+file.remove("npgo.txt")
 
 # ---- MEI ----
 download.file("https://psl.noaa.gov/enso/mei/data/meiv2.data",
@@ -127,6 +135,8 @@ mei <- make_ea_index(
   source = "NOAA ESRL/PSL, https://psl.noaa.gov/enso/mei/"
 )
 usethis::use_data(mei, overwrite = TRUE)
+# clean up txt file
+file.remove("mei.txt")
 
 # ---- AO ----
 download.file("https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/monthly.ao.index.b50.current.ascii.table",
@@ -149,6 +159,8 @@ ao <- make_ea_index(
   source = "NOAA CPC, https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/"
 )
 usethis::use_data(ao, overwrite = TRUE)
+# clean up txt file
+file.remove("ao.txt")
 
 # ---- AMO ----
 download.file("https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat",
@@ -166,6 +178,8 @@ amo <- make_ea_index(
   source = "NOAA , https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat"
 )
 usethis::use_data(amo, overwrite = TRUE)
+# clean up txt file
+file.remove("amo.txt")
 
 # ---- END ----
 message("All coastwide indices updated using ea_data class and with full metadata.")
