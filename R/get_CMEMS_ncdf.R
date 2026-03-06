@@ -15,7 +15,7 @@
 #' @param output_filename Name of the output file (NetCDF format).
 #'
 #' @return No return value. Downloads a NetCDF file to the specified location.
-#' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import
+#' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import use_python py_available py_install
 #' @export
 #'
 #' @examples
@@ -38,10 +38,10 @@ get_CMEMS_ncdf <- function(
   # Check if Python is available
   python_path <- Sys.getenv("RETICULATE_PYTHON", unset = "")
   if (nchar(python_path) > 0) {
-    reticulate::use_python(python_path, required = FALSE)
+    use_python(python_path, required = FALSE)
   }
 
-  if (!reticulate::py_available(initialize = TRUE)) {
+  if (!py_available(initialize = TRUE)) {
     stop(
       "Python is not installed. Please install Python from https://www.python.org or contact your system administrator.",
       call. = FALSE
@@ -52,7 +52,7 @@ get_CMEMS_ncdf <- function(
   venv_setup_success <- FALSE
   pythonenv <- tryCatch(
     {
-      reticulate::use_virtualenv("CopernicusMarine", required = TRUE)
+      use_virtualenv("CopernicusMarine", required = TRUE)
       venv_setup_success <- TRUE
       TRUE
     },
@@ -60,12 +60,12 @@ get_CMEMS_ncdf <- function(
       message("Virtual environment not found. Attempting to create one...")
       tryCatch(
         {
-          reticulate::virtualenv_create(envname = "CopernicusMarine")
-          reticulate::virtualenv_install(
+          virtualenv_create(envname = "CopernicusMarine")
+          virtualenv_install(
             "CopernicusMarine",
             packages = c("copernicusmarine")
           )
-          reticulate::use_virtualenv("CopernicusMarine", required = TRUE)
+          use_virtualenv("CopernicusMarine", required = TRUE)
           venv_setup_success <<- TRUE
           TRUE
         },
@@ -83,15 +83,15 @@ get_CMEMS_ncdf <- function(
   if (!venv_setup_success) {
     message("Using system Python installation with pip...")
     tryCatch(
-      reticulate::import("copernicusmarine"),
+      import("copernicusmarine"),
       error = function(e) {
         message("Installing copernicusmarine via pip...")
-        reticulate::py_install("copernicusmarine", pip = TRUE)
+        py_install("copernicusmarine", pip = TRUE)
       }
     )
   }
 
-  cmt <- reticulate::import("copernicusmarine")
+  cmt <- import("copernicusmarine")
 
   # Login function to create your configuration file
   if (!is.na(username) | !is.na(password)) {
