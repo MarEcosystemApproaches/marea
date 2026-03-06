@@ -47,15 +47,15 @@ test_that("get_CMEMS_ncdf sets up venv on first run, logs in, and calls subset w
   }
 
   # Stub within function
-  stub(get_CMEMS_ncdf, "reticulate::use_virtualenv", use_virtualenv_mock)
-  stub(get_CMEMS_ncdf, "reticulate::virtualenv_create", virtualenv_create_mock)
+  stub(get_CMEMS_ncdf, "use_virtualenv", use_virtualenv_mock)
+  stub(get_CMEMS_ncdf, "virtualenv_create", virtualenv_create_mock)
   stub(
     get_CMEMS_ncdf,
-    "reticulate::virtualenv_install",
+    "virtualenv_install",
     virtualenv_install_mock
   )
-  stub(get_CMEMS_ncdf, "reticulate::py_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "reticulate::use_python", function(...) invisible(NULL))
+  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
+  stub(get_CMEMS_ncdf, "use_python", function(...) invisible(NULL))
   stub(get_CMEMS_ncdf, "import", import_mock)
 
   # Act
@@ -115,15 +115,15 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
     )
   }
 
-  stub(get_CMEMS_ncdf, "reticulate::use_virtualenv", use_virtualenv_mock)
-  stub(get_CMEMS_ncdf, "reticulate::virtualenv_create", virtualenv_create_mock)
+  stub(get_CMEMS_ncdf, "use_virtualenv", use_virtualenv_mock)
+  stub(get_CMEMS_ncdf, "virtualenv_create", virtualenv_create_mock)
   stub(
     get_CMEMS_ncdf,
-    "reticulate::virtualenv_install",
+    "virtualenv_install",
     virtualenv_install_mock
   )
-  stub(get_CMEMS_ncdf, "reticulate::py_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "reticulate::use_python", function(...) invisible(NULL))
+  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
+  stub(get_CMEMS_ncdf, "use_python", function(...) invisible(NULL))
   stub(get_CMEMS_ncdf, "import", import_mock)
 
   out_nc <- tempfile(fileext = ".nc")
