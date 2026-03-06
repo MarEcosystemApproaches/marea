@@ -177,6 +177,7 @@ test_that("debug: how many times is use_virtualenv called", {
     "times\n"
   )
   expect_equal(
-    length(mockery::mock_calls(use_virtualenv_mock)), 
-    -1  # intentionally wrong so it fails and shows actual count
+    length(mockery::mock_calls(use_virtualenv_mock)),
+    -1L # intentionally wrong so it fails and shows actual count
+  )
 })
