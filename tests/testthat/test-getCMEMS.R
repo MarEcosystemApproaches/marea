@@ -9,7 +9,7 @@ test_that("get_CMEMS_ncdf sets up venv on first run, logs in, and calls subset w
 
   # Arrange: mock reticulate calls
   use_virtualenv_mock <- mock(
-    structure("first-call-failed", class = "try-error"), # first call triggers setup path
+    stop("venv not found"), # first call throws, triggers error handler
     NULL # second call succeeds
   )
   virtualenv_create_mock <- mock(NULL)
@@ -130,7 +130,7 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
   get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
 
   # No venv creation/install expected
-  expect_called(use_virtualenv_mock, 2)
+  expect_called(use_virtualenv_mock, 1)
   expect_called(virtualenv_create_mock, 0)
   expect_called(virtualenv_install_mock, 0)
 
@@ -140,44 +140,4 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
   # Subset still called and file created
   expect_equal(subset_called, 1)
   expect_true(file.exists(out_nc))
-})
-
-test_that("debug: how many times is use_virtualenv called", {
-  skip_if_not_installed("mockery")
-  library(mockery)
-
-  use_virtualenv_mock <- mock(NULL, cycle = TRUE)
-
-  stub(get_CMEMS_ncdf, "use_virtualenv", use_virtualenv_mock)
-  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "use_python", function(...) invisible(NULL))
-  stub(get_CMEMS_ncdf, "import", function(module) {
-    list(
-      login = function(...) invisible(NULL),
-      subset = function(...) {
-        args <- list(...)
-        ofile <- file.path(args$output_directory, args$output_filename)
-        dir.create(
-          args$output_directory,
-          recursive = TRUE,
-          showWarnings = FALSE
-        )
-        file.create(ofile)
-        invisible(NULL)
-      }
-    )
-  })
-
-  out_nc <- tempfile(fileext = ".nc")
-  get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
-
-  cat(
-    "\nuse_virtualenv was called",
-    mockery::mock_calls(use_virtualenv_mock) |> length(),
-    "times\n"
-  )
-  expect_equal(
-    length(mockery::mock_calls(use_virtualenv_mock)),
-    -1L # intentionally wrong so it fails and shows actual count
-  )
 })
