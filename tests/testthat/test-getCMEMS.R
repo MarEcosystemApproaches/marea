@@ -141,3 +141,40 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
   expect_equal(subset_called, 1)
   expect_true(file.exists(out_nc))
 })
+
+test_that("debug: how many times is use_virtualenv called", {
+  skip_if_not_installed("mockery")
+  library(mockery)
+
+  use_virtualenv_mock <- mock(NULL, cycle = TRUE)
+
+  stub(get_CMEMS_ncdf, "use_virtualenv", use_virtualenv_mock)
+  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
+  stub(get_CMEMS_ncdf, "use_python", function(...) invisible(NULL))
+  stub(get_CMEMS_ncdf, "import", function(module) {
+    list(
+      login = function(...) invisible(NULL),
+      subset = function(...) {
+        args <- list(...)
+        ofile <- file.path(args$output_directory, args$output_filename)
+        dir.create(
+          args$output_directory,
+          recursive = TRUE,
+          showWarnings = FALSE
+        )
+        file.create(ofile)
+        invisible(NULL)
+      }
+    )
+  })
+
+  out_nc <- tempfile(fileext = ".nc")
+  get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
+
+  cat(
+    "\nuse_virtualenv was called",
+    mockery::mock_calls(use_virtualenv_mock) |> length(),
+    "times\n"
+  )
+  expect_true(TRUE) # always pass, just want the output
+})
