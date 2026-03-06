@@ -17,6 +17,9 @@ vignette: >
 ```{r setup, echo = FALSE, warnings = FALSE, message = FALSE}
 library(marea)
 library(tidyverse)
+library(sf)
+library(cmocean) # for colour scales
+library(Mar.data) # available from https://github.com/PopulationEcologyDivision/Mar.data
 ```
 
 
@@ -26,21 +29,90 @@ In this vignette, we will demonstrate how to extract data from the `marea` packa
 
 ## Useful tools
 
+- `marea` provides curated spatial datasets
+
+- `sf` standard for handling spatial data, coordinate reference systems and spatial filtering
+
+- `tidyverse` for data manipulation
+
+- `ggplot2` for plotting spatial data
+
 
 ## Example: Extracting Data for a Specific Region
 
-# load in all datasets
+### load in a spatial dataset
 
-# load in spatial box of interest
+First we will load in an example of a spatial dataset from marea. For this example we will use glorys bottom temperature. 
 
-# check which datasets overlap with your area of interest
+```{r}
+data("glorys_bottom_temperature")
+```
 
-# extract those datasets 
+### load in spatial box of interest
 
-# gather exploratory info about data availability
+We will use an example polygon from Mar.data, but any custom polygon could be created and used here.
+
+```{r}
+data("LFAs_sf")
+
+lfa_33 <- LFAs_sf %>%
+  filter(LFA == "33") %>%
+  st_transform(crs = st_crs(glorys_bottom_temperature@data)) # use same CRS as the data for spatial operations
+
+```
+
+### check for overlap and subset the data
+
+Now we can see where out area of interest overlaps with the data
+
+```{r}
+
+# first we check for overlap
+overlap_check <- st_intersects(glorys_bottom_temperature@data, lfa_33, sparse = FALSE)
+
+# How many survey points fall within our study area?
+sum(overlap_check)
+```
+
+Now we can subset the data to only include points that fall within our area of interest
+
+```{r}
+area_subset <- glorys_bottom_temperature@data %>% 
+  st_filter(lfa_33)
+
+```
 
 
-## Making it reproducible
+Let's visualize the extraction to verify it worked
+
+```{r}
+ggplot() +
+  # 1. Base map context (optional): Plot the background grid faintly
+  geom_sf(data = glorys_bottom_temperature@data, color = "grey90", size = 0.8, shape = 15) +
+  
+  # 2. Extracted Data: Map the 'value' column to color. 
+  # Using shape=15 (square) to make the dense grid points look like a solid layer
+  geom_sf(data = area_subset, aes(color = value), size = 2.5, shape = 15) +
+  
+  # 3. Top Layer: Our subsetting box (fill = NA ensures we can see the data inside)
+  geom_sf(data = lfa_33, fill = NA, color = "black", linewidth = 1.2) +
+  
+  # Apply the oceanographic cmocean 'thermal' palette for temperature
+  scale_color_cmocean(name = "thermal") +
+  
+  theme_minimal() +
+  labs(
+    title = "Spatial Subsetting of GLORYS Bottom Temperature",
+    subtitle = "Black box: Study Area boundary | Colors: Extracted Reanalysis Data",
+    color = "Bottom\nTemp (°C)",
+    x = "Longitude", y = "Latitude"
+  ) +
+  theme(
+    legend.position = "right",
+    panel.grid.major = element_line(color = "grey95")
+  )
+```
+
 
 
 
