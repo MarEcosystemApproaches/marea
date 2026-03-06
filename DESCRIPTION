@@ -71,7 +71,8 @@ Imports:
     stars,
     terra,
     tidyterra,
-    methods
+    methods,
+    cmocean
 Suggests:
     devtools,
     doParallel,
@@ -88,7 +89,8 @@ Suggests:
     patchwork,
     here
 Remotes: 
-    pbs-assess/pacea
+    pbs-assess/pacea,
+    PopulationEcologyDivision/Mar.data
 Encoding: UTF-8
 LazyData: false
 Roxygen: list(markdown = TRUE)
