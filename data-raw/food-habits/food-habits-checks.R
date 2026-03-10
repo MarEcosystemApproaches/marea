@@ -192,6 +192,85 @@ run_food_habits_contract_checks <- function(
   check_msg(check_near(manual_shrimp, 1 / 6, tol = 1e-6), "manual fixture shrimp mean_diet_prop == 1/6")
   check_msg(check_near(manual_herring + manual_shrimp, 1, tol = 1e-6), "manual fixture prey proportions sum to 1")
 
+  # Denominator mode regression checks:
+  # verifies that denominator scope can be switched explicitly between
+  # usable-prey predators and all sampled predators.
+  fx_den <- data.frame(
+    year = c(2020L, 2020L),
+    strat = c("A", "A"),
+    pred_seq = c(1L, 2L),
+    pred_code = c(11L, 11L),
+    pred_common = c("COD", "COD"),
+    prey_code = c(NA_integer_, 60L),
+    prey_common = c(NA_character_, "HERRING ATLANTIC"),
+    pwt = c(NA_real_, 1),
+    flen = c(30, 30),
+    stringsAsFactors = FALSE
+  )
+  fx_den_usable <- estimate_mean_diet(
+    food_habits_stomach = fx_den,
+    group_vars = c("pred_code"),
+    length_breaks = c(0, 50),
+    include_label_cols = TRUE,
+    remove_excluded_codes = FALSE,
+    denominator_mode = "usable_predators"
+  )
+  fx_den_all <- estimate_mean_diet(
+    food_habits_stomach = fx_den,
+    group_vars = c("pred_code"),
+    length_breaks = c(0, 50),
+    include_label_cols = TRUE,
+    remove_excluded_codes = FALSE,
+    denominator_mode = "all_sampled_predators"
+  )
+  fx_den_usable_prop <- fx_den_usable |>
+    dplyr::filter(prey_code == 60L) |>
+    dplyr::pull(mean_diet_prop)
+  fx_den_all_prop <- fx_den_all |>
+    dplyr::filter(prey_code == 60L) |>
+    dplyr::pull(mean_diet_prop)
+  check_msg(length(fx_den_usable_prop) == 1, "denominator fixture usable mode has one prey row")
+  check_msg(length(fx_den_all_prop) == 1, "denominator fixture all-sampled mode has one prey row")
+  check_msg(check_near(fx_den_usable_prop, 1, tol = 1e-6), "denominator_mode='usable_predators' gives conditional proportion")
+  check_msg(check_near(fx_den_all_prop, 0.5, tol = 1e-6), "denominator_mode='all_sampled_predators' includes empty predators")
+
+  fx_den_excl <- data.frame(
+    year = c(2020L, 2020L),
+    strat = c("A", "A"),
+    pred_seq = c(1L, 2L),
+    pred_code = c(11L, 11L),
+    pred_common = c("COD", "COD"),
+    prey_code = c(9000L, 60L),
+    prey_common = c("UNID REMAINS DIGESTED", "HERRING ATLANTIC"),
+    pwt = c(1, 1),
+    flen = c(30, 30),
+    stringsAsFactors = FALSE
+  )
+  fx_den_excl_usable <- estimate_mean_diet(
+    food_habits_stomach = fx_den_excl,
+    group_vars = c("pred_code"),
+    length_breaks = c(0, 50),
+    include_label_cols = TRUE,
+    remove_excluded_codes = TRUE,
+    denominator_mode = "usable_predators"
+  )
+  fx_den_excl_all <- estimate_mean_diet(
+    food_habits_stomach = fx_den_excl,
+    group_vars = c("pred_code"),
+    length_breaks = c(0, 50),
+    include_label_cols = TRUE,
+    remove_excluded_codes = TRUE,
+    denominator_mode = "all_sampled_predators"
+  )
+  fx_den_excl_usable_prop <- fx_den_excl_usable |>
+    dplyr::filter(prey_code == 60L) |>
+    dplyr::pull(mean_diet_prop)
+  fx_den_excl_all_prop <- fx_den_excl_all |>
+    dplyr::filter(prey_code == 60L) |>
+    dplyr::pull(mean_diet_prop)
+  check_msg(check_near(fx_den_excl_usable_prop, 1, tol = 1e-6), "usable denominator excludes predators with only excluded prey")
+  check_msg(check_near(fx_den_excl_all_prop, 0.5, tol = 1e-6), "all-sampled denominator retains predators with only excluded prey")
+
   fx_dom <- estimate_dominant_prey(
     food_habits_stomach = fx_stomach,
     group_vars = c("year", "pred_code"),

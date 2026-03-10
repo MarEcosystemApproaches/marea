@@ -29,11 +29,16 @@
 #'   - mean prey weight per predator
 #'   - mean prey proportion per predator
 #'   - prey occurrence proportion among predators
-#' 6. Collapse across length bins within each stratum using `length_weights` if
+#' 6. Choose denominator scope for predator counts via `denominator_mode`:
+#'   - `"usable_predators"`: predators retained after prey/weight/exclusion
+#'     filtering (historical behavior).
+#'   - `"all_sampled_predators"`: all sampled predators with non-missing
+#'     predator ID, stratum and length bin, regardless of prey usability.
+#' 7. Collapse across length bins within each stratum using `length_weights` if
 #' provided, otherwise sample-based predator counts.
-#' 7. Collapse across strata using `strata_weights` if provided, otherwise
+#' 8. Collapse across strata using `strata_weights` if provided, otherwise
 #' sample-based predator counts.
-#' 8. Rank prey within each group by descending estimated mean diet weight.
+#' 9. Rank prey within each group by descending estimated mean diet weight.
 #'
 #' Design rationale:
 #' - Length-stratified stomach sampling is represented explicitly by estimating
@@ -46,6 +51,8 @@
 #' Assumptions:
 #' - `weight_var` contains non-negative prey weight values.
 #' - `predator_id_var` uniquely identifies predators/stomachs for averaging.
+#' - `denominator_mode` matches the intended estimand (conditional diet vs
+#' population-level diet among sampled predators).
 #' - If external weights are omitted, sample-count weighting is acceptable for
 #' the intended application.
 #'
@@ -73,6 +80,11 @@
 #' (parasites, highly digested remains, artefacts) before estimation.
 #' @param excluded_prey_codes Integer vector of prey codes to exclude when
 #' `remove_excluded_codes = TRUE`.
+#' @param denominator_mode Character controlling which predators
+#' contribute to denominators used for `mean_diet_*` and occurrence metrics.
+#' `"usable_predators"` uses only predators with at least one usable prey row
+#' after filtering; `"all_sampled_predators"` uses all sampled predators with
+#' non-missing predator ID, stratum and length bin.
 #' @param retain_strata Logical. If `TRUE`, keep survey strata separated in
 #' output instead of collapsing across strata.
 #' @param retain_length_bins Logical. If `TRUE`, keep predator length bins
@@ -116,8 +128,10 @@ estimate_mean_diet <- function(
     strata_weight_var = "weight",
     remove_excluded_codes = TRUE,
     excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+    denominator_mode = c("usable_predators", "all_sampled_predators"),
     retain_strata = FALSE,
     retain_length_bins = FALSE) {
+  denominator_mode <- match.arg(denominator_mode)
   group_vars <- existing_cols(food_habits_stomach, group_vars)
   prey_var <- existing_cols(food_habits_stomach, prey_var)
 
@@ -128,13 +142,6 @@ estimate_mean_diet <- function(
     stop("prey_var must resolve to one existing column.", call. = FALSE)
   }
 
-  food_habits_stomach <- apply_prey_code_exclusions(
-    food_habits_stomach = food_habits_stomach,
-    prey_var = prey_var,
-    remove_excluded_codes = remove_excluded_codes,
-    excluded_prey_codes = excluded_prey_codes
-  )
-
   if (include_label_cols) {
     group_vars <- add_label_cols(food_habits_stomach, group_vars, label_map = label_map)
     prey_group_vars <- add_label_cols(food_habits_stomach, prey_var, label_map = label_map)
@@ -143,14 +150,34 @@ estimate_mean_diet <- function(
   }
 
   if (is.null(length_bin_var)) {
-    dat <- food_habits_stomach |>
+    dat_all <- food_habits_stomach |>
       dplyr::mutate(length_bin = build_length_bins(.data[[length_var]], bin_width = length_bin_width, breaks = length_breaks))
     length_bin_var <- "length_bin"
   } else {
-    dat <- food_habits_stomach
+    dat_all <- food_habits_stomach
   }
 
-  dat <- dat |>
+  dat_for_diet <- apply_prey_code_exclusions(
+    food_habits_stomach = dat_all,
+    prey_var = prey_var,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes
+  )
+
+  pred_keys <- unique(c(group_vars, strata_var, length_bin_var, predator_id_var))
+  prey_keys <- unique(c(pred_keys, prey_group_vars))
+
+  if (identical(denominator_mode, "all_sampled_predators")) {
+    denominator_predators <- dat_all |>
+      dplyr::filter(
+        !is.na(.data[[predator_id_var]]),
+        !is.na(.data[[strata_var]]),
+        !is.na(.data[[length_bin_var]])
+      ) |>
+      dplyr::distinct(dplyr::across(dplyr::all_of(pred_keys)))
+  }
+
+  dat <- dat_for_diet |>
     dplyr::filter(
       !is.na(.data[[predator_id_var]]),
       !is.na(.data[[strata_var]]),
@@ -160,12 +187,14 @@ estimate_mean_diet <- function(
       .data[[weight_var]] >= 0
     )
 
-  pred_keys <- unique(c(group_vars, strata_var, length_bin_var, predator_id_var))
-  prey_keys <- unique(c(pred_keys, prey_group_vars))
-
   predator_totals <- dat |>
     dplyr::group_by(dplyr::across(dplyr::all_of(pred_keys))) |>
     dplyr::summarise(pred_total_weight = sum(.data[[weight_var]], na.rm = TRUE), .groups = "drop")
+
+  if (identical(denominator_mode, "usable_predators")) {
+    denominator_predators <- predator_totals |>
+      dplyr::distinct(dplyr::across(dplyr::all_of(pred_keys)))
+  }
 
   prey_by_predator <- dat |>
     dplyr::group_by(dplyr::across(dplyr::all_of(prey_keys))) |>
@@ -175,7 +204,7 @@ estimate_mean_diet <- function(
       prey_prop = dplyr::if_else(pred_total_weight > 0, prey_weight / pred_total_weight, NA_real_)
     )
 
-  pred_counts <- predator_totals |>
+  pred_counts <- denominator_predators |>
     dplyr::group_by(
       dplyr::across(
         dplyr::all_of(unique(c(group_vars, strata_var, length_bin_var)))

@@ -93,6 +93,13 @@ include_label_cols <- TRUE
 remove_excluded_codes <- TRUE
 excluded_prey_codes <- food_habits_default_exclusion_prey_codes()
 
+# Denominator mode for mean-diet metrics:
+# - "usable_predators": only predators with at least one usable prey row after
+#   prey/weight/exclusion filters (historical behavior).
+# - "all_sampled_predators": all sampled predators with non-missing
+#   pred_seq/strat/length-bin, even if no usable prey row remains.
+mean_diet_denominator_mode <- "usable_predators"
+
 # Dominance/predation reporting thresholds.
 dominant_prey_top_n <- 5
 dominant_prey_min_prop <- NULL
@@ -102,7 +109,7 @@ prey_predation_min_contribution <- NULL
 
 # Example outputs and figures flag
 # Set to TRUE to generate examples and figures scripted at the end of this file
-run_examples <- FALSE
+run_examples <- TRUE
 
 # ------------------- Build data products -------------------
 
@@ -159,12 +166,14 @@ priority_predator_codes_processed <- map_codes_to_grouped_codes(
 #   (currently year + survey stratum + predator code).
 # - Length structure is handled inside `estimate_mean_diet()` to reflect
 #   length-stratified stomach sampling.
+# - Denominator scope is controlled by `mean_diet_denominator_mode`.
 food_habits_mean_diet_stratified <- estimate_mean_diet(
   food_habits_stomach = food_habits_processed,
   group_vars = mean_diet_group_vars,
   length_breaks = mean_diet_length_breaks,
   remove_excluded_codes = remove_excluded_codes,
   excluded_prey_codes = excluded_prey_codes,
+  denominator_mode = mean_diet_denominator_mode,
   include_label_cols = include_label_cols
 )
 
@@ -175,12 +184,14 @@ food_habits_mean_diet_stratified <- estimate_mean_diet(
 #   to create a time-series-style table.
 # - Keeps dominant prey using configurable thresholds (`dominant_prey_top_n`,
 #   `dominant_prey_min_prop`, `dominant_prey_min_occurrence`).
+# - Uses the same mean-diet denominator choice via `mean_diet_denominator_mode`.
 food_habits_dominant_prey_timeseries <- estimate_dominant_prey(
   food_habits_stomach = food_habits_processed,
   group_vars = dominant_prey_group_vars,
   length_breaks = dominant_prey_length_breaks,
   remove_excluded_codes = remove_excluded_codes,
   excluded_prey_codes = excluded_prey_codes,
+  denominator_mode = mean_diet_denominator_mode,
   top_n = dominant_prey_top_n,
   min_diet_prop = dominant_prey_min_prop,
   min_occurrence_prop = dominant_prey_min_occurrence,
@@ -273,6 +284,7 @@ if (run_examples) {
     length_breaks = mean_diet_length_breaks,
     remove_excluded_codes = remove_excluded_codes,
     excluded_prey_codes = excluded_prey_codes,
+    denominator_mode = mean_diet_denominator_mode,
     retain_strata = FALSE,
     retain_length_bins = FALSE,
     include_label_cols = include_label_cols
@@ -285,6 +297,7 @@ if (run_examples) {
     length_breaks = mean_diet_length_breaks,
     remove_excluded_codes = remove_excluded_codes,
     excluded_prey_codes = excluded_prey_codes,
+    denominator_mode = mean_diet_denominator_mode,
     retain_strata = TRUE,
     retain_length_bins = FALSE,
     include_label_cols = include_label_cols
@@ -297,6 +310,7 @@ if (run_examples) {
     length_breaks = mean_diet_length_breaks,
     remove_excluded_codes = remove_excluded_codes,
     excluded_prey_codes = excluded_prey_codes,
+    denominator_mode = mean_diet_denominator_mode,
     retain_strata = FALSE,
     retain_length_bins = TRUE,
     include_label_cols = include_label_cols
