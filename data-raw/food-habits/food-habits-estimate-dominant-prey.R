@@ -140,6 +140,11 @@ plot_dominant_prey <- function(dominant_prey_data, top_n = 8, facet_by_predator 
       ggplot2::aes(x = factor(year), y = plot_value, fill = .data[[prey_label_var]])
     ) +
       ggplot2::geom_col(position = "stack") +
+      ggplot2::scale_y_continuous(
+        limits = c(0, 1),
+        breaks = seq(0, 1, by = 0.2),
+        expand = ggplot2::expansion(mult = c(0, 0.02))
+      ) +
       ggplot2::labs(
         title = "Dominant Prey Over Time",
         subtitle = "Stacked prey composition by year (top prey only)",
@@ -153,7 +158,7 @@ plot_dominant_prey <- function(dominant_prey_data, top_n = 8, facet_by_predator 
       )
 
     if (isTRUE(facet_by_predator) && !is.null(pred_label_var) && dplyr::n_distinct(ts_dat[[pred_label_var]]) > 1) {
-      p <- p + ggplot2::facet_wrap(stats::as.formula(paste("~", pred_label_var)), scales = "free_y")
+      p <- p + ggplot2::facet_wrap(stats::as.formula(paste("~", pred_label_var)), scales = "fixed")
     }
 
     p

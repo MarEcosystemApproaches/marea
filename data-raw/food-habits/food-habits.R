@@ -101,7 +101,8 @@ prey_predation_top_n_predators <- NULL
 prey_predation_min_contribution <- NULL
 
 # Example outputs and figures flag
-run_examples <- TRUE
+# Set to TRUE to generate examples and figures scripted at the end of this file
+run_examples <- FALSE
 
 # ------------------- Build data products -------------------
 

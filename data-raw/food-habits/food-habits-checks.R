@@ -10,9 +10,44 @@ check_msg <- function(ok, label) {
   stop("[FAIL] ", label, call. = FALSE)
 }
 
+check_near <- function(x, y, tol = 1e-8) {
+  isTRUE(all(abs(x - y) <= tol, na.rm = TRUE))
+}
+
 required_columns_present <- function(data, cols) {
   missing <- setdiff(cols, names(data))
   list(ok = length(missing) == 0, missing = missing)
+}
+
+composition_prop_check <- function(data, prop_var = "mean_diet_prop") {
+  if (!(prop_var %in% names(data))) {
+    return(list(ok = TRUE, max_sum = NA_real_, n_groups_over = 0L))
+  }
+
+  group_cols <- setdiff(
+    names(data),
+    c(
+      "prey_code", "prey_common",
+      "mean_diet_weight", "mean_diet_prop", "mean_occurrence_prop",
+      "n_predators", "n_strata", "prey_rank"
+    )
+  )
+
+  if (length(group_cols) == 0) {
+    summed <- data.frame(sum_prop = sum(data[[prop_var]], na.rm = TRUE))
+  } else {
+    summed <- data |>
+      dplyr::group_by(dplyr::across(dplyr::all_of(group_cols))) |>
+      dplyr::summarise(sum_prop = sum(.data[[prop_var]], na.rm = TRUE), .groups = "drop")
+  }
+
+  tol <- 1e-8
+  n_over <- sum(summed$sum_prop > (1 + tol), na.rm = TRUE)
+  list(
+    ok = n_over == 0,
+    max_sum = max(summed$sum_prop, na.rm = TRUE),
+    n_groups_over = n_over
+  )
 }
 
 make_food_habits_fixture <- function() {
@@ -83,6 +118,16 @@ run_food_habits_contract_checks <- function(
   check_msg(all(food_habits_mean_diet_stratified$mean_diet_weight >= 0, na.rm = TRUE), "mean_diet_weight is non-negative")
   check_msg(all(food_habits_mean_diet_stratified$mean_diet_prop >= 0 & food_habits_mean_diet_stratified$mean_diet_prop <= 1, na.rm = TRUE), "mean_diet_prop is in [0,1]")
   check_msg(all(food_habits_prey_predation$predator_weight_prop >= 0 & food_habits_prey_predation$predator_weight_prop <= 1, na.rm = TRUE), "predator_weight_prop is in [0,1]")
+  mean_comp <- composition_prop_check(food_habits_mean_diet_stratified, prop_var = "mean_diet_prop")
+  check_msg(
+    mean_comp$ok,
+    paste0("mean-diet composition sums <= 1 (max = ", signif(mean_comp$max_sum, 5), ", groups_over = ", mean_comp$n_groups_over, ")")
+  )
+  dom_comp <- composition_prop_check(food_habits_dominant_prey_timeseries, prop_var = "mean_diet_prop")
+  check_msg(
+    dom_comp$ok,
+    paste0("dominant-prey composition sums <= 1 (max = ", signif(dom_comp$max_sum, 5), ", groups_over = ", dom_comp$n_groups_over, ")")
+  )
 
   if (isTRUE(remove_excluded_codes) && "prey_code" %in% names(food_habits_mean_diet_stratified)) {
     check_msg(
@@ -109,6 +154,43 @@ run_food_habits_contract_checks <- function(
   )
   check_msg(nrow(fx_mean) > 0, "estimate_mean_diet() returns rows on fixture")
   check_msg(all(fx_mean$mean_diet_weight >= 0, na.rm = TRUE), "estimate_mean_diet() fixture weights are non-negative")
+  fx_mean_comp <- composition_prop_check(fx_mean, prop_var = "mean_diet_prop")
+  check_msg(fx_mean_comp$ok, "estimate_mean_diet() fixture composition sums <= 1")
+
+  # Hand-calculated regression check:
+  # verifies that prey absences are treated as implicit zeros during
+  # length/strata weighted collapse (historical inflation bug guard).
+  fx_manual <- data.frame(
+    year = c(2020L, 2020L, 2020L, 2020L),
+    strat = c("A", "A", "A", "B"),
+    pred_seq = c(1L, 2L, 2L, 3L),
+    pred_code = c(11L, 11L, 11L, 11L),
+    pred_common = c("COD", "COD", "COD", "COD"),
+    prey_code = c(60L, 60L, 2211L, 60L),
+    prey_common = c("HERRING ATLANTIC", "HERRING ATLANTIC", "PANDALUS BOREALIS", "HERRING ATLANTIC"),
+    pwt = c(1, 1, 1, 2),
+    flen = c(5, 15, 15, 5),
+    stringsAsFactors = FALSE
+  )
+  fx_manual_out <- estimate_mean_diet(
+    food_habits_stomach = fx_manual,
+    group_vars = c("pred_code"),
+    length_breaks = c(0, 10, 20),
+    include_label_cols = TRUE
+  )
+
+  manual_herring <- fx_manual_out |>
+    dplyr::filter(prey_code == 60L) |>
+    dplyr::pull(mean_diet_prop)
+  manual_shrimp <- fx_manual_out |>
+    dplyr::filter(prey_code == 2211L) |>
+    dplyr::pull(mean_diet_prop)
+
+  check_msg(length(manual_herring) == 1, "manual fixture has one herring row")
+  check_msg(length(manual_shrimp) == 1, "manual fixture has one shrimp row")
+  check_msg(check_near(manual_herring, 5 / 6, tol = 1e-6), "manual fixture herring mean_diet_prop == 5/6")
+  check_msg(check_near(manual_shrimp, 1 / 6, tol = 1e-6), "manual fixture shrimp mean_diet_prop == 1/6")
+  check_msg(check_near(manual_herring + manual_shrimp, 1, tol = 1e-6), "manual fixture prey proportions sum to 1")
 
   fx_dom <- estimate_dominant_prey(
     food_habits_stomach = fx_stomach,

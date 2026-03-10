@@ -201,6 +201,39 @@ estimate_mean_diet <- function(
       prey_occurrence_prop = n_predators_with_prey / n_predators_total
     )
 
+  # Complete missing prey/length cells within each group/stratum so that
+  # later weighted collapses include implicit zero-prey cells.
+  prey_ids_by_stratum <- prey_length_stratum |>
+    dplyr::distinct(dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, prey_group_vars)))))
+
+  prey_length_universe <- prey_ids_by_stratum |>
+    dplyr::left_join(
+      pred_counts |>
+        dplyr::select(dplyr::all_of(unique(c(group_vars, strata_var, length_bin_var, "n_predators_total")))),
+      by = unique(c(group_vars, strata_var)),
+      relationship = "many-to-many"
+    )
+
+  prey_length_keys <- unique(c(group_vars, strata_var, length_bin_var, prey_group_vars))
+  prey_length_complete <- prey_length_universe |>
+    dplyr::left_join(
+      prey_length_stratum |>
+        dplyr::select(
+          dplyr::all_of(prey_length_keys),
+          mean_prey_weight,
+          mean_prey_prop,
+          prey_occurrence_prop,
+          n_predators_total
+        ),
+      by = prey_length_keys,
+      suffix = c("", "_obs")
+    ) |>
+    dplyr::mutate(
+      mean_prey_weight = dplyr::coalesce(mean_prey_weight, 0),
+      mean_prey_prop = dplyr::coalesce(mean_prey_prop, 0),
+      prey_occurrence_prop = dplyr::coalesce(prey_occurrence_prop, 0)
+    )
+
   # if strata/length are explicitly requested in
   # group_vars, keep them in final output even if retain_* flags are FALSE.
   retain_strata <- isTRUE(retain_strata) || strata_var %in% group_vars
@@ -220,7 +253,7 @@ estimate_mean_diet <- function(
   }
 
   if (retain_length_bins) {
-    level_prey <- prey_length_stratum |>
+    level_prey <- prey_length_complete |>
       dplyr::transmute(
         dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, length_bin_var, prey_group_vars)))),
         level_mean_prey_weight = mean_prey_weight,
@@ -229,7 +262,7 @@ estimate_mean_diet <- function(
         n_predators_level = n_predators_total
       )
   } else {
-    level_prey <- prey_length_stratum |>
+    level_prey <- prey_length_complete |>
       dplyr::left_join(length_weight_tbl, by = unique(c(group_vars, strata_var, length_bin_var))) |>
       dplyr::group_by(dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, prey_group_vars))))) |>
       dplyr::summarise(
@@ -241,8 +274,36 @@ estimate_mean_diet <- function(
       )
   }
 
+  # Complete missing prey/stratum cells (optionally by length bin) so strata
+  # weighting is applied against full denominators, not only prey-present cells.
+  strata_keys <- unique(c(group_vars, if (retain_length_bins) length_bin_var, strata_var))
+  if (retain_length_bins) {
+    strata_base <- pred_counts |>
+      dplyr::select(dplyr::all_of(c(strata_keys, "n_predators_total"))) |>
+      dplyr::rename(strata_n_predators = n_predators_total)
+  } else {
+    strata_base <- pred_counts |>
+      dplyr::group_by(dplyr::across(dplyr::all_of(strata_keys))) |>
+      dplyr::summarise(strata_n_predators = sum(n_predators_total, na.rm = TRUE), .groups = "drop")
+  }
+
+  prey_ids_for_strata <- level_prey |>
+    dplyr::distinct(dplyr::across(dplyr::all_of(unique(c(group_vars, if (retain_length_bins) length_bin_var, prey_group_vars)))))
+
+  strata_join_keys <- unique(c(group_vars, if (retain_length_bins) length_bin_var))
+  level_keys <- unique(c(group_vars, if (retain_length_bins) length_bin_var, strata_var, prey_group_vars))
+  level_prey_complete <- prey_ids_for_strata |>
+    dplyr::left_join(strata_base, by = strata_join_keys, relationship = "many-to-many") |>
+    dplyr::left_join(level_prey, by = level_keys) |>
+    dplyr::mutate(
+      level_mean_prey_weight = dplyr::coalesce(level_mean_prey_weight, 0),
+      level_mean_prey_prop = dplyr::coalesce(level_mean_prey_prop, 0),
+      level_mean_occurrence = dplyr::coalesce(level_mean_occurrence, 0),
+      n_predators_level = dplyr::coalesce(n_predators_level, strata_n_predators)
+    )
+
   if (retain_strata) {
-    final_dat <- level_prey |>
+    final_dat <- level_prey_complete |>
       dplyr::transmute(
         dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, if (retain_length_bins) length_bin_var, prey_group_vars)))),
         mean_diet_weight = level_mean_prey_weight,
@@ -264,7 +325,7 @@ estimate_mean_diet <- function(
         dplyr::rename(strata_weight = dplyr::all_of(strata_weight_var))
     }
 
-    final_dat <- level_prey |>
+    final_dat <- level_prey_complete |>
       dplyr::left_join(strata_weight_tbl, by = strata_weight_keys) |>
       dplyr::group_by(dplyr::across(dplyr::all_of(unique(c(group_vars, if (retain_length_bins) length_bin_var, prey_group_vars))))) |>
       dplyr::summarise(
