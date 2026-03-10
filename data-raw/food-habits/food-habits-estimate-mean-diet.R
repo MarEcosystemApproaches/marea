@@ -69,6 +69,10 @@
 #' @param strata_weights Optional table of strata-level weights.
 #' @param strata_weight_var Character scalar naming the strata-weight column in
 #' `strata_weights`.
+#' @param remove_excluded_codes Logical. If `TRUE`, remove excluded prey codes
+#' (parasites, highly digested remains, artefacts) before estimation.
+#' @param excluded_prey_codes Integer vector of prey codes to exclude when
+#' `remove_excluded_codes = TRUE`.
 #' @param retain_strata Logical. If `TRUE`, keep survey strata separated in
 #' output instead of collapsing across strata.
 #' @param retain_length_bins Logical. If `TRUE`, keep predator length bins
@@ -94,25 +98,26 @@
 #'
 #' @export
 estimate_mean_diet <- function(
-  food_habits_stomach,
-  group_vars = c("year", "strat", "pred_code"),
-  prey_var = "prey_code",
-  weight_var = "pwt",
-  predator_id_var = "pred_seq",
-  strata_var = "strat",
-  length_var = "flen",
-  length_bin_width = 5,
-  length_breaks = NULL,
-  length_bin_var = NULL,
-  include_label_cols = TRUE,
-  label_map = food_habits_default_label_map(),
-  length_weights = NULL,
-  length_weight_var = "weight",
-  strata_weights = NULL,
-  strata_weight_var = "weight",
-  retain_strata = FALSE,
-  retain_length_bins = FALSE
-) {
+    food_habits_stomach,
+    group_vars = c("year", "strat", "pred_code"),
+    prey_var = "prey_code",
+    weight_var = "pwt",
+    predator_id_var = "pred_seq",
+    strata_var = "strat",
+    length_var = "flen",
+    length_bin_width = 5,
+    length_breaks = NULL,
+    length_bin_var = NULL,
+    include_label_cols = TRUE,
+    label_map = food_habits_default_label_map(),
+    length_weights = NULL,
+    length_weight_var = "weight",
+    strata_weights = NULL,
+    strata_weight_var = "weight",
+    remove_excluded_codes = TRUE,
+    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+    retain_strata = FALSE,
+    retain_length_bins = FALSE) {
   group_vars <- existing_cols(food_habits_stomach, group_vars)
   prey_var <- existing_cols(food_habits_stomach, prey_var)
 
@@ -122,6 +127,13 @@ estimate_mean_diet <- function(
   if (length(prey_var) != 1) {
     stop("prey_var must resolve to one existing column.", call. = FALSE)
   }
+
+  food_habits_stomach <- apply_prey_code_exclusions(
+    food_habits_stomach = food_habits_stomach,
+    prey_var = prey_var,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes
+  )
 
   if (include_label_cols) {
     group_vars <- add_label_cols(food_habits_stomach, group_vars, label_map = label_map)

@@ -140,6 +140,39 @@ food_habits_default_label_map <- function() {
   )
 }
 
+# Default prey codes to exclude from diet-focused products.
+# Includes parasites, highly digested/unidentified remains, and non-diet
+# artefacts (e.g., mud, water, stones). Code 1099 (fish remains) is included
+# with 9002 to avoid duplication in current coding practice.
+food_habits_default_exclusion_prey_codes <- function() {
+  as.integer(c(
+    1099,
+    7000, 7100, 7101, 7110, 7111, 7113, 7116,
+    9000, 9001, 9002, 9003,
+    9100, 9200, 9500, 9600, 9650, 9700, 9800
+  ))
+}
+
+# Conditionally remove prey codes from stomach records before analysis.
+apply_prey_code_exclusions <- function(
+    food_habits_stomach,
+    prey_var = "prey_code",
+    remove_excluded_codes = TRUE,
+    excluded_prey_codes = food_habits_default_exclusion_prey_codes()) {
+  if (!isTRUE(remove_excluded_codes)) {
+    return(food_habits_stomach)
+  }
+  if (!(prey_var %in% names(food_habits_stomach))) {
+    stop("prey_var column not found in food_habits_stomach: ", prey_var, call. = FALSE)
+  }
+  if (length(excluded_prey_codes) == 0) {
+    return(food_habits_stomach)
+  }
+
+  food_habits_stomach %>%
+    dplyr::filter(is.na(.data[[prey_var]]) | !(.data[[prey_var]] %in% excluded_prey_codes))
+}
+
 # Convert species common names to species codes for filtering/grouping.
 lookup_species_codes <- function(species_lookup, common_names) {
   if (length(common_names) == 0) {

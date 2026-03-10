@@ -39,6 +39,7 @@ source(here("data-raw", "food-habits", "food-habits-checks.R"))
 # ---- User-configurable settings ----
 
 # Set source_mode to "mar_datawrangling" when client credentials/code are available.
+# TODO: Implementation should be done in function `load_food_habits_inputs()` in food-habits-utils.R
 source_mode <- "local_rdata"
 
 # Priority species discussed with managers/assessment leads.
@@ -63,6 +64,11 @@ dominant_prey_length_breaks <- mean_diet_length_breaks
 # Set TRUE to automatically include name labels for code groupings
 # (e.g., pred_common for pred_code).
 include_label_cols <- TRUE
+
+# Exclude digestion/artefact/parasite prey codes from diet products.
+# Set FALSE to retain all prey codes.
+remove_excluded_codes <- TRUE
+excluded_prey_codes <- food_habits_default_exclusion_prey_codes()
 
 # Dominance/predation reporting thresholds.
 dominant_prey_top_n <- 5
@@ -108,6 +114,8 @@ food_habits_mean_diet_stratified <- estimate_mean_diet(
   food_habits_stomach = food_habits_priority,
   group_vars = mean_diet_group_vars,
   length_breaks = mean_diet_length_breaks,
+  remove_excluded_codes = remove_excluded_codes,
+  excluded_prey_codes = excluded_prey_codes,
   include_label_cols = include_label_cols
 )
 
@@ -116,6 +124,8 @@ food_habits_mean_diet_aggregated_example <- estimate_mean_diet(
   food_habits_stomach = food_habits_priority,
   group_vars = c("pred_code"),
   length_breaks = mean_diet_length_breaks,
+  remove_excluded_codes = remove_excluded_codes,
+  excluded_prey_codes = excluded_prey_codes,
   retain_strata = FALSE,
   retain_length_bins = FALSE,
   include_label_cols = include_label_cols
@@ -126,6 +136,8 @@ food_habits_mean_diet_by_strata_example <- estimate_mean_diet(
   food_habits_stomach = food_habits_priority,
   group_vars = c("pred_code"),
   length_breaks = mean_diet_length_breaks,
+  remove_excluded_codes = remove_excluded_codes,
+  excluded_prey_codes = excluded_prey_codes,
   retain_strata = TRUE,
   retain_length_bins = FALSE,
   include_label_cols = include_label_cols
@@ -136,6 +148,8 @@ food_habits_mean_diet_by_length_example <- estimate_mean_diet(
   food_habits_stomach = food_habits_priority,
   group_vars = c("pred_code"),
   length_breaks = mean_diet_length_breaks,
+  remove_excluded_codes = remove_excluded_codes,
+  excluded_prey_codes = excluded_prey_codes,
   retain_strata = FALSE,
   retain_length_bins = TRUE,
   include_label_cols = include_label_cols
@@ -151,6 +165,8 @@ food_habits_dominant_prey_timeseries <- estimate_dominant_prey(
   food_habits_stomach = food_habits_priority,
   group_vars = dominant_prey_group_vars,
   length_breaks = dominant_prey_length_breaks,
+  remove_excluded_codes = remove_excluded_codes,
+  excluded_prey_codes = excluded_prey_codes,
   top_n = dominant_prey_top_n,
   min_diet_prop = dominant_prey_min_prop,
   min_occurrence_prop = dominant_prey_min_occurrence,
@@ -167,6 +183,8 @@ food_habits_dominant_prey_timeseries <- estimate_dominant_prey(
 food_habits_prey_predation <- estimate_predator_contribution(
   food_habits_stomach = filter_food_habits(food_habits_stomach, prey_codes = priority_prey_codes),
   group_vars = prey_predation_group_vars,
+  remove_excluded_codes = remove_excluded_codes,
+  excluded_prey_codes = excluded_prey_codes,
   include_label_cols = include_label_cols,
   top_n_predators = prey_predation_top_n_predators,
   min_predator_contribution = prey_predation_min_contribution
@@ -183,7 +201,9 @@ if (isTRUE(run_contract_checks)) {
     priority_prey_codes = priority_prey_codes,
     mean_diet_group_vars = mean_diet_group_vars,
     dominant_prey_group_vars = dominant_prey_group_vars,
-    prey_predation_group_vars = prey_predation_group_vars
+    prey_predation_group_vars = prey_predation_group_vars,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes
   )
 }
 

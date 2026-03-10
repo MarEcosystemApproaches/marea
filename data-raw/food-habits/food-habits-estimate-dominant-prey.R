@@ -27,6 +27,10 @@
 #' @param min_diet_prop Optional numeric threshold on `mean_diet_prop`.
 #' @param min_occurrence_prop Optional numeric threshold on
 #' `mean_occurrence_prop`.
+#' @param remove_excluded_codes Logical. If `TRUE`, remove excluded prey codes
+#' before mean-diet estimation.
+#' @param excluded_prey_codes Integer vector of prey codes to exclude when
+#' `remove_excluded_codes = TRUE`.
 #' @param include_label_cols Logical; if `TRUE`, include mapped readable labels
 #' (for example `pred_common`, `prey_common`) when code columns are grouped.
 #' @param ... Additional arguments passed directly to
@@ -47,17 +51,20 @@
 #'
 #' @export
 estimate_dominant_prey <- function(
-  food_habits_stomach,
-  group_vars = c("year", "pred_code"),
-  top_n = 5,
-  min_diet_prop = NULL,
-  min_occurrence_prop = NULL,
-  include_label_cols = TRUE,
-  ...
-) {
+    food_habits_stomach,
+    group_vars = c("year", "pred_code"),
+    top_n = 5,
+    min_diet_prop = NULL,
+    min_occurrence_prop = NULL,
+    remove_excluded_codes = TRUE,
+    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+    include_label_cols = TRUE,
+    ...) {
   diet <- estimate_mean_diet(
     food_habits_stomach = food_habits_stomach,
     group_vars = group_vars,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes,
     include_label_cols = include_label_cols,
     ...
   )

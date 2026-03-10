@@ -40,17 +40,18 @@ make_food_habits_fixture <- function() {
 }
 
 run_food_habits_contract_checks <- function(
-  food_habits_stomach,
-  food_habits_species,
-  food_habits_mean_diet_stratified,
-  food_habits_dominant_prey_timeseries,
-  food_habits_prey_predation,
-  priority_predator_codes,
-  priority_prey_codes,
-  mean_diet_group_vars,
-  dominant_prey_group_vars,
-  prey_predation_group_vars
-) {
+    food_habits_stomach,
+    food_habits_species,
+    food_habits_mean_diet_stratified,
+    food_habits_dominant_prey_timeseries,
+    food_habits_prey_predation,
+    priority_predator_codes,
+    priority_prey_codes,
+    mean_diet_group_vars,
+    dominant_prey_group_vars,
+    prey_predation_group_vars,
+    remove_excluded_codes = TRUE,
+    excluded_prey_codes = food_habits_default_exclusion_prey_codes()) {
   message("=== Food Habits Contract Checks ===")
 
   # ---- Real-data structure checks ----
@@ -82,6 +83,19 @@ run_food_habits_contract_checks <- function(
   check_msg(all(food_habits_mean_diet_stratified$mean_diet_weight >= 0, na.rm = TRUE), "mean_diet_weight is non-negative")
   check_msg(all(food_habits_mean_diet_stratified$mean_diet_prop >= 0 & food_habits_mean_diet_stratified$mean_diet_prop <= 1, na.rm = TRUE), "mean_diet_prop is in [0,1]")
   check_msg(all(food_habits_prey_predation$predator_weight_prop >= 0 & food_habits_prey_predation$predator_weight_prop <= 1, na.rm = TRUE), "predator_weight_prop is in [0,1]")
+
+  if (isTRUE(remove_excluded_codes) && "prey_code" %in% names(food_habits_mean_diet_stratified)) {
+    check_msg(
+      !any(food_habits_mean_diet_stratified$prey_code %in% excluded_prey_codes, na.rm = TRUE),
+      "excluded prey codes are absent from mean-diet output"
+    )
+  }
+  if (isTRUE(remove_excluded_codes) && "prey_code" %in% names(food_habits_prey_predation)) {
+    check_msg(
+      !any(food_habits_prey_predation$prey_code %in% excluded_prey_codes, na.rm = TRUE),
+      "excluded prey codes are absent from predator-contribution output"
+    )
+  }
 
   # ---- Method behavior checks on synthetic fixture ----
   fx <- make_food_habits_fixture()
@@ -131,6 +145,17 @@ run_food_habits_contract_checks <- function(
     common_names = c("ATLANTIC HERRING", "PANDALUS BOREALIS", "SEA URCHIN")
   )
   check_msg(all(c(60L, 2211L, 6400L) %in% resolved_codes), "resolve_priority_codes() handles exact and token-based matches on fixture")
+
+  fx_excl <- estimate_mean_diet(
+    food_habits_stomach = dplyr::bind_rows(
+      fx_stomach,
+      dplyr::mutate(fx_stomach[1, ], prey_code = 9000L, prey_common = "UNID REMAINS DIGESTED")
+    ),
+    group_vars = c("pred_code"),
+    include_label_cols = TRUE,
+    remove_excluded_codes = TRUE
+  )
+  check_msg(!any(fx_excl$prey_code == 9000L, na.rm = TRUE), "excluded prey code (9000) removed in estimate_mean_diet()")
 
   # ---- Grouping variable sanity checks ----
   check_msg(length(existing_cols(food_habits_stomach, mean_diet_group_vars)) > 0, "mean_diet_group_vars resolve on data")

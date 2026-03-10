@@ -1,48 +1,3 @@
-# Internal helper: summarize predator contributions to each prey
-# group and compute within-group predator ranks.
-summarise_prey_pressure <- function(
-  food_habits_stomach,
-  group_vars = c("year", "nafo_zone", "prey_code"),
-  predator_var = "pred_code",
-  weight_var = "pwt",
-  stomach_id_var = "pred_seq",
-  include_label_cols = TRUE,
-  label_map = food_habits_default_label_map()
-) {
-  group_vars <- existing_cols(food_habits_stomach, group_vars)
-  predator_var <- existing_cols(food_habits_stomach, predator_var)
-  if (length(predator_var) != 1) {
-    stop("predator_var must resolve to one existing column.", call. = FALSE)
-  }
-
-  if (include_label_cols) {
-    group_vars <- add_label_cols(food_habits_stomach, group_vars, label_map = label_map)
-    predator_var_with_labels <- add_label_cols(food_habits_stomach, predator_var, label_map = label_map)
-  } else {
-    predator_var_with_labels <- predator_var
-  }
-
-  full_group <- unique(c(group_vars, predator_var_with_labels))
-
-  out <- food_habits_stomach |>
-    dplyr::filter(!is.na(.data[[predator_var]]), !is.na(.data[[weight_var]]), .data[[weight_var]] >= 0) |>
-    dplyr::group_by(dplyr::across(dplyr::all_of(full_group))) |>
-    dplyr::summarise(
-      prey_weight_total = sum(.data[[weight_var]], na.rm = TRUE),
-      n_prey_records = dplyr::n(),
-      n_stomachs = dplyr::n_distinct(.data[[stomach_id_var]]),
-      .groups = "drop"
-    ) |>
-    dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) |>
-    dplyr::mutate(
-      predator_weight_prop = prey_weight_total / sum(prey_weight_total, na.rm = TRUE),
-      predator_rank = dplyr::dense_rank(dplyr::desc(prey_weight_total))
-    ) |>
-    dplyr::ungroup()
-
-  out
-}
-
 #' Predation on Prey Species by Predator Contribution
 #'
 #' Estimate predation patterns on focal prey by summarizing predator
@@ -71,9 +26,14 @@ summarise_prey_pressure <- function(
 #' @param food_habits_stomach Standardized stomach-prey data table.
 #' @param group_vars Character vector of grouping variables. Typical default:
 #' `c("year", "nafo_zone", "prey_code")`.
+#' @param prey_var Character scalar naming prey code column.
 #' @param predator_var Character scalar naming predator code column.
 #' @param weight_var Character scalar naming prey-weight column.
 #' @param stomach_id_var Character scalar naming predator/stomach ID.
+#' @param remove_excluded_codes Logical. If `TRUE`, remove excluded prey codes
+#' before estimation.
+#' @param excluded_prey_codes Integer vector of prey codes to exclude when
+#' `remove_excluded_codes = TRUE`.
 #' @param include_label_cols Logical; if `TRUE`, include mapped readable labels
 #' (for example `pred_common`, `prey_common`) when code fields are grouped.
 #' @param label_map Named character vector mapping code columns to label columns.
@@ -102,22 +62,27 @@ summarise_prey_pressure <- function(
 #'
 #' @export
 estimate_predator_contribution <- function(
-  food_habits_stomach,
-  group_vars = c("year", "nafo_zone", "prey_code"),
-  predator_var = "pred_code",
-  weight_var = "pwt",
-  stomach_id_var = "pred_seq",
-  include_label_cols = TRUE,
-  label_map = food_habits_default_label_map(),
-  top_n_predators = NULL,
-  min_predator_contribution = NULL
-) {
+    food_habits_stomach,
+    group_vars = c("year", "nafo_zone", "prey_code"),
+    prey_var = "prey_code",
+    predator_var = "pred_code",
+    weight_var = "pwt",
+    stomach_id_var = "pred_seq",
+    remove_excluded_codes = TRUE,
+    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+    include_label_cols = TRUE,
+    label_map = food_habits_default_label_map(),
+    top_n_predators = NULL,
+    min_predator_contribution = NULL) {
   out <- summarise_prey_pressure(
     food_habits_stomach = food_habits_stomach,
     group_vars = group_vars,
+    prey_var = prey_var,
     predator_var = predator_var,
     weight_var = weight_var,
     stomach_id_var = stomach_id_var,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes,
     include_label_cols = include_label_cols,
     label_map = label_map
   )
@@ -129,6 +94,65 @@ estimate_predator_contribution <- function(
   if (!is.null(top_n_predators)) {
     out <- out |> dplyr::filter(predator_rank <= top_n_predators)
   }
+
+  out
+}
+
+
+# Internal helper: summarize predator contributions to each prey
+# group and compute within-group predator ranks.
+summarise_prey_pressure <- function(
+    food_habits_stomach,
+    group_vars = c("year", "nafo_zone", "prey_code"),
+    prey_var = "prey_code",
+    predator_var = "pred_code",
+    weight_var = "pwt",
+    stomach_id_var = "pred_seq",
+    remove_excluded_codes = TRUE,
+    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+    include_label_cols = TRUE,
+    label_map = food_habits_default_label_map()) {
+  group_vars <- existing_cols(food_habits_stomach, group_vars)
+  prey_var <- existing_cols(food_habits_stomach, prey_var)
+  predator_var <- existing_cols(food_habits_stomach, predator_var)
+  if (length(prey_var) != 1) {
+    stop("prey_var must resolve to one existing column.", call. = FALSE)
+  }
+  if (length(predator_var) != 1) {
+    stop("predator_var must resolve to one existing column.", call. = FALSE)
+  }
+
+  food_habits_stomach <- apply_prey_code_exclusions(
+    food_habits_stomach = food_habits_stomach,
+    prey_var = prey_var,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes
+  )
+
+  if (include_label_cols) {
+    group_vars <- add_label_cols(food_habits_stomach, group_vars, label_map = label_map)
+    predator_var_with_labels <- add_label_cols(food_habits_stomach, predator_var, label_map = label_map)
+  } else {
+    predator_var_with_labels <- predator_var
+  }
+
+  full_group <- unique(c(group_vars, predator_var_with_labels))
+
+  out <- food_habits_stomach %>%
+    dplyr::filter(!is.na(.data[[predator_var]]), !is.na(.data[[weight_var]]), .data[[weight_var]] >= 0) %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(full_group))) %>%
+    dplyr::summarise(
+      prey_weight_total = sum(.data[[weight_var]], na.rm = TRUE),
+      n_prey_records = dplyr::n(),
+      n_stomachs = dplyr::n_distinct(.data[[stomach_id_var]]),
+      .groups = "drop"
+    ) %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) %>%
+    dplyr::mutate(
+      predator_weight_prop = prey_weight_total / sum(prey_weight_total, na.rm = TRUE),
+      predator_rank = dplyr::dense_rank(dplyr::desc(prey_weight_total))
+    ) %>%
+    dplyr::ungroup()
 
   out
 }
