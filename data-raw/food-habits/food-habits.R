@@ -28,7 +28,7 @@ library(here)
 # - food_habits_dominant_prey_timeseries: dominant prey species over time.
 # - food_habits_prey_predation: predator contributions to focal prey consumption.
 
-# ---- Source utility functions ----
+# ------------------- Source utility functions -------------------
 source(here("data-raw", "food-habits", "food-habits-utils.R"))
 source(here("data-raw", "food-habits", "food-habits-estimate-mean-diet.R"))
 source(here("data-raw", "food-habits", "food-habits-estimate-dominant-prey.R"))
@@ -36,19 +36,42 @@ source(here("data-raw", "food-habits", "food-habits-estimate-predator-contributi
 source(here("data-raw", "food-habits", "food-habits-checks.R"))
 
 
-# ---- User-configurable settings ----
+# ------------------- User-configurable settings -------------------
 
 # Set source_mode to "mar_datawrangling" when client credentials/code are available.
 # TODO: Implementation should be done in function `load_food_habits_inputs()` in food-habits-utils.R
 source_mode <- "local_rdata"
 
 # Priority species discussed with managers/assessment leads.
-priority_predators <- c(
-  "ATLANTIC COD", "HADDOCK", "POLLOCK", "SILVER HAKE", "REDFISH", "AMERICAN PLAICE"
+# Use species codes as stable identifiers; comments are for readability.
+priority_predator_codes <- c(
+  10, # COD(ATLANTIC)
+  11, # HADDOCK
+  16, # POLLOCK
+  14, # SILVER HAKE
+  20, # REDFISH
+  40 # AMERICAN PLAICE
 )
-priority_prey <- c(
-  "ATLANTIC HERRING", "PANDALUS BOREALIS", "GREEN SEA URCHIN", "SEA URCHIN"
+priority_prey_codes <- c(
+  60, # HERRING(ATLANTIC)
+  2211, # PANDALUS BOREALIS
+  6411, # SEA URCHIN (GREEN)
+  6400 # SEA URCHINS
 )
+
+# Optional predator/prey grouping (code-based).
+# Example:
+# prey_group_definitions <- list(
+#   pandalus_spp = list(
+#     members = c(2210, 2211),  # PANDALUS SP. + PANDALUS BOREALIS
+#     new_code = 2211,          # keep canonical code
+#     new_label = "PANDALUS SPP"
+#   )
+# )
+apply_predator_grouping_flag <- FALSE
+predator_group_definitions <- list()
+apply_prey_grouping_flag <- FALSE
+prey_group_definitions <- list()
 
 # Grouping controls for summary products.
 # Add/remove fields based on desired output granularity.
@@ -77,13 +100,10 @@ dominant_prey_min_occurrence <- NULL
 prey_predation_top_n_predators <- NULL
 prey_predation_min_contribution <- NULL
 
-# Plot export mode:
-# - "per_species": one figure per species of interest (default).
-# - "aggregated": one figure per output aggregating all selected species.
-plot_export_mode <- "per_species"
-run_contract_checks <- TRUE
+# Example outputs and figures flag
+run_examples <- TRUE
 
-# ---- Build data products ----
+# ------------------- Build data products -------------------
 
 inputs <- load_food_habits_inputs(source_mode = source_mode)
 std <- standardize_food_habits(
@@ -94,14 +114,42 @@ std <- standardize_food_habits(
 food_habits_stomach <- std$stomach
 food_habits_species <- std$species_lookup
 
-food_habits_qc(food_habits_stomach, food_habits_species)
+# Baseline QC on imported/standardized data.
+run_food_habits_qc(
+  food_habits_stomach = food_habits_stomach,
+  species_lookup = food_habits_species
+)
 
-priority_predator_codes <- resolve_priority_codes(food_habits_species, priority_predators)
-priority_prey_codes <- resolve_priority_codes(food_habits_species, priority_prey)
-
-food_habits_priority <- filter_food_habits(
+# Build a single processed analysis table:
+# - filters to priority predators
+# - optionally applies prey/predator grouping
+food_habits_processed <- filter_food_habits(
   food_habits_stomach,
   predator_codes = priority_predator_codes
+)
+if (isTRUE(apply_prey_grouping_flag)) {
+  food_habits_processed <- apply_code_grouping(
+    data = food_habits_processed,
+    group_definitions = prey_group_definitions,
+    code_var = "prey_code",
+    label_var = "prey_common"
+  )
+}
+if (isTRUE(apply_predator_grouping_flag)) {
+  food_habits_processed <- apply_code_grouping(
+    data = food_habits_processed,
+    group_definitions = predator_group_definitions,
+    code_var = "pred_code",
+    label_var = "pred_common"
+  )
+}
+priority_prey_codes_processed <- map_codes_to_grouped_codes(
+  codes = priority_prey_codes,
+  group_definitions = if (isTRUE(apply_prey_grouping_flag)) prey_group_definitions else list()
+)
+priority_predator_codes_processed <- map_codes_to_grouped_codes(
+  codes = priority_predator_codes,
+  group_definitions = if (isTRUE(apply_predator_grouping_flag)) predator_group_definitions else list()
 )
 
 # Output table 1 (stratified mean diet):
@@ -111,7 +159,7 @@ food_habits_priority <- filter_food_habits(
 # - Length structure is handled inside `estimate_mean_diet()` to reflect
 #   length-stratified stomach sampling.
 food_habits_mean_diet_stratified <- estimate_mean_diet(
-  food_habits_stomach = food_habits_priority,
+  food_habits_stomach = food_habits_processed,
   group_vars = mean_diet_group_vars,
   length_breaks = mean_diet_length_breaks,
   remove_excluded_codes = remove_excluded_codes,
@@ -119,41 +167,6 @@ food_habits_mean_diet_stratified <- estimate_mean_diet(
   include_label_cols = include_label_cols
 )
 
-# Example output A (aggregated): collapse both strata and length bins.
-food_habits_mean_diet_aggregated_example <- estimate_mean_diet(
-  food_habits_stomach = food_habits_priority,
-  group_vars = c("pred_code"),
-  length_breaks = mean_diet_length_breaks,
-  remove_excluded_codes = remove_excluded_codes,
-  excluded_prey_codes = excluded_prey_codes,
-  retain_strata = FALSE,
-  retain_length_bins = FALSE,
-  include_label_cols = include_label_cols
-)
-
-# Example output B (unaggregated by strata): keep strata, collapse length bins.
-food_habits_mean_diet_by_strata_example <- estimate_mean_diet(
-  food_habits_stomach = food_habits_priority,
-  group_vars = c("pred_code"),
-  length_breaks = mean_diet_length_breaks,
-  remove_excluded_codes = remove_excluded_codes,
-  excluded_prey_codes = excluded_prey_codes,
-  retain_strata = TRUE,
-  retain_length_bins = FALSE,
-  include_label_cols = include_label_cols
-)
-
-# Example output C (unaggregated by length): keep length bins, collapse strata.
-food_habits_mean_diet_by_length_example <- estimate_mean_diet(
-  food_habits_stomach = food_habits_priority,
-  group_vars = c("pred_code"),
-  length_breaks = mean_diet_length_breaks,
-  remove_excluded_codes = remove_excluded_codes,
-  excluded_prey_codes = excluded_prey_codes,
-  retain_strata = FALSE,
-  retain_length_bins = TRUE,
-  include_label_cols = include_label_cols
-)
 
 # Output table 2 (dominant prey):
 # - Starts from the same priority-predator filtered data.
@@ -162,7 +175,7 @@ food_habits_mean_diet_by_length_example <- estimate_mean_diet(
 # - Keeps dominant prey using configurable thresholds (`dominant_prey_top_n`,
 #   `dominant_prey_min_prop`, `dominant_prey_min_occurrence`).
 food_habits_dominant_prey_timeseries <- estimate_dominant_prey(
-  food_habits_stomach = food_habits_priority,
+  food_habits_stomach = food_habits_processed,
   group_vars = dominant_prey_group_vars,
   length_breaks = dominant_prey_length_breaks,
   remove_excluded_codes = remove_excluded_codes,
@@ -181,7 +194,7 @@ food_habits_dominant_prey_timeseries <- estimate_dominant_prey(
 # - Optional filters keep only dominant predator contributors by rank or minimum
 #   contribution proportion.
 food_habits_prey_predation <- estimate_predator_contribution(
-  food_habits_stomach = filter_food_habits(food_habits_stomach, prey_codes = priority_prey_codes),
+  food_habits_stomach = filter_food_habits(food_habits_processed, prey_codes = priority_prey_codes_processed),
   group_vars = prey_predation_group_vars,
   remove_excluded_codes = remove_excluded_codes,
   excluded_prey_codes = excluded_prey_codes,
@@ -190,43 +203,38 @@ food_habits_prey_predation <- estimate_predator_contribution(
   min_predator_contribution = prey_predation_min_contribution
 )
 
-if (isTRUE(run_contract_checks)) {
-  run_food_habits_contract_checks(
-    food_habits_stomach = food_habits_stomach,
-    food_habits_species = food_habits_species,
-    food_habits_mean_diet_stratified = food_habits_mean_diet_stratified,
-    food_habits_dominant_prey_timeseries = food_habits_dominant_prey_timeseries,
-    food_habits_prey_predation = food_habits_prey_predation,
-    priority_predator_codes = priority_predator_codes,
-    priority_prey_codes = priority_prey_codes,
-    mean_diet_group_vars = mean_diet_group_vars,
-    dominant_prey_group_vars = dominant_prey_group_vars,
-    prey_predation_group_vars = prey_predation_group_vars,
-    remove_excluded_codes = remove_excluded_codes,
-    excluded_prey_codes = excluded_prey_codes
-  )
-}
+# ------------------- Post-processing quality control checks -------------------
+# Grouping QC on processed data and final outputs:
+# verifies that grouped member codes are consistently collapsed and labels are
+# consistent across output tables when grouping is enabled.
+run_food_habits_qc(
+  food_habits_stomach = food_habits_stomach,
+  species_lookup = food_habits_species,
+  processed_data = food_habits_processed,
+  apply_prey_grouping_flag = apply_prey_grouping_flag,
+  prey_group_definitions = prey_group_definitions,
+  apply_predator_grouping_flag = apply_predator_grouping_flag,
+  predator_group_definitions = predator_group_definitions,
+  food_habits_mean_diet = food_habits_mean_diet_stratified,
+  food_habits_dominant_prey = food_habits_dominant_prey_timeseries,
+  food_habits_predator_contribution = food_habits_prey_predation
+)
 
-# ---- Export summary figures ----
-export_food_habits_plots(
+run_food_habits_contract_checks(
+  food_habits_stomach = food_habits_stomach,
+  food_habits_species = food_habits_species,
   food_habits_mean_diet_stratified = food_habits_mean_diet_stratified,
   food_habits_dominant_prey_timeseries = food_habits_dominant_prey_timeseries,
   food_habits_prey_predation = food_habits_prey_predation,
-  food_habits_species = food_habits_species,
-  priority_predator_codes = priority_predator_codes,
-  priority_prey_codes = priority_prey_codes,
-  plot_export_mode = plot_export_mode,
-  out_dir = here("data-raw", "food-habits")
+  priority_predator_codes = priority_predator_codes_processed,
+  priority_prey_codes = priority_prey_codes_processed,
+  mean_diet_group_vars = mean_diet_group_vars,
+  dominant_prey_group_vars = dominant_prey_group_vars,
+  prey_predation_group_vars = prey_predation_group_vars,
+  remove_excluded_codes = remove_excluded_codes,
+  excluded_prey_codes = excluded_prey_codes
 )
 
-# Additional example figures for unaggregated mean-diet outputs.
-export_food_habits_mean_diet_unaggregated_plots(
-  food_habits_mean_diet_by_strata_example = food_habits_mean_diet_by_strata_example,
-  food_habits_mean_diet_by_length_example = food_habits_mean_diet_by_length_example,
-  out_dir = here("data-raw", "food-habits"),
-  top_n = 12,
-  length_bin_var = "length_bin"
-)
 
 food_habits_full <- food_habits_stomach
 attr(food_habits_full, "source_citation") <- "Cook and Bundy 2010; Mar.datawrangling extraction workflow"
@@ -248,3 +256,68 @@ usethis::use_data(
   food_habits_prey_predation,
   overwrite = TRUE
 )
+
+# ------------------- Example outputs and summary figures -------------------
+
+if (run_examples) {
+  # Plot export mode:
+  # - "per_species": one figure per species of interest (default).
+  # - "aggregated": one figure per output aggregating all selected species.
+  plot_export_mode <- "per_species"
+
+  # Example output A (aggregated): collapse both strata and length bins.
+  food_habits_mean_diet_aggregated_example <- estimate_mean_diet(
+    food_habits_stomach = food_habits_processed,
+    group_vars = c("pred_code"),
+    length_breaks = mean_diet_length_breaks,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes,
+    retain_strata = FALSE,
+    retain_length_bins = FALSE,
+    include_label_cols = include_label_cols
+  )
+
+  # Example output B (unaggregated by strata): keep strata, collapse length bins.
+  food_habits_mean_diet_by_strata_example <- estimate_mean_diet(
+    food_habits_stomach = food_habits_processed,
+    group_vars = c("pred_code"),
+    length_breaks = mean_diet_length_breaks,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes,
+    retain_strata = TRUE,
+    retain_length_bins = FALSE,
+    include_label_cols = include_label_cols
+  )
+
+  # Example output C (unaggregated by length): keep length bins, collapse strata.
+  food_habits_mean_diet_by_length_example <- estimate_mean_diet(
+    food_habits_stomach = food_habits_processed,
+    group_vars = c("pred_code"),
+    length_breaks = mean_diet_length_breaks,
+    remove_excluded_codes = remove_excluded_codes,
+    excluded_prey_codes = excluded_prey_codes,
+    retain_strata = FALSE,
+    retain_length_bins = TRUE,
+    include_label_cols = include_label_cols
+  )
+
+  export_food_habits_plots(
+    food_habits_mean_diet_stratified = food_habits_mean_diet_stratified,
+    food_habits_dominant_prey_timeseries = food_habits_dominant_prey_timeseries,
+    food_habits_prey_predation = food_habits_prey_predation,
+    food_habits_species = food_habits_species,
+    priority_predator_codes = priority_predator_codes_processed,
+    priority_prey_codes = priority_prey_codes_processed,
+    plot_export_mode = plot_export_mode,
+    out_dir = here("data-raw", "food-habits")
+  )
+
+  # Additional example figures for unaggregated mean-diet outputs.
+  export_food_habits_mean_diet_unaggregated_plots(
+    food_habits_mean_diet_by_strata_example = food_habits_mean_diet_by_strata_example,
+    food_habits_mean_diet_by_length_example = food_habits_mean_diet_by_length_example,
+    out_dir = here("data-raw", "food-habits"),
+    top_n = 12,
+    length_bin_var = "length_bin"
+  )
+}

@@ -97,7 +97,13 @@ standardize_food_habits <- function(stomach_raw, species_raw) {
 
 # Run basic QA checks on key fields and code-join coverage, and print a
 # compact QC summary to the console.
-food_habits_qc <- function(food_habits_stomach, species_lookup) {
+food_habits_qc <- function(
+    food_habits_stomach,
+    species_lookup,
+    processed_data = NULL,
+    prey_group_definitions = list(),
+    predator_group_definitions = list(),
+    output_tables = list()) {
   prey_codes <- unique(food_habits_stomach$prey_code[!is.na(food_habits_stomach$prey_code)]) |>
     sort()
   pred_codes <- unique(food_habits_stomach$pred_code[!is.na(food_habits_stomach$pred_code)]) |>
@@ -124,11 +130,154 @@ food_habits_qc <- function(food_habits_stomach, species_lookup) {
     warning("Some predator codes do not map to species dictionary.", call. = FALSE)
   }
 
+  check_grouping_consistency <- function(
+      defs,
+      axis_label,
+      code_col,
+      label_col,
+      processed_data,
+      output_tables) {
+    if (length(defs) == 0) {
+      return(list())
+    }
+
+    out <- list()
+    for (nm in names(defs)) {
+      def <- defs[[nm]]
+      members <- if (!is.null(def$members)) as.integer(def$members) else integer()
+      members <- unique(members[!is.na(members)])
+      if (length(members) == 0) {
+        next
+      }
+      new_code <- if (!is.null(def$new_code)) as.integer(def$new_code) else as.integer(members[1])
+      new_label <- if (!is.null(def$new_label)) as.character(def$new_label) else as.character(nm)
+      member_codes_to_remove <- setdiff(members, new_code)
+
+      group_ok <- TRUE
+
+      if (!is.null(processed_data) && code_col %in% names(processed_data)) {
+        has_old_members <- any(processed_data[[code_col]] %in% member_codes_to_remove, na.rm = TRUE)
+        if (has_old_members) {
+          warning(
+            sprintf(
+              "Grouping QC (%s - %s): member codes still present in processed data: %s",
+              axis_label, nm, paste(member_codes_to_remove, collapse = ", ")
+            ),
+            call. = FALSE
+          )
+          group_ok <- FALSE
+        }
+
+        if (label_col %in% names(processed_data) && any(processed_data[[code_col]] == new_code, na.rm = TRUE)) {
+          bad_label <- any(as.character(processed_data[[label_col]][processed_data[[code_col]] == new_code]) != new_label, na.rm = TRUE)
+          if (bad_label) {
+            warning(
+              sprintf("Grouping QC (%s - %s): grouped label mismatch in processed data for code %s", axis_label, nm, new_code),
+              call. = FALSE
+            )
+            group_ok <- FALSE
+          }
+        }
+      }
+
+      for (tbl_nm in names(output_tables)) {
+        tbl <- output_tables[[tbl_nm]]
+        if (!(code_col %in% names(tbl))) {
+          next
+        }
+
+        has_old_members_tbl <- any(tbl[[code_col]] %in% member_codes_to_remove, na.rm = TRUE)
+        if (has_old_members_tbl) {
+          warning(
+            sprintf(
+              "Grouping QC (%s - %s): member codes still present in output '%s': %s",
+              axis_label, nm, tbl_nm, paste(member_codes_to_remove, collapse = ", ")
+            ),
+            call. = FALSE
+          )
+          group_ok <- FALSE
+        }
+
+        if (label_col %in% names(tbl) && any(tbl[[code_col]] == new_code, na.rm = TRUE)) {
+          bad_label_tbl <- any(as.character(tbl[[label_col]][tbl[[code_col]] == new_code]) != new_label, na.rm = TRUE)
+          if (bad_label_tbl) {
+            warning(
+              sprintf(
+                "Grouping QC (%s - %s): grouped label mismatch in output '%s' for code %s",
+                axis_label, nm, tbl_nm, new_code
+              ),
+              call. = FALSE
+            )
+            group_ok <- FALSE
+          }
+        }
+      }
+
+      if (group_ok) {
+        message(sprintf("  grouping QC OK (%s): %s", axis_label, nm))
+      }
+      out[[nm]] <- group_ok
+    }
+
+    out
+  }
+
+  grouping_qc <- list(
+    prey = check_grouping_consistency(
+      defs = prey_group_definitions,
+      axis_label = "prey",
+      code_col = "prey_code",
+      label_col = "prey_common",
+      processed_data = processed_data,
+      output_tables = output_tables
+    ),
+    predator = check_grouping_consistency(
+      defs = predator_group_definitions,
+      axis_label = "predator",
+      code_col = "pred_code",
+      label_col = "pred_common",
+      processed_data = processed_data,
+      output_tables = output_tables
+    )
+  )
+
   invisible(
     list(
       unmatched_prey_codes = unmatched_prey,
-      unmatched_pred_codes = unmatched_pred
+      unmatched_pred_codes = unmatched_pred,
+      grouping_qc = grouping_qc
     )
+  )
+}
+
+# Convenience wrapper to keep the processing script lightweight.
+# Runs baseline QC and, when provided, grouping-consistency QC on processed and
+# output tables.
+run_food_habits_qc <- function(
+    food_habits_stomach,
+    species_lookup,
+    processed_data = NULL,
+    apply_prey_grouping_flag = FALSE,
+    prey_group_definitions = list(),
+    apply_predator_grouping_flag = FALSE,
+    predator_group_definitions = list(),
+    food_habits_mean_diet = NULL,
+    food_habits_dominant_prey = NULL,
+    food_habits_predator_contribution = NULL) {
+  output_tables <- list(
+    mean_diet = food_habits_mean_diet,
+    dominant_prey = food_habits_dominant_prey,
+    predator_contribution = food_habits_predator_contribution
+  )
+  output_tables <- output_tables[!vapply(output_tables, is.null, logical(1))]
+
+  food_habits_qc(
+    food_habits_stomach = food_habits_stomach,
+    species_lookup = species_lookup,
+    processed_data = processed_data,
+    prey_group_definitions = if (isTRUE(apply_prey_grouping_flag)) prey_group_definitions else list(),
+    predator_group_definitions = if (isTRUE(apply_predator_grouping_flag)) predator_group_definitions else list(),
+    output_tables = output_tables
   )
 }
 
@@ -171,6 +320,119 @@ apply_prey_code_exclusions <- function(
 
   food_habits_stomach %>%
     dplyr::filter(is.na(.data[[prey_var]]) | !(.data[[prey_var]] %in% excluded_prey_codes))
+}
+
+# Recode code/name columns into user-defined grouped categories.
+# `group_definitions` is a named list where each element is a list with:
+# - members: integer vector of codes to group
+# - new_code: integer code to assign the group (default: first member)
+# - new_label: character label to assign target label column (default: list name)
+apply_code_grouping <- function(
+    data,
+    group_definitions = list(),
+    code_var,
+    label_var) {
+  if (length(group_definitions) == 0) {
+    return(data)
+  }
+  if (!(code_var %in% names(data))) {
+    stop("code_var not found in data: ", code_var, call. = FALSE)
+  }
+  if (!(label_var %in% names(data))) {
+    stop("label_var not found in data: ", label_var, call. = FALSE)
+  }
+
+  map_rows <- list()
+  i <- 1L
+  for (nm in names(group_definitions)) {
+    def <- group_definitions[[nm]]
+    members <- if (!is.null(def$members)) as.integer(def$members) else integer()
+    members <- unique(members[!is.na(members)])
+    if (length(members) == 0) {
+      next
+    }
+    new_code <- if (!is.null(def$new_code)) as.integer(def$new_code) else as.integer(members[1])
+    new_label <- if (!is.null(def$new_label)) as.character(def$new_label) else as.character(nm)
+    map_rows[[i]] <- data.frame(
+      member_code = members,
+      grouped_code = new_code,
+      grouped_label = new_label,
+      stringsAsFactors = FALSE
+    )
+    i <- i + 1L
+  }
+
+  if (length(map_rows) == 0) {
+    return(data)
+  }
+
+  mapping <- dplyr::bind_rows(map_rows)
+  dup_member <- mapping$member_code[duplicated(mapping$member_code)]
+  if (length(dup_member) > 0) {
+    stop(
+      "A code is assigned to more than one group: ",
+      paste(unique(dup_member), collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  out <- data %>%
+    dplyr::left_join(mapping, by = stats::setNames("member_code", code_var)) %>%
+    dplyr::mutate(
+      "{code_var}" := dplyr::if_else(!is.na(grouped_code), grouped_code, .data[[code_var]]),
+      "{label_var}" := dplyr::if_else(!is.na(grouped_label), grouped_label, as.character(.data[[label_var]]))
+    ) %>%
+    dplyr::select(-grouped_code, -grouped_label)
+
+  out
+}
+
+# Backward-compatible wrapper for prey grouping.
+apply_prey_grouping <- function(
+    food_habits_stomach,
+    prey_group_definitions = list(),
+    prey_code_var = "prey_code",
+    prey_label_var = "prey_common") {
+  apply_code_grouping(
+    data = food_habits_stomach,
+    group_definitions = prey_group_definitions,
+    code_var = prey_code_var,
+    label_var = prey_label_var
+  )
+}
+
+# Map selected codes through group definitions so filters can be applied
+# after grouping is performed.
+map_codes_to_grouped_codes <- function(
+    codes,
+    group_definitions = list()) {
+  codes <- as.integer(codes)
+  if (length(group_definitions) == 0 || length(codes) == 0) {
+    return(sort(unique(codes)))
+  }
+
+  recoded <- codes
+  for (def in group_definitions) {
+    members <- if (!is.null(def$members)) as.integer(def$members) else integer()
+    members <- unique(members[!is.na(members)])
+    if (length(members) == 0) {
+      next
+    }
+    new_code <- if (!is.null(def$new_code)) as.integer(def$new_code) else as.integer(members[1])
+    recoded[recoded %in% members] <- new_code
+  }
+
+  sort(unique(recoded))
+}
+
+# Backward-compatible wrapper for prey-code mapping.
+map_prey_codes_to_grouped_codes <- function(
+    prey_codes,
+    prey_group_definitions = list()) {
+  map_codes_to_grouped_codes(
+    codes = prey_codes,
+    group_definitions = prey_group_definitions
+  )
 }
 
 # Convert species common names to species codes for filtering/grouping.
