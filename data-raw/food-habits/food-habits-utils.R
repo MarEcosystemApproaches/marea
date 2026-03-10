@@ -130,13 +130,12 @@ food_habits_qc <- function(
     warning("Some predator codes do not map to species dictionary.", call. = FALSE)
   }
 
-  check_grouping_consistency <- function(
-      defs,
-      axis_label,
-      code_col,
-      label_col,
-      processed_data,
-      output_tables) {
+  check_grouping_consistency <- function(defs,
+                                         axis_label,
+                                         code_col,
+                                         label_col,
+                                         processed_data,
+                                         output_tables) {
     if (length(defs) == 0) {
       return(list())
     }
@@ -318,7 +317,7 @@ apply_prey_code_exclusions <- function(
     return(food_habits_stomach)
   }
 
-  food_habits_stomach %>%
+  food_habits_stomach |>
     dplyr::filter(is.na(.data[[prey_var]]) | !(.data[[prey_var]] %in% excluded_prey_codes))
 }
 
@@ -376,12 +375,12 @@ apply_code_grouping <- function(
     )
   }
 
-  out <- data %>%
-    dplyr::left_join(mapping, by = stats::setNames("member_code", code_var)) %>%
+  out <- data |>
+    dplyr::left_join(mapping, by = stats::setNames("member_code", code_var)) |>
     dplyr::mutate(
       "{code_var}" := dplyr::if_else(!is.na(grouped_code), grouped_code, .data[[code_var]]),
       "{label_var}" := dplyr::if_else(!is.na(grouped_label), grouped_label, as.character(.data[[label_var]]))
-    ) %>%
+    ) |>
     dplyr::select(-grouped_code, -grouped_label)
 
   out
@@ -450,12 +449,11 @@ lookup_species_codes <- function(species_lookup, common_names) {
 
 # Filter stomach records by predator/prey codes and optional species groups.
 filter_food_habits <- function(
-  food_habits_stomach,
-  predator_codes = NULL,
-  prey_codes = NULL,
-  predator_groups = NULL,
-  prey_groups = NULL
-) {
+    food_habits_stomach,
+    predator_codes = NULL,
+    prey_codes = NULL,
+    predator_groups = NULL,
+    prey_groups = NULL) {
   out <- food_habits_stomach
 
   if (!is.null(predator_groups) && length(predator_groups)) {
@@ -560,15 +558,14 @@ save_plot_file <- function(plot_obj, out_dir, file_stub) {
 # Export food-habits summary plots either as one plot per species of interest
 # or one aggregated plot per output.
 export_food_habits_plots <- function(
-  food_habits_mean_diet_stratified,
-  food_habits_dominant_prey_timeseries,
-  food_habits_prey_predation,
-  food_habits_species,
-  priority_predator_codes,
-  priority_prey_codes,
-  plot_export_mode = "per_species",
-  out_dir = file.path("data-raw", "food-habits")
-) {
+    food_habits_mean_diet_stratified,
+    food_habits_dominant_prey_timeseries,
+    food_habits_prey_predation,
+    food_habits_species,
+    priority_predator_codes,
+    priority_prey_codes,
+    plot_export_mode = "per_species",
+    out_dir = file.path("data-raw", "food-habits")) {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }
@@ -689,12 +686,11 @@ export_food_habits_plots <- function(
 # Export unaggregated mean-diet example figures (by strata and by length),
 # one figure per predator species.
 export_food_habits_mean_diet_unaggregated_plots <- function(
-  food_habits_mean_diet_by_strata_example,
-  food_habits_mean_diet_by_length_example,
-  out_dir = file.path("data-raw", "food-habits"),
-  top_n = 12,
-  length_bin_var = "length_bin"
-) {
+    food_habits_mean_diet_by_strata_example,
+    food_habits_mean_diet_by_length_example,
+    out_dir = file.path("data-raw", "food-habits"),
+    top_n = 12,
+    length_bin_var = "length_bin") {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }

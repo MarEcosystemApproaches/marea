@@ -133,20 +133,20 @@ summarise_prey_pressure <- function(
 
   full_group <- unique(c(group_vars, predator_var_with_labels))
 
-  out <- food_habits_stomach %>%
-    dplyr::filter(!is.na(.data[[predator_var]]), !is.na(.data[[weight_var]]), .data[[weight_var]] >= 0) %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(full_group))) %>%
+  out <- food_habits_stomach |>
+    dplyr::filter(!is.na(.data[[predator_var]]), !is.na(.data[[weight_var]]), .data[[weight_var]] >= 0) |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(full_group))) |>
     dplyr::summarise(
       prey_weight_total = sum(.data[[weight_var]], na.rm = TRUE),
       n_prey_records = dplyr::n(),
       n_stomachs = dplyr::n_distinct(.data[[stomach_id_var]]),
       .groups = "drop"
-    ) %>%
-    dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) %>%
+    ) |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(group_vars))) |>
     dplyr::mutate(
       predator_weight_prop = prey_weight_total / sum(prey_weight_total, na.rm = TRUE),
       predator_rank = dplyr::dense_rank(dplyr::desc(prey_weight_total))
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
   out
