@@ -1,6 +1,6 @@
 #' Dominant Prey Time Series from Stratified Mean Diet Estimates
 #'
-#' Generate time-series-ready dominant prey summaries by applying dominance
+#' Generate time-series dominant prey summaries by applying dominance
 #' filters to outputs from `estimate_mean_diet()`.
 #'
 #' @description
@@ -16,9 +16,6 @@
 #' 2. `min_occurrence_prop` filter (if provided),
 #' 3. `top_n` rank filter (if provided).
 #'
-#' This design keeps weighted diet estimation centralized while making
-#' dominant-prey extraction explicit and configurable for
-#' management reporting workflows.
 #'
 #' @param food_habits_stomach Standardized stomach-prey data table.
 #' @param group_vars Character vector of grouping variables used to define each

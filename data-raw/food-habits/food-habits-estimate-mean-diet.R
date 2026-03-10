@@ -5,7 +5,7 @@
 #' and survey strata with configurable weights.
 #'
 #' @description
-#' `estimate_mean_diet()` provides a flexible, design-aware estimator
+#' `estimate_mean_diet()` provides a flexible estimator
 #' for food-habits summaries. The method first computes predator-level diet
 #' quantities, then applies two-stage aggregation:
 #' 1) within-stratum aggregation across predator length classes, and
@@ -41,7 +41,7 @@
 #' - Stratified survey structure is represented by stratum-level aggregation with
 #' explicit stratum weights.
 #' - Sample-count defaults provide a transparent interim weighting option when
-#' external survey design weights are not yet available.
+#' external survey design weights are not available.
 #'
 #' Assumptions:
 #' - `weight_var` contains non-negative prey weight values.

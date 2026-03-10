@@ -1,11 +1,10 @@
 #' Predation on Prey Species by Predator Contribution
 #'
 #' Estimate predation patterns on focal prey by summarizing predator
-#' contributions (consumed weight and relative share) within flexible
-#' spatial/temporal grouping units.
+#' contributions (consumed weight and relative share).
 #'
 #' @description
-#' `estimate_predator_contribution()` provides prey-centric summaries of predation by
+#' `estimate_predator_contribution()` provides prey summaries of predation by
 #' predator. It first computes predator contribution metrics using
 #' `summarise_prey_pressure()`, then optionally filters results to dominant
 #' predators by contribution thresholds or top-N rank.
@@ -18,10 +17,6 @@
 #' 4. Optionally filter by:
 #'   - minimum contribution proportion (`min_predator_contribution`)
 #'   - top-N predator rank (`top_n_predators`)
-#'
-#' This function is designed to support prey-focused management questions (for
-#' example, which predators contribute most to predation on herring, shrimp, or
-#' sea urchin by year and area).
 #'
 #' @param food_habits_stomach Standardized stomach-prey data table.
 #' @param group_vars Character vector of grouping variables. Typical default:
