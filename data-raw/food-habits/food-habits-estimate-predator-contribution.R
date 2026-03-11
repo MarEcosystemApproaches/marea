@@ -57,18 +57,19 @@
 #'
 #' @export
 estimate_predator_contribution <- function(
-    food_habits_stomach,
-    group_vars = c("year", "nafo_zone", "prey_code"),
-    prey_var = "prey_code",
-    predator_var = "pred_code",
-    weight_var = "pwt",
-    stomach_id_var = "pred_seq",
-    remove_excluded_codes = TRUE,
-    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
-    include_label_cols = TRUE,
-    label_map = food_habits_default_label_map(),
-    top_n_predators = NULL,
-    min_predator_contribution = NULL) {
+  food_habits_stomach,
+  group_vars = c("year", "nafo_zone", "prey_code"),
+  prey_var = "prey_code",
+  predator_var = "pred_code",
+  weight_var = "pwt",
+  stomach_id_var = "pred_seq",
+  remove_excluded_codes = TRUE,
+  excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+  include_label_cols = TRUE,
+  label_map = food_habits_default_label_map(),
+  top_n_predators = NULL,
+  min_predator_contribution = NULL
+) {
   out <- summarise_prey_pressure(
     food_habits_stomach = food_habits_stomach,
     group_vars = group_vars,
@@ -97,16 +98,17 @@ estimate_predator_contribution <- function(
 # Internal helper: summarize predator contributions to each prey
 # group and compute within-group predator ranks.
 summarise_prey_pressure <- function(
-    food_habits_stomach,
-    group_vars = c("year", "nafo_zone", "prey_code"),
-    prey_var = "prey_code",
-    predator_var = "pred_code",
-    weight_var = "pwt",
-    stomach_id_var = "pred_seq",
-    remove_excluded_codes = TRUE,
-    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
-    include_label_cols = TRUE,
-    label_map = food_habits_default_label_map()) {
+  food_habits_stomach,
+  group_vars = c("year", "nafo_zone", "prey_code"),
+  prey_var = "prey_code",
+  predator_var = "pred_code",
+  weight_var = "pwt",
+  stomach_id_var = "pred_seq",
+  remove_excluded_codes = TRUE,
+  excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+  include_label_cols = TRUE,
+  label_map = food_habits_default_label_map()
+) {
   group_vars <- existing_cols(food_habits_stomach, group_vars)
   prey_var <- existing_cols(food_habits_stomach, prey_var)
   predator_var <- existing_cols(food_habits_stomach, predator_var)

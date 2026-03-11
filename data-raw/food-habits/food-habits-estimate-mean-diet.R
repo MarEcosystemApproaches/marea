@@ -110,27 +110,28 @@
 #'
 #' @export
 estimate_mean_diet <- function(
-    food_habits_stomach,
-    group_vars = c("year", "strat", "pred_code"),
-    prey_var = "prey_code",
-    weight_var = "pwt",
-    predator_id_var = "pred_seq",
-    strata_var = "strat",
-    length_var = "flen",
-    length_bin_width = 5,
-    length_breaks = NULL,
-    length_bin_var = NULL,
-    include_label_cols = TRUE,
-    label_map = food_habits_default_label_map(),
-    length_weights = NULL,
-    length_weight_var = "weight",
-    strata_weights = NULL,
-    strata_weight_var = "weight",
-    remove_excluded_codes = TRUE,
-    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
-    denominator_mode = c("usable_predators", "all_sampled_predators"),
-    retain_strata = FALSE,
-    retain_length_bins = FALSE) {
+  food_habits_stomach,
+  group_vars = c("year", "strat", "pred_code"),
+  prey_var = "prey_code",
+  weight_var = "pwt",
+  predator_id_var = "pred_seq",
+  strata_var = "strat",
+  length_var = "flen",
+  length_bin_width = 5,
+  length_breaks = NULL,
+  length_bin_var = NULL,
+  include_label_cols = TRUE,
+  label_map = food_habits_default_label_map(),
+  length_weights = NULL,
+  length_weight_var = "weight",
+  strata_weights = NULL,
+  strata_weight_var = "weight",
+  remove_excluded_codes = TRUE,
+  excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+  denominator_mode = c("usable_predators", "all_sampled_predators"),
+  retain_strata = FALSE,
+  retain_length_bins = FALSE
+) {
   denominator_mode <- match.arg(denominator_mode)
   group_vars <- existing_cols(food_habits_stomach, group_vars)
   prey_var <- existing_cols(food_habits_stomach, prey_var)

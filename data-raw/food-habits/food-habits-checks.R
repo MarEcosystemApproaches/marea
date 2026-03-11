@@ -75,18 +75,19 @@ make_food_habits_fixture <- function() {
 }
 
 run_food_habits_contract_checks <- function(
-    food_habits_stomach,
-    food_habits_species,
-    food_habits_mean_diet_stratified,
-    food_habits_dominant_prey_timeseries,
-    food_habits_prey_predation,
-    priority_predator_codes,
-    priority_prey_codes,
-    mean_diet_group_vars,
-    dominant_prey_group_vars,
-    prey_predation_group_vars,
-    remove_excluded_codes = TRUE,
-    excluded_prey_codes = food_habits_default_exclusion_prey_codes()) {
+  food_habits_stomach,
+  food_habits_species,
+  food_habits_mean_diet_stratified,
+  food_habits_dominant_prey_timeseries,
+  food_habits_prey_predation,
+  priority_predator_codes,
+  priority_prey_codes,
+  mean_diet_group_vars,
+  dominant_prey_group_vars,
+  prey_predation_group_vars,
+  remove_excluded_codes = TRUE,
+  excluded_prey_codes = food_habits_default_exclusion_prey_codes()
+) {
   message("=== Food Habits Contract Checks ===")
 
   # ---- Real-data structure checks ----

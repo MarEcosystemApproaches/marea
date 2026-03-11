@@ -98,12 +98,13 @@ standardize_food_habits <- function(stomach_raw, species_raw) {
 # Run basic QA checks on key fields and code-join coverage, and print a
 # compact QC summary to the console.
 food_habits_qc <- function(
-    food_habits_stomach,
-    species_lookup,
-    processed_data = NULL,
-    prey_group_definitions = list(),
-    predator_group_definitions = list(),
-    output_tables = list()) {
+  food_habits_stomach,
+  species_lookup,
+  processed_data = NULL,
+  prey_group_definitions = list(),
+  predator_group_definitions = list(),
+  output_tables = list()
+) {
   prey_codes <- unique(food_habits_stomach$prey_code[!is.na(food_habits_stomach$prey_code)]) |>
     sort()
   pred_codes <- unique(food_habits_stomach$pred_code[!is.na(food_habits_stomach$pred_code)]) |>
@@ -253,16 +254,17 @@ food_habits_qc <- function(
 # Runs baseline QC and, when provided, grouping-consistency QC on processed and
 # output tables.
 run_food_habits_qc <- function(
-    food_habits_stomach,
-    species_lookup,
-    processed_data = NULL,
-    apply_prey_grouping_flag = FALSE,
-    prey_group_definitions = list(),
-    apply_predator_grouping_flag = FALSE,
-    predator_group_definitions = list(),
-    food_habits_mean_diet = NULL,
-    food_habits_dominant_prey = NULL,
-    food_habits_predator_contribution = NULL) {
+  food_habits_stomach,
+  species_lookup,
+  processed_data = NULL,
+  apply_prey_grouping_flag = FALSE,
+  prey_group_definitions = list(),
+  apply_predator_grouping_flag = FALSE,
+  predator_group_definitions = list(),
+  food_habits_mean_diet = NULL,
+  food_habits_dominant_prey = NULL,
+  food_habits_predator_contribution = NULL
+) {
   output_tables <- list(
     mean_diet = food_habits_mean_diet,
     dominant_prey = food_habits_dominant_prey,
@@ -303,10 +305,11 @@ food_habits_default_exclusion_prey_codes <- function() {
 
 # Conditionally remove prey codes from stomach records before analysis.
 apply_prey_code_exclusions <- function(
-    food_habits_stomach,
-    prey_var = "prey_code",
-    remove_excluded_codes = TRUE,
-    excluded_prey_codes = food_habits_default_exclusion_prey_codes()) {
+  food_habits_stomach,
+  prey_var = "prey_code",
+  remove_excluded_codes = TRUE,
+  excluded_prey_codes = food_habits_default_exclusion_prey_codes()
+) {
   if (!isTRUE(remove_excluded_codes)) {
     return(food_habits_stomach)
   }
@@ -327,10 +330,11 @@ apply_prey_code_exclusions <- function(
 # - new_code: integer code to assign the group (default: first member)
 # - new_label: character label to assign target label column (default: list name)
 apply_code_grouping <- function(
-    data,
-    group_definitions = list(),
-    code_var,
-    label_var) {
+  data,
+  group_definitions = list(),
+  code_var,
+  label_var
+) {
   if (length(group_definitions) == 0) {
     return(data)
   }
@@ -388,10 +392,11 @@ apply_code_grouping <- function(
 
 # Backward-compatible wrapper for prey grouping.
 apply_prey_grouping <- function(
-    food_habits_stomach,
-    prey_group_definitions = list(),
-    prey_code_var = "prey_code",
-    prey_label_var = "prey_common") {
+  food_habits_stomach,
+  prey_group_definitions = list(),
+  prey_code_var = "prey_code",
+  prey_label_var = "prey_common"
+) {
   apply_code_grouping(
     data = food_habits_stomach,
     group_definitions = prey_group_definitions,
@@ -403,8 +408,9 @@ apply_prey_grouping <- function(
 # Map selected codes through group definitions so filters can be applied
 # after grouping is performed.
 map_codes_to_grouped_codes <- function(
-    codes,
-    group_definitions = list()) {
+  codes,
+  group_definitions = list()
+) {
   codes <- as.integer(codes)
   if (length(group_definitions) == 0 || length(codes) == 0) {
     return(sort(unique(codes)))
@@ -426,8 +432,9 @@ map_codes_to_grouped_codes <- function(
 
 # Backward-compatible wrapper for prey-code mapping.
 map_prey_codes_to_grouped_codes <- function(
-    prey_codes,
-    prey_group_definitions = list()) {
+  prey_codes,
+  prey_group_definitions = list()
+) {
   map_codes_to_grouped_codes(
     codes = prey_codes,
     group_definitions = prey_group_definitions
@@ -449,11 +456,12 @@ lookup_species_codes <- function(species_lookup, common_names) {
 
 # Filter stomach records by predator/prey codes and optional species groups.
 filter_food_habits <- function(
-    food_habits_stomach,
-    predator_codes = NULL,
-    prey_codes = NULL,
-    predator_groups = NULL,
-    prey_groups = NULL) {
+  food_habits_stomach,
+  predator_codes = NULL,
+  prey_codes = NULL,
+  predator_groups = NULL,
+  prey_groups = NULL
+) {
   out <- food_habits_stomach
 
   if (!is.null(predator_groups) && length(predator_groups)) {
@@ -558,14 +566,15 @@ save_plot_file <- function(plot_obj, out_dir, file_stub) {
 # Export food-habits summary plots either as one plot per species of interest
 # or one aggregated plot per output.
 export_food_habits_plots <- function(
-    food_habits_mean_diet_stratified,
-    food_habits_dominant_prey_timeseries,
-    food_habits_prey_predation,
-    food_habits_species,
-    priority_predator_codes,
-    priority_prey_codes,
-    plot_export_mode = "per_species",
-    out_dir = file.path("data-raw", "food-habits")) {
+  food_habits_mean_diet_stratified,
+  food_habits_dominant_prey_timeseries,
+  food_habits_prey_predation,
+  food_habits_species,
+  priority_predator_codes,
+  priority_prey_codes,
+  plot_export_mode = "per_species",
+  out_dir = file.path("data-raw", "food-habits")
+) {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }
@@ -686,11 +695,12 @@ export_food_habits_plots <- function(
 # Export unaggregated mean-diet example figures (by strata and by length),
 # one figure per predator species.
 export_food_habits_mean_diet_unaggregated_plots <- function(
-    food_habits_mean_diet_by_strata_example,
-    food_habits_mean_diet_by_length_example,
-    out_dir = file.path("data-raw", "food-habits"),
-    top_n = 12,
-    length_bin_var = "length_bin") {
+  food_habits_mean_diet_by_strata_example,
+  food_habits_mean_diet_by_length_example,
+  out_dir = file.path("data-raw", "food-habits"),
+  top_n = 12,
+  length_bin_var = "length_bin"
+) {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }

@@ -48,15 +48,16 @@
 #'
 #' @export
 estimate_dominant_prey <- function(
-    food_habits_stomach,
-    group_vars = c("year", "pred_code"),
-    top_n = 5,
-    min_diet_prop = NULL,
-    min_occurrence_prop = NULL,
-    remove_excluded_codes = TRUE,
-    excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
-    include_label_cols = TRUE,
-    ...) {
+  food_habits_stomach,
+  group_vars = c("year", "pred_code"),
+  top_n = 5,
+  min_diet_prop = NULL,
+  min_occurrence_prop = NULL,
+  remove_excluded_codes = TRUE,
+  excluded_prey_codes = food_habits_default_exclusion_prey_codes(),
+  include_label_cols = TRUE,
+  ...
+) {
   diet <- estimate_mean_diet(
     food_habits_stomach = food_habits_stomach,
     group_vars = group_vars,
