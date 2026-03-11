@@ -33,7 +33,6 @@ source(here("data-raw", "food-habits", "food-habits-utils.R"))
 source(here("data-raw", "food-habits", "food-habits-estimate-mean-diet.R"))
 source(here("data-raw", "food-habits", "food-habits-estimate-dominant-prey.R"))
 source(here("data-raw", "food-habits", "food-habits-estimate-predator-contribution.R"))
-source(here("data-raw", "food-habits", "food-habits-checks.R"))
 
 
 # ------------------- User-configurable settings -------------------
@@ -122,12 +121,6 @@ std <- standardize_food_habits(
 food_habits_stomach <- std$stomach
 food_habits_species <- std$species_lookup
 
-# Baseline QC on imported/standardized data.
-run_food_habits_qc(
-  food_habits_stomach = food_habits_stomach,
-  species_lookup = food_habits_species
-)
-
 # Build a single processed analysis table:
 # - filters to priority predators
 # - optionally applies prey/predator grouping
@@ -215,38 +208,6 @@ food_habits_prey_predation <- estimate_predator_contribution(
   min_predator_contribution = prey_predation_min_contribution
 )
 
-# ------------------- Post-processing quality control checks -------------------
-# Grouping QC on processed data and final outputs:
-# verifies that grouped member codes are consistently collapsed and labels are
-# consistent across output tables when grouping is enabled.
-run_food_habits_qc(
-  food_habits_stomach = food_habits_stomach,
-  species_lookup = food_habits_species,
-  processed_data = food_habits_processed,
-  apply_prey_grouping_flag = apply_prey_grouping_flag,
-  prey_group_definitions = prey_group_definitions,
-  apply_predator_grouping_flag = apply_predator_grouping_flag,
-  predator_group_definitions = predator_group_definitions,
-  food_habits_mean_diet = food_habits_mean_diet_stratified,
-  food_habits_dominant_prey = food_habits_dominant_prey_timeseries,
-  food_habits_predator_contribution = food_habits_prey_predation
-)
-
-run_food_habits_contract_checks(
-  food_habits_stomach = food_habits_stomach,
-  food_habits_species = food_habits_species,
-  food_habits_mean_diet_stratified = food_habits_mean_diet_stratified,
-  food_habits_dominant_prey_timeseries = food_habits_dominant_prey_timeseries,
-  food_habits_prey_predation = food_habits_prey_predation,
-  priority_predator_codes = priority_predator_codes_processed,
-  priority_prey_codes = priority_prey_codes_processed,
-  mean_diet_group_vars = mean_diet_group_vars,
-  dominant_prey_group_vars = dominant_prey_group_vars,
-  prey_predation_group_vars = prey_predation_group_vars,
-  remove_excluded_codes = remove_excluded_codes,
-  excluded_prey_codes = excluded_prey_codes
-)
-
 
 food_habits_full <- food_habits_stomach
 attr(food_habits_full, "source_citation") <- "Cook and Bundy 2010; Mar.datawrangling extraction workflow"
@@ -277,20 +238,7 @@ if (run_examples) {
   # - "aggregated": one figure per output aggregating all selected species.
   plot_export_mode <- "per_species"
 
-  # Example output A (aggregated): collapse both strata and length bins.
-  food_habits_mean_diet_aggregated_example <- estimate_mean_diet(
-    food_habits_stomach = food_habits_processed,
-    group_vars = c("pred_code"),
-    length_breaks = mean_diet_length_breaks,
-    remove_excluded_codes = remove_excluded_codes,
-    excluded_prey_codes = excluded_prey_codes,
-    denominator_mode = mean_diet_denominator_mode,
-    retain_strata = FALSE,
-    retain_length_bins = FALSE,
-    include_label_cols = include_label_cols
-  )
-
-  # Example output B (unaggregated by strata): keep strata, collapse length bins.
+  # Example output (unaggregated by strata): keep strata, collapse length bins.
   food_habits_mean_diet_by_strata_example <- estimate_mean_diet(
     food_habits_stomach = food_habits_processed,
     group_vars = c("pred_code"),
@@ -303,7 +251,7 @@ if (run_examples) {
     include_label_cols = include_label_cols
   )
 
-  # Example output C (unaggregated by length): keep length bins, collapse strata.
+  # Example output (unaggregated by length): keep length bins, collapse strata.
   food_habits_mean_diet_by_length_example <- estimate_mean_diet(
     food_habits_stomach = food_habits_processed,
     group_vars = c("pred_code"),

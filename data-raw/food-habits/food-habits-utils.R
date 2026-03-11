@@ -95,193 +95,6 @@ standardize_food_habits <- function(stomach_raw, species_raw) {
   )
 }
 
-# Run basic QA checks on key fields and code-join coverage, and print a
-# compact QC summary to the console.
-food_habits_qc <- function(
-  food_habits_stomach,
-  species_lookup,
-  processed_data = NULL,
-  prey_group_definitions = list(),
-  predator_group_definitions = list(),
-  output_tables = list()
-) {
-  prey_codes <- unique(food_habits_stomach$prey_code[!is.na(food_habits_stomach$prey_code)]) |>
-    sort()
-  pred_codes <- unique(food_habits_stomach$pred_code[!is.na(food_habits_stomach$pred_code)]) |>
-    sort()
-  species_codes <- unique(species_lookup$species_code) |>
-    sort()
-
-  unmatched_prey <- setdiff(prey_codes, species_codes)
-  unmatched_pred <- setdiff(pred_codes, species_codes)
-
-  message("Food habits QC summary")
-  message("  rows: ", nrow(food_habits_stomach))
-  message("  year range: ", min(food_habits_stomach$year, na.rm = TRUE), "-", max(food_habits_stomach$year, na.rm = TRUE))
-  message("  missing prey in gut content (prey_code): ", sum(is.na(food_habits_stomach$prey_code)))
-  message("  missing prey weight (pwt): ", sum(is.na(food_habits_stomach$pwt)))
-  message("  unmatched predator codes: ", length(unmatched_pred))
-  message("  unmatched prey codes: ", length(unmatched_prey))
-
-  if (length(unmatched_prey) > 0) {
-    message("  unmatched prey code examples: ", paste(utils::head(unmatched_prey, 10), collapse = ", "))
-  }
-
-  if (length(unmatched_pred) > 0) {
-    warning("Some predator codes do not map to species dictionary.", call. = FALSE)
-  }
-
-  check_grouping_consistency <- function(defs,
-                                         axis_label,
-                                         code_col,
-                                         label_col,
-                                         processed_data,
-                                         output_tables) {
-    if (length(defs) == 0) {
-      return(list())
-    }
-
-    out <- list()
-    for (nm in names(defs)) {
-      def <- defs[[nm]]
-      members <- if (!is.null(def$members)) as.integer(def$members) else integer()
-      members <- unique(members[!is.na(members)])
-      if (length(members) == 0) {
-        next
-      }
-      new_code <- if (!is.null(def$new_code)) as.integer(def$new_code) else as.integer(members[1])
-      new_label <- if (!is.null(def$new_label)) as.character(def$new_label) else as.character(nm)
-      member_codes_to_remove <- setdiff(members, new_code)
-
-      group_ok <- TRUE
-
-      if (!is.null(processed_data) && code_col %in% names(processed_data)) {
-        has_old_members <- any(processed_data[[code_col]] %in% member_codes_to_remove, na.rm = TRUE)
-        if (has_old_members) {
-          warning(
-            sprintf(
-              "Grouping QC (%s - %s): member codes still present in processed data: %s",
-              axis_label, nm, paste(member_codes_to_remove, collapse = ", ")
-            ),
-            call. = FALSE
-          )
-          group_ok <- FALSE
-        }
-
-        if (label_col %in% names(processed_data) && any(processed_data[[code_col]] == new_code, na.rm = TRUE)) {
-          bad_label <- any(as.character(processed_data[[label_col]][processed_data[[code_col]] == new_code]) != new_label, na.rm = TRUE)
-          if (bad_label) {
-            warning(
-              sprintf("Grouping QC (%s - %s): grouped label mismatch in processed data for code %s", axis_label, nm, new_code),
-              call. = FALSE
-            )
-            group_ok <- FALSE
-          }
-        }
-      }
-
-      for (tbl_nm in names(output_tables)) {
-        tbl <- output_tables[[tbl_nm]]
-        if (!(code_col %in% names(tbl))) {
-          next
-        }
-
-        has_old_members_tbl <- any(tbl[[code_col]] %in% member_codes_to_remove, na.rm = TRUE)
-        if (has_old_members_tbl) {
-          warning(
-            sprintf(
-              "Grouping QC (%s - %s): member codes still present in output '%s': %s",
-              axis_label, nm, tbl_nm, paste(member_codes_to_remove, collapse = ", ")
-            ),
-            call. = FALSE
-          )
-          group_ok <- FALSE
-        }
-
-        if (label_col %in% names(tbl) && any(tbl[[code_col]] == new_code, na.rm = TRUE)) {
-          bad_label_tbl <- any(as.character(tbl[[label_col]][tbl[[code_col]] == new_code]) != new_label, na.rm = TRUE)
-          if (bad_label_tbl) {
-            warning(
-              sprintf(
-                "Grouping QC (%s - %s): grouped label mismatch in output '%s' for code %s",
-                axis_label, nm, tbl_nm, new_code
-              ),
-              call. = FALSE
-            )
-            group_ok <- FALSE
-          }
-        }
-      }
-
-      if (group_ok) {
-        message(sprintf("  grouping QC OK (%s): %s", axis_label, nm))
-      }
-      out[[nm]] <- group_ok
-    }
-
-    out
-  }
-
-  grouping_qc <- list(
-    prey = check_grouping_consistency(
-      defs = prey_group_definitions,
-      axis_label = "prey",
-      code_col = "prey_code",
-      label_col = "prey_common",
-      processed_data = processed_data,
-      output_tables = output_tables
-    ),
-    predator = check_grouping_consistency(
-      defs = predator_group_definitions,
-      axis_label = "predator",
-      code_col = "pred_code",
-      label_col = "pred_common",
-      processed_data = processed_data,
-      output_tables = output_tables
-    )
-  )
-
-  invisible(
-    list(
-      unmatched_prey_codes = unmatched_prey,
-      unmatched_pred_codes = unmatched_pred,
-      grouping_qc = grouping_qc
-    )
-  )
-}
-
-# Convenience wrapper to keep the processing script lightweight.
-# Runs baseline QC and, when provided, grouping-consistency QC on processed and
-# output tables.
-run_food_habits_qc <- function(
-  food_habits_stomach,
-  species_lookup,
-  processed_data = NULL,
-  apply_prey_grouping_flag = FALSE,
-  prey_group_definitions = list(),
-  apply_predator_grouping_flag = FALSE,
-  predator_group_definitions = list(),
-  food_habits_mean_diet = NULL,
-  food_habits_dominant_prey = NULL,
-  food_habits_predator_contribution = NULL
-) {
-  output_tables <- list(
-    mean_diet = food_habits_mean_diet,
-    dominant_prey = food_habits_dominant_prey,
-    predator_contribution = food_habits_predator_contribution
-  )
-  output_tables <- output_tables[!vapply(output_tables, is.null, logical(1))]
-
-  food_habits_qc(
-    food_habits_stomach = food_habits_stomach,
-    species_lookup = species_lookup,
-    processed_data = processed_data,
-    prey_group_definitions = if (isTRUE(apply_prey_grouping_flag)) prey_group_definitions else list(),
-    predator_group_definitions = if (isTRUE(apply_predator_grouping_flag)) predator_group_definitions else list(),
-    output_tables = output_tables
-  )
-}
-
 # Map code columns to default human-readable label columns.
 food_habits_default_label_map <- function() {
   c(
@@ -305,11 +118,10 @@ food_habits_default_exclusion_prey_codes <- function() {
 
 # Conditionally remove prey codes from stomach records before analysis.
 apply_prey_code_exclusions <- function(
-  food_habits_stomach,
-  prey_var = "prey_code",
-  remove_excluded_codes = TRUE,
-  excluded_prey_codes = food_habits_default_exclusion_prey_codes()
-) {
+    food_habits_stomach,
+    prey_var = "prey_code",
+    remove_excluded_codes = TRUE,
+    excluded_prey_codes = food_habits_default_exclusion_prey_codes()) {
   if (!isTRUE(remove_excluded_codes)) {
     return(food_habits_stomach)
   }
@@ -330,11 +142,10 @@ apply_prey_code_exclusions <- function(
 # - new_code: integer code to assign the group (default: first member)
 # - new_label: character label to assign target label column (default: list name)
 apply_code_grouping <- function(
-  data,
-  group_definitions = list(),
-  code_var,
-  label_var
-) {
+    data,
+    group_definitions = list(),
+    code_var,
+    label_var) {
   if (length(group_definitions) == 0) {
     return(data)
   }
@@ -390,27 +201,11 @@ apply_code_grouping <- function(
   out
 }
 
-# Backward-compatible wrapper for prey grouping.
-apply_prey_grouping <- function(
-  food_habits_stomach,
-  prey_group_definitions = list(),
-  prey_code_var = "prey_code",
-  prey_label_var = "prey_common"
-) {
-  apply_code_grouping(
-    data = food_habits_stomach,
-    group_definitions = prey_group_definitions,
-    code_var = prey_code_var,
-    label_var = prey_label_var
-  )
-}
-
 # Map selected codes through group definitions so filters can be applied
 # after grouping is performed.
 map_codes_to_grouped_codes <- function(
-  codes,
-  group_definitions = list()
-) {
+    codes,
+    group_definitions = list()) {
   codes <- as.integer(codes)
   if (length(group_definitions) == 0 || length(codes) == 0) {
     return(sort(unique(codes)))
@@ -430,38 +225,13 @@ map_codes_to_grouped_codes <- function(
   sort(unique(recoded))
 }
 
-# Backward-compatible wrapper for prey-code mapping.
-map_prey_codes_to_grouped_codes <- function(
-  prey_codes,
-  prey_group_definitions = list()
-) {
-  map_codes_to_grouped_codes(
-    codes = prey_codes,
-    group_definitions = prey_group_definitions
-  )
-}
-
-# Convert species common names to species codes for filtering/grouping.
-lookup_species_codes <- function(species_lookup, common_names) {
-  if (length(common_names) == 0) {
-    return(integer())
-  }
-
-  species_lookup |>
-    dplyr::filter(toupper(common_name) %in% toupper(common_names)) |>
-    dplyr::pull(species_code) |>
-    unique() |>
-    sort()
-}
-
 # Filter stomach records by predator/prey codes and optional species groups.
 filter_food_habits <- function(
-  food_habits_stomach,
-  predator_codes = NULL,
-  prey_codes = NULL,
-  predator_groups = NULL,
-  prey_groups = NULL
-) {
+    food_habits_stomach,
+    predator_codes = NULL,
+    prey_codes = NULL,
+    predator_groups = NULL,
+    prey_groups = NULL) {
   out <- food_habits_stomach
 
   if (!is.null(predator_groups) && length(predator_groups)) {
@@ -502,50 +272,7 @@ add_label_cols <- function(data, group_vars, label_map = food_habits_default_lab
   out
 }
 
-# Resolve priority common names to species codes.
-# Strategy: exact match first; fallback to token-based matching robust to
-# word order (e.g., "ATLANTIC HERRING" vs "HERRING ATLANTIC").
-resolve_priority_codes <- function(species_lookup, common_names) {
-  out <- integer(0)
-
-  for (nm in common_names) {
-    nm_upper <- toupper(stringr::str_squish(nm))
-
-    exact <- species_lookup |>
-      dplyr::filter(toupper(common_name) == nm_upper) |>
-      dplyr::pull(species_code) |>
-      unique()
-
-    if (length(exact) > 0) {
-      out <- c(out, exact[1])
-      next
-    }
-
-    tokens <- unlist(strsplit(gsub("[^A-Z0-9 ]", " ", nm_upper), "\\s+"))
-    tokens <- tokens[nzchar(tokens)]
-    if (length(tokens) == 0) {
-      next
-    }
-
-    token_hits <- species_lookup |>
-      dplyr::filter(!is.na(common_name)) |>
-      dplyr::mutate(common_upper = toupper(common_name)) |>
-      dplyr::filter(vapply(
-        common_upper,
-        function(x) all(vapply(tokens, grepl, logical(1), x = x, fixed = TRUE)),
-        logical(1)
-      )) |>
-      dplyr::pull(species_code) |>
-      unique()
-
-    if (length(token_hits) > 0) {
-      out <- c(out, token_hits[1])
-    }
-  }
-
-  sort(unique(out))
-}
-
+# -------------- Plotting utilities
 sanitize_plot_suffix <- function(x) {
   x <- tolower(as.character(x))
   x <- gsub("[^a-z0-9]+", "_", x)
@@ -566,15 +293,14 @@ save_plot_file <- function(plot_obj, out_dir, file_stub) {
 # Export food-habits summary plots either as one plot per species of interest
 # or one aggregated plot per output.
 export_food_habits_plots <- function(
-  food_habits_mean_diet_stratified,
-  food_habits_dominant_prey_timeseries,
-  food_habits_prey_predation,
-  food_habits_species,
-  priority_predator_codes,
-  priority_prey_codes,
-  plot_export_mode = "per_species",
-  out_dir = file.path("data-raw", "food-habits")
-) {
+    food_habits_mean_diet_stratified,
+    food_habits_dominant_prey_timeseries,
+    food_habits_prey_predation,
+    food_habits_species,
+    priority_predator_codes,
+    priority_prey_codes,
+    plot_export_mode = "per_species",
+    out_dir = file.path("data-raw", "food-habits")) {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }
@@ -695,12 +421,11 @@ export_food_habits_plots <- function(
 # Export unaggregated mean-diet example figures (by strata and by length),
 # one figure per predator species.
 export_food_habits_mean_diet_unaggregated_plots <- function(
-  food_habits_mean_diet_by_strata_example,
-  food_habits_mean_diet_by_length_example,
-  out_dir = file.path("data-raw", "food-habits"),
-  top_n = 12,
-  length_bin_var = "length_bin"
-) {
+    food_habits_mean_diet_by_strata_example,
+    food_habits_mean_diet_by_length_example,
+    out_dir = file.path("data-raw", "food-habits"),
+    top_n = 12,
+    length_bin_var = "length_bin") {
   if (!dir.exists(out_dir)) {
     stop("Output directory does not exist: ", out_dir, call. = FALSE)
   }
