@@ -62,7 +62,7 @@ eco_indicators<- as_ea_data(
   location_descriptor = "NAFO",
   units = "tonnes",
   source_citation = "Bundy et al. 2017",
-  nb = "years 2018 and 2021 have incomplete data due to poor survey coverage or ship change",
+  nb = "years 2018 and 2021 have incomplete data due to poor survey coverage or ship change"
 )
 
 
