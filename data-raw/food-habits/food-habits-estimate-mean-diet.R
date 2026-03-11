@@ -271,9 +271,10 @@ estimate_mean_diet <- function(
 
   if (is.null(length_weights)) {
     length_weight_tbl <- pred_counts |>
-      dplyr::transmute(
+      dplyr::mutate(
         dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, length_bin_var)))),
-        length_weight = n_predators_total
+        length_weight = n_predators_total,
+        .keep = "none"
       )
   } else {
     length_weight_keys <- existing_cols(length_weights, unique(c(group_vars, strata_var, length_bin_var)))
@@ -284,12 +285,13 @@ estimate_mean_diet <- function(
 
   if (retain_length_bins) {
     level_prey <- prey_length_complete |>
-      dplyr::transmute(
+      dplyr::mutate(
         dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, length_bin_var, prey_group_vars)))),
         level_mean_prey_weight = mean_prey_weight,
         level_mean_prey_prop = mean_prey_prop,
         level_mean_occurrence = prey_occurrence_prop,
-        n_predators_level = n_predators_total
+        n_predators_level = n_predators_total,
+        .keep = "none"
       )
   } else {
     level_prey <- prey_length_complete |>
@@ -334,13 +336,14 @@ estimate_mean_diet <- function(
 
   if (retain_strata) {
     final_dat <- level_prey_complete |>
-      dplyr::transmute(
+      dplyr::mutate(
         dplyr::across(dplyr::all_of(unique(c(group_vars, strata_var, if (retain_length_bins) length_bin_var, prey_group_vars)))),
         mean_diet_weight = level_mean_prey_weight,
         mean_diet_prop = level_mean_prey_prop,
         mean_occurrence_prop = level_mean_occurrence,
         n_predators = n_predators_level,
-        n_strata = 1L
+        n_strata = 1L,
+        .keep = "none"
       )
   } else {
     strata_weight_keys <- unique(c(group_vars, if (retain_length_bins) length_bin_var, strata_var))
