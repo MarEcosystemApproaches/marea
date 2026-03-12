@@ -21,7 +21,6 @@ library(here)
 # }
 
 # Exported food-habits databases created by this script:
-# - food_habits_full: primary cleaned stomach-record table.
 # - food_habits_stomach: detailed standardized stomach/prey table with joined species names.
 # - food_habits_species: species code dictionary used for predator/prey lookups.
 # - food_habits_mean_diet_stratified: stratified mean diet estimates (area + length strata).
@@ -208,12 +207,6 @@ food_habits_prey_predation <- estimate_predator_contribution(
   min_predator_contribution = prey_predation_min_contribution
 )
 
-
-food_habits_full <- food_habits_stomach
-attr(food_habits_full, "source_citation") <- "Cook and Bundy 2010; Mar.datawrangling extraction workflow"
-attr(food_habits_full, "region") <- "Maritimes"
-
-save(food_habits_full, file = here("data-raw", "food-habits", "food_habits_full.rda"))
 save(food_habits_stomach, file = here("data-raw", "food-habits", "food_habits_stomach.rda"))
 save(food_habits_species, file = here("data-raw", "food-habits", "food_habits_species.rda"))
 save(food_habits_mean_diet_stratified, file = here("data-raw", "food-habits", "food_habits_mean_diet_stratified.rda"))
@@ -221,7 +214,6 @@ save(food_habits_dominant_prey_timeseries, file = here("data-raw", "food-habits"
 save(food_habits_prey_predation, file = here("data-raw", "food-habits", "food_habits_prey_predation.rda"))
 
 usethis::use_data(
-  food_habits_full,
   food_habits_stomach,
   food_habits_species,
   food_habits_mean_diet_stratified,
