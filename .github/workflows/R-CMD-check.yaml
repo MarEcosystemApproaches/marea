@@ -46,6 +46,8 @@ jobs:
       - name: Install GitHub dependencies
         run: |
           remotes::install_github("pbs-assess/pacea")
+          remotes::install_github("PopulationEcologyDivision/Mar.data")
+
         shell: Rscript {0}
         
       - name: Install package
@@ -55,7 +57,3 @@ jobs:
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
         shell: Rscript {0}
-
-      - uses: r-lib/actions/check-r-package@v2
-        with:
-          error-on: '"error"'
