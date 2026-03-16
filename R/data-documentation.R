@@ -303,6 +303,161 @@
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_salinity"
 
+#' AZMP phytoplankton data (ea_data)
+#'
+#' Phytoplankton data from AZMP monitoring program for Halifax 2 and Prince 5 stations
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character station name for Halifax 2 and Prince 5 where data was collected
+#'       \item{\code{diatoms}:} abundance of diatoms (log10)
+#'       \item{\code{dinoflagellates}:} abundance of diatoms (log10)
+#'       \item{\code{flagillates}:} abundance of diatoms (log10)
+#'       \item{\code{cilliates}:} abundance of diatoms (log10)
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "phytoplankton"
+#'       \item{\code{region}:} "Halifax2 and Prince5 station"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf and Bay of Funday"
+#'       \item{\code{units}:} "log10"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_phytoplankton
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_phytoplankton"
+
+#' AZMP zooplankton data (ea_data)
+#'
+#' Zooplankton data from AZMP monitoring program CS LL HL BBL Sections
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character section name CS LL HL BBL
+#'       \item{\code{calanus_fin_value}:} abundance of Calanus finmarchicus (log10)
+#'       \item{\code{pseudocalanus}:} abundance of pseudocalanus (log10)
+#'       \item{\code{copepod}:} abundance of copepods group (log10)
+#'       \item{\code{non_copepods}:} abundance of non_copepods group (log10)
+#'       \item{\code{arctic_calanus_spp}:} abundance arctic calanus group (log10)
+#'       \item{\code{warm_offshore_copepods}:} abundance of warm offshore copepods group (Clausocalanus spp., Mecynocera clausi, and Pleuromamma borealis) (log10)
+#'       \item{\code{warm_shelf_copepods}:} abundance of warm shelf copepods (the summer-fall copepods Paracalanus spp. and Centropages typicus) (log10)
+#'       \item{\code{meso_zooplankton}:} Dry weight of meso zooplankton
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "zooplankton"
+#'       \item{\code{region}:} "Cabot Strait Line, Lousibourg Line, Halifax Line, Browns Bank Line"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf"
+#'       \item{\code{units}:} "log10"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_zooplankton
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_zooplankton"
+
+#' AZMP chemical data (ea_data)
+#'
+#' Ocean chemistry data from AZMP monitoring program CS LL HL BBL Sections
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character section name CS LL HL BBL
+#'       \item{\code{chlorophyll_0_100_value}:} Chlorophyll concentrations integrated between 0 and 100 metres
+#'       \item{\code{integrated_nitrate_0_50}:} Nitrate concentrations integrated between 0 and 50 metres
+#'       \item{\code{integrated_nitrate_50_150}:} Nitrate concentrations integrated between 50 and 150 metres
+#'       \item{\code{integrated_phosphate_0_50}:} Phosphate concentrations integrated between 0 and 50 metres
+#'       \item{\code{integrated_phosphate_50_150}:} Phosphate concentrations integrated between 50 and 150 metres
+#'       \item{\code{integrated_silicate_0_50s}:} Silicate concentrations integrated between 0 and 50 metres
+#'       \item{\code{integrated_silicate_50_150 }:} Silicate concentrations integrated between 50 and 150 metres
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "chemical"
+#'       \item{\code{region}:} "Cabot Strait Line, Lousibourg Line, Halifax Line, Browns Bank Line"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf"
+#'       \item{\code{units}:} "concentrations"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_chemical
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_chemical"
+
+#' AZMP remotesensing data (ea_data)
+#'
+#' Remote sensing and bloom statistic data from AZMP reporting
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character section name CS ESS CSS WSS GB LS
+#'       \item{\code{surface_cholorophyll_log10_value}:} Average surface chlorophyll as inferred from satellite (remote sensing) measurements, with a log 10 transform
+#'       \item{\code{bloom_start}:} Start of pythoplankton bloom, from satellite
+#'       \item{\code{bloom_duration}:} Length of phytoplankton bloom, from satellite
+#'       \item{\code{bloom_amplitude}:} Amplitude of phytoplankton bloom, from satellite
+#'       \item{\code{bloom_magnitude}:} Magnitude of phytoplankton bloom, from satellite
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "satellite"
+#'       \item{\code{region}:} "Cabot Strait, Eastern Scotian Shelf, Central Scotian Shelf, Western Scotian Shelf, Georges Bank, Lower Shelf"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf"
+#'       \item{\code{units}:} "phytoplankton bloom statistics"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_remotesensing
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_remotesensing"
 
 #' Pacific Decadal Oscillation (PDO) Index (ea_data)
 #'
