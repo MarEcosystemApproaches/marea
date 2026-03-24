@@ -87,7 +87,8 @@ Suggests:
     mockery,
     rerddap,
     patchwork,
-    here
+    here,
+    remotes
 Remotes: 
     pbs-assess/pacea,
     PopulationEcologyDivision/Mar.data
