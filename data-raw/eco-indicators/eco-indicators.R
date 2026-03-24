@@ -27,14 +27,21 @@ library(here)
 # This is the raw data
 
 data_dir <- 'R:/Science/BIODataSvc/SRC/marea'
+eco_indicators_strat <- file.path(data_dir, "eco_indicators_strat.csv")
+eco_indicators_strat <- read_csv(eco_indicators_strat)
 eco_indicators_nafo<- file.path(data_dir, "eco_indicators_nafo.csv")
 eco_indicators_nafo <- read_csv(eco_indicators_nafo)
 eco_indicators_esswss<-file.path(data_dir, "eco_indicators_esswss.csv")
 eco_indicators_esswss <- read_csv(eco_indicators_esswss)
 
+# data adjustments so that all files will bind
+eco_indicators_strat<-eco_indicators_strat |> 
+  # adjust ID to chr
+  mutate(ID=as.character(ID))
+
 
 #join the 2 data frames
-join_indicators<-bind_rows(eco_indicators_nafo, eco_indicators_esswss) 
+join_indicators<-bind_rows(eco_indicators_nafo, eco_indicators_esswss, eco_indicators_strat) 
 
 # filter years -2021, and only to 2022 when the RV survey changed to the Jacques Cartier, still no conversion factors for all the species required for this analysis. 
 
@@ -55,7 +62,7 @@ eco_indicators<- as_ea_data(
   location_descriptor = "NAFO",
   units = "tonnes",
   source_citation = "Bundy et al. 2017",
-  nb = "years 2018 and 2021 have incomplete data due to poor survey coverage or ship change",
+  nb = "years 2018 and 2021 have incomplete data due to poor survey coverage or ship change"
 )
 
 
