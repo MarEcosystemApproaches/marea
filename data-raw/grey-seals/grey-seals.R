@@ -44,7 +44,7 @@ grey_seals <- ea_data(
   species = "grey seal",
   region = "Scotian Shelf",
   location_descriptor = 'Sable Island',
-  source_citation = "den Heyer, C. E., Mosnier, A., Stenson, G. B., Lidgard, D. C., Bowen, W. D., & Hammill, M. O. (2024). Grey seal pup production in Canada (DFO Can. Sci. Advis. Sec. Res. Doc. 2023/078). Fisheries and Oceans Canada, Canadian Science Advisory Secretariat.",
+  source_citation = "Hammill, M.O., S.P. Rossi, A. Mosnier, C.E. den Heyer,  W.D. Bowen and G.B. Stenson. 2023.  Grey Seal Abundance and Harvest Advice in Canadian Waters. DFO Can. Sci. Advis. Sec. Res. Doc. 2023/053. vi + 40 p.",
   comment = paste0("Estimates from a Bayesian state-space model fitted to aerial survey data and demographic rates from Sable Island. See Hammill et al. (2023) for details.")
 )
 
