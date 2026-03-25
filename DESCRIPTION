@@ -72,7 +72,8 @@ Imports:
     terra,
     tidyterra,
     methods,
-    cmocean
+    cmocean,
+    remotes
 Suggests:
     devtools,
     doParallel,
