@@ -2,6 +2,8 @@
 % Please edit documentation in R/plot-ea_spatial.R
 \name{plot}
 \alias{plot}
+\alias{plot.ea_spatial}
+\alias{plot,ea_spatial-method}
 \alias{plot,ea_spatial,missing-method}
 \title{Plot an ea_spatial object with multiple styles}
 \usage{

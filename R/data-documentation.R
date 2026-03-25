@@ -1,3 +1,39 @@
+#' Gulf Stream North Wall Index (ea_data)
+#'
+#' The Gulf Stream North Wall (GSNW) index measures the latitudinal position of
+#' the Gulf Stream's northern wall, calculated as an anomaly from the long-term
+#' mean position. A positive index indicates a more northerly Gulf Stream
+#' position. The index has been linked to changes in shelf water temperature,
+#' stratification, and ecosystem productivity on the Northeast US Continental
+#' Shelf.
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble: \describe{
+#'     \item{year}{Year}
+#'     \item{value}{Gulf Stream North Wall index anomaly value}
+#'   }}
+#'   \item{meta}{A named list. Keys include:
+#'     \itemize{
+#'       \item{\code{data_type}:} "Gulf Stream North Wall Index"
+#'       \item{\code{region}:} "Northwest Atlantic"
+#'       \item{\code{location_descriptor}:} "Gulf Stream North Wall position index"
+#'       \item{\code{units}:} "degrees latitude anomaly"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "NOAA EDAB ecodata R package, see source"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' @name gsnw
+#' @docType data
+#' @author Emily O'Grady, Jamie C. Tam
+#' @source \url{https://noaa-edab.github.io/ecodata/} via \code{ecodata::gsi};
+#'   Joyce, T.M. and Zhang, R. (2010). On the path of the Gulf Stream and the
+#'   Atlantic meridional overturning circulation. \emph{Journal of Climate},
+#'   23(11), 3146--3154. \doi{10.1175/2010JCLI3310.1}
+"gsnw"
+
 #' Oceanic Niño Index (ONI)
 #'
 #' The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern 
@@ -781,7 +817,7 @@
 #'   \item{units}{Character. "t_start: day of year; t_duration: days; amplitude_real: mg/m3; magnitude_real: days*mg/m3; annual_mean: mg/m3"}
 #'   \item{region}{Character. "Northwest Atlantic"}
 #'   \item{time_descriptor}{Character. Year}
-#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1) [Data set]. https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
+#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1). https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
 #'   \item{temporal_coverage}{Character. "1998-2024"}
 #'   \item{variable_name}{Character. The name used for the variable}
 #' }
