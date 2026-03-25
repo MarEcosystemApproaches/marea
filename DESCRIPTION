@@ -74,6 +74,7 @@ Imports:
     methods,
     cmocean,
     pak
+    remotes
 Suggests:
     devtools,
     doParallel,
@@ -88,7 +89,8 @@ Suggests:
     mockery,
     rerddap,
     patchwork,
-    here
+    here,
+    Mar.data
 Remotes: 
     pbs-assess/pacea,
     PopulationEcologyDivision/Mar.data
