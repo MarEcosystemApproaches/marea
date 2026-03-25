@@ -2,6 +2,8 @@
 % Please edit documentation in R/plot-ea_data.R
 \name{plot}
 \alias{plot}
+\alias{plot.ea_data}
+\alias{plot,ea_data-method}
 \alias{plot,ea_data,missing-method}
 \title{Plot an ea_data object with multiple styles}
 \usage{

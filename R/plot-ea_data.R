@@ -58,7 +58,7 @@
 #'
 #' @export
 #' @rdname plot-ea_data
-#' @aliases plot,ea_data,missing-method
+#' @aliases plot.ea_data plot,ea_data-method plot,ea_data,missing-method
 #'
 #' @examples
 #' # Create sample data with uncertainty

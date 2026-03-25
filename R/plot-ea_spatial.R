@@ -30,6 +30,8 @@
 #' @param ... Additional args passed to the geoms.
 #' @return A ggplot object.
 #' 
+#' @aliases plot.ea_spatial plot,ea_spatial-method plot,ea_spatial,missing-method
+
 setGeneric("plot")
 
 #' @rdname plot-ea_spatial
