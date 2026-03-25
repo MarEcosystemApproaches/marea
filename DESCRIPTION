@@ -73,7 +73,7 @@ Imports:
     tidyterra,
     methods,
     cmocean,
-    pak
+    pak,
     remotes
 Suggests:
     devtools,
