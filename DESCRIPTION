@@ -72,7 +72,8 @@ Imports:
     terra,
     tidyterra,
     methods,
-    cmocean
+    cmocean,
+    remotes
 Suggests:
     devtools,
     doParallel,
@@ -88,7 +89,7 @@ Suggests:
     rerddap,
     patchwork,
     here,
-    remotes
+    Mar.data
 Remotes: 
     pbs-assess/pacea,
     PopulationEcologyDivision/Mar.data
