@@ -41,10 +41,11 @@ test_that("get_CMEMS_ncdf logs in and calls subset with correct args", {
   vars <- list("thetao")
   default_dataset <- "cmems_mod_glo_phy_my_0.083deg_P1M-m"
 
-  with_mock(
-    `reticulate::py_available` = function(...) TRUE,
-    `reticulate::py_module_available` = function(...) TRUE,
-    `reticulate::import` = import_mock,
+  testthat::with_mocked_bindings(
+    py_available = function(...) TRUE,
+    py_module_available = function(...) TRUE,
+    import = import_mock,
+    .package = "reticulate",
     {
       get_CMEMS_ncdf(
         username = "user",
@@ -93,10 +94,11 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
 
   out_nc <- tempfile(fileext = ".nc")
 
-  with_mock(
-    `reticulate::py_available` = function(...) TRUE,
-    `reticulate::py_module_available` = function(...) TRUE,
-    `reticulate::import` = import_mock,
+  testthat::with_mocked_bindings(
+    py_available = function(...) TRUE,
+    py_module_available = function(...) TRUE,
+    import = import_mock,
+    .package = "reticulate",
     {
       get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
     }
@@ -137,10 +139,11 @@ test_that("get_CMEMS_ncdf handles character variables correctly", {
 
   out_nc <- tempfile(fileext = ".nc")
 
-  with_mock(
-    `reticulate::py_available` = function(...) TRUE,
-    `reticulate::py_module_available` = function(...) TRUE,
-    `reticulate::import` = import_mock,
+  testthat::with_mocked_bindings(
+    py_available = function(...) TRUE,
+    py_module_available = function(...) TRUE,
+    import = import_mock,
+    .package = "reticulate",
     {
       get_CMEMS_ncdf(
         variables = c("thetao", "so"),
@@ -158,9 +161,10 @@ test_that("get_CMEMS_ncdf throws error when variables is not character or list",
   skip_if_not_installed("mockery")
   library(mockery)
 
-  with_mock(
-    `reticulate::py_available` = function(...) TRUE,
-    `reticulate::py_module_available` = function(...) TRUE,
+  testthat::with_mocked_bindings(
+    py_available = function(...) TRUE,
+    py_module_available = function(...) TRUE,
+    .package = "reticulate",
     {
       expect_error(
         get_CMEMS_ncdf(variables = 123),
@@ -174,8 +178,9 @@ test_that("get_CMEMS_ncdf throws error when Python is not available", {
   skip_if_not_installed("mockery")
   library(mockery)
 
-  with_mock(
-    `reticulate::py_available` = function(...) FALSE,
+  testthat::with_mocked_bindings(
+    py_available = function(...) FALSE,
+    .package = "reticulate",
     {
       expect_error(
         get_CMEMS_ncdf(variables = "thetao"),
