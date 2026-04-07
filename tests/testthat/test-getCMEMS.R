@@ -36,21 +36,23 @@ test_that("get_CMEMS_ncdf logs in and calls subset with correct args", {
     }
   }
 
-  # Stub the actual functions your code calls
-  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "py_module_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "import", import_mock)
-
   # Act
   out_nc <- tempfile(fileext = ".nc")
   vars <- list("thetao")
   default_dataset <- "cmems_mod_glo_phy_my_0.083deg_P1M-m"
 
-  get_CMEMS_ncdf(
-    username = "user",
-    password = "pass",
-    variables = vars,
-    output_filename = out_nc
+  with_mock(
+    `reticulate::py_available` = function(...) TRUE,
+    `reticulate::py_module_available` = function(...) TRUE,
+    `reticulate::import` = import_mock,
+    {
+      get_CMEMS_ncdf(
+        username = "user",
+        password = "pass",
+        variables = vars,
+        output_filename = out_nc
+      )
+    }
   )
 
   # Assert: login called with credentials
@@ -89,12 +91,16 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
     }
   }
 
-  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "py_module_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "import", import_mock)
-
   out_nc <- tempfile(fileext = ".nc")
-  get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
+
+  with_mock(
+    `reticulate::py_available` = function(...) TRUE,
+    `reticulate::py_module_available` = function(...) TRUE,
+    `reticulate::import` = import_mock,
+    {
+      get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
+    }
+  )
 
   # Login should be skipped
   expect_called(login_mock, 0)
@@ -129,16 +135,18 @@ test_that("get_CMEMS_ncdf handles character variables correctly", {
     }
   }
 
-  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "py_module_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "import", import_mock)
-
   out_nc <- tempfile(fileext = ".nc")
 
-  # Pass character vector instead of list
-  get_CMEMS_ncdf(
-    variables = c("thetao", "so"),
-    output_filename = out_nc
+  with_mock(
+    `reticulate::py_available` = function(...) TRUE,
+    `reticulate::py_module_available` = function(...) TRUE,
+    `reticulate::import` = import_mock,
+    {
+      get_CMEMS_ncdf(
+        variables = c("thetao", "so"),
+        output_filename = out_nc
+      )
+    }
   )
 
   # Should be converted to list
@@ -150,12 +158,15 @@ test_that("get_CMEMS_ncdf throws error when variables is not character or list",
   skip_if_not_installed("mockery")
   library(mockery)
 
-  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
-  stub(get_CMEMS_ncdf, "py_module_available", function(...) TRUE)
-
-  expect_error(
-    get_CMEMS_ncdf(variables = 123),
-    "variables must be a character vector or list"
+  with_mock(
+    `reticulate::py_available` = function(...) TRUE,
+    `reticulate::py_module_available` = function(...) TRUE,
+    {
+      expect_error(
+        get_CMEMS_ncdf(variables = 123),
+        "variables must be a character vector or list"
+      )
+    }
   )
 })
 
@@ -163,10 +174,13 @@ test_that("get_CMEMS_ncdf throws error when Python is not available", {
   skip_if_not_installed("mockery")
   library(mockery)
 
-  stub(get_CMEMS_ncdf, "py_available", function(...) FALSE)
-
-  expect_error(
-    get_CMEMS_ncdf(variables = "thetao"),
-    "Python is not installed"
+  with_mock(
+    `reticulate::py_available` = function(...) FALSE,
+    {
+      expect_error(
+        get_CMEMS_ncdf(variables = "thetao"),
+        "Python is not installed"
+      )
+    }
   )
 })
