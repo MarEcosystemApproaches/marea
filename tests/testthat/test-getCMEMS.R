@@ -41,19 +41,18 @@ test_that("get_CMEMS_ncdf logs in and calls subset with correct args", {
   vars <- list("thetao")
   default_dataset <- "cmems_mod_glo_phy_my_0.083deg_P1M-m"
 
-  testthat::with_mocked_bindings(
+  local_mocked_bindings(
     py_available = function(...) TRUE,
     py_module_available = function(...) TRUE,
     import = import_mock,
-    .package = "reticulate",
-    {
-      get_CMEMS_ncdf(
-        username = "user",
-        password = "pass",
-        variables = vars,
-        output_filename = out_nc
-      )
-    }
+    .package = "reticulate"
+  )
+
+  get_CMEMS_ncdf(
+    username = "user",
+    password = "pass",
+    variables = vars,
+    output_filename = out_nc
   )
 
   # Assert: login called with credentials
@@ -94,15 +93,14 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
 
   out_nc <- tempfile(fileext = ".nc")
 
-  testthat::with_mocked_bindings(
+  local_mocked_bindings(
     py_available = function(...) TRUE,
     py_module_available = function(...) TRUE,
     import = import_mock,
-    .package = "reticulate",
-    {
-      get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
-    }
+    .package = "reticulate"
   )
+
+  get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
 
   # Login should be skipped
   expect_called(login_mock, 0)
@@ -139,17 +137,16 @@ test_that("get_CMEMS_ncdf handles character variables correctly", {
 
   out_nc <- tempfile(fileext = ".nc")
 
-  testthat::with_mocked_bindings(
+  local_mocked_bindings(
     py_available = function(...) TRUE,
     py_module_available = function(...) TRUE,
     import = import_mock,
-    .package = "reticulate",
-    {
-      get_CMEMS_ncdf(
-        variables = c("thetao", "so"),
-        output_filename = out_nc
-      )
-    }
+    .package = "reticulate"
+  )
+
+  get_CMEMS_ncdf(
+    variables = c("thetao", "so"),
+    output_filename = out_nc
   )
 
   # Should be converted to list
@@ -161,16 +158,25 @@ test_that("get_CMEMS_ncdf throws error when variables is not character or list",
   skip_if_not_installed("mockery")
   library(mockery)
 
-  testthat::with_mocked_bindings(
-    py_available = function(...) TRUE,
-    py_module_available = function(...) TRUE,
-    .package = "reticulate",
-    {
-      expect_error(
-        get_CMEMS_ncdf(variables = 123),
-        "variables must be a character vector or list"
+  import_mock <- function(module) {
+    if (module == "copernicusmarine") {
+      list(
+        login = mock(NULL),
+        subset = mock(NULL)
       )
     }
+  }
+
+  local_mocked_bindings(
+    py_available = function(...) TRUE,
+    py_module_available = function(...) TRUE,
+    import = import_mock,
+    .package = "reticulate"
+  )
+
+  expect_error(
+    get_CMEMS_ncdf(variables = 123),
+    "variables must be a character vector or list"
   )
 })
 
@@ -178,14 +184,13 @@ test_that("get_CMEMS_ncdf throws error when Python is not available", {
   skip_if_not_installed("mockery")
   library(mockery)
 
-  testthat::with_mocked_bindings(
+  local_mocked_bindings(
     py_available = function(...) FALSE,
-    .package = "reticulate",
-    {
-      expect_error(
-        get_CMEMS_ncdf(variables = "thetao"),
-        "Python is not installed"
-      )
-    }
+    .package = "reticulate"
+  )
+
+  expect_error(
+    get_CMEMS_ncdf(variables = "thetao"),
+    "Python is not installed"
   )
 })
