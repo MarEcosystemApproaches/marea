@@ -15,7 +15,7 @@
 #' @param output_filename Name of the output file (NetCDF format).
 #'
 #' @return No return value. Downloads a NetCDF file to the specified location.
-#' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import use_python py_available py_install
+#' @importFrom reticulate import py_available py_install
 #' @export
 #'
 #' @examples
