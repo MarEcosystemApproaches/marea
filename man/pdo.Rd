@@ -30,7 +30,7 @@ An \code{ea_data} object:
 \url{https://www.ncei.noaa.gov/access/monitoring/pdo/}
 }
 \usage{
-data(pdo)
+pdo
 }
 \description{
 The PDO Index is a monthly index describing long-term sea surface temperature variability in the North Pacific (poleward of 20°N).

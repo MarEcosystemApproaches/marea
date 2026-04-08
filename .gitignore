@@ -14,3 +14,5 @@ data-raw/food-habits/food_habits_*
 data-raw/food-habits/GROUNDFISH*
 data/food_habits*
 .DS_Store
+/doc/
+/Meta/

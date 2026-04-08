@@ -6,7 +6,7 @@ library(marea)
 
 # Helper function
 make_ea_index <- function(
-  df, value_col, data_type, region, location, units, source, species = NA_character_, ...
+    df, value_col, data_type, region, location, units, source, species = NA_character_, ...
 ) {
   ea_data(
     data = df,
@@ -16,7 +16,7 @@ make_ea_index <- function(
     location_descriptor = location,
     units = units,
     species = species,
-    source_citation = source,
+    source_citation = source, 
     ...
   )
 }
@@ -37,7 +37,7 @@ nao <- make_ea_index(
   data_type = "North Atlantic Oscillation Index",
   region = "North Atlantic",
   location = "Azores–Iceland SLP difference",
-  units = "", # Standardized index
+  units = "",  # Standardized index
   source = "NOAA NCEP via azmpdata; https://www.ncei.noaa.gov/access/monitoring/nao/"
 )
 usethis::use_data(nao, overwrite = TRUE)
@@ -57,7 +57,8 @@ azmp_bottom_temperature <- make_ea_index(
   region = "Scotian Shelf (4X, 4V, 4W)",
   location = "NAFO sea floor mean temperature",
   units = "deg C",
-  source = "DFO Atlantic Zone Monitoring Program via azmpdata"
+  source = "DFO Atlantic Zone Monitoring Program via azmpdata package (https://casaultb.github.io/azmpdata/)",
+  citation = "Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229"
 )
 usethis::use_data(azmp_bottom_temperature, overwrite = TRUE)
 
@@ -76,7 +77,9 @@ azmp_surface_temperature <- make_ea_index(
   region = "Scotian Shelf (4X, 4V, 4W)",
   location = "NAFO sea surface mean temperature",
   units = "deg C",
-  source = "DFO Atlantic Zone Monitoring Program via azmpdata"
+  source = "DFO Atlantic Zone Monitoring Program via azmpdata package (https://casaultb.github.io/azmpdata/)",
+  citation = "Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229"
+  
 )
 usethis::use_data(azmp_surface_temperature, overwrite = TRUE)
 
@@ -94,7 +97,9 @@ azmp_satellite_temperature <- make_ea_index(
   region = "Scotian Shelf (4X, 4V, 4W)",
   location = "NAFO sea surface mean temperature from satellite",
   units = "deg C",
-  source = "DFO Atlantic Zone Monitoring Program via azmpdata"
+  source = "DFO Atlantic Zone Monitoring Program via azmpdata package (https://casaultb.github.io/azmpdata/)",
+  citation = "Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229"
+  
 )
 usethis::use_data(azmp_satellite_temperature, overwrite = TRUE)
 
@@ -114,7 +119,8 @@ azmp_stratification <- make_ea_index(
   region = "Scotian Shelf (4X, 4V, 4W)",
   location = "NAFO stratification index",
   units = "kg/m^3 per meter",
-  source = "DFO Atlantic Zone Monitoring Program via azmpdata",
+  source = "DFO Atlantic Zone Monitoring Program via azmpdata package (https://casaultb.github.io/azmpdata/)",
+  citation = "Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229",
   details = "An index of stratification, measured as the density difference between 0 and 50 metres"
 )
 usethis::use_data(azmp_stratification, overwrite = TRUE)
@@ -135,6 +141,9 @@ azmp_salinity <- make_ea_index(
   region = "Scotian Shelf (4X, 4V, 4W)",
   location = "NAFO sea surface mean salinity",
   units = "PSU",
-  source = "DFO Atlantic Zone Monitoring Program via azmpdata"
+  source = "DFO Atlantic Zone Monitoring Program via azmpdata package (https://casaultb.github.io/azmpdata/)",
+  citation = "Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229"
 )
 usethis::use_data(azmp_salinity, overwrite = TRUE)
+  
+  

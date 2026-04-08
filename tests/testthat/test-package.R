@@ -8,4 +8,6 @@ testthat::test_that("marea", {
 
   # Test if a specific function exists
   expect_true(exists("marea_metadata", where = "package:marea"))
+
+
 })

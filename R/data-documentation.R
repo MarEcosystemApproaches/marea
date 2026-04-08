@@ -1,6 +1,12 @@
 #' Oceanic Niño Index (ONI)
 #'
-#' The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern Oscillation. It is calculated as a 3-month running mean of sea surface temperature (SST) anomalies in the Niño 3.4 region (5°N–5°S, 120°W–170°W), using 30-year base periods updated every 5 years. ONI values may change for up to two months after initial posting due to data filtering.
+#' The Oceanic Niño Index (ONI) is a monthly measure of the El Niño-Southern 
+#' Oscillation. It is calculated as a 3-month running mean of sea surface 
+#' temperature (SST) anomalies in the Niño 3.4 region (5°N–5°S, 120°W–170°W),
+#' using 30-year base periods updated every 5 years. ONI values may change for
+#' up to two months after initial posting due to data filtering.
+#' 
+#' This dataset was last queried from NOAA source March 2 2026. 
 #'
 #' For more information, see \href{http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml}{NOAA ONI} and \href{https://www.ncei.noaa.gov/access/monitoring/enso/sst}{NOAA ENSO SST}.
 #'
@@ -26,8 +32,8 @@
 #'     }
 #'   }
 #' }
+#' @name oni
 #' @docType data
-#' @usage data(oni)
 #' @author Andrew Edwards
 #' @source Generated in data-raw/coastwide-indices/coastwide-indices.R
 #' @references Ross, T. & Robert, M. (2022). In Boldt, J.L. et al. Canadian Technical Report of Fisheries and Aquatic Sciences, 3482.
@@ -59,16 +65,14 @@
 #'     }
 #'   }
 #' }
-#'
+#' 
+#' @name grey_seals
 #' @docType data
-#' @usage data(grey_seals)
 #' @author Andrew Edwards, Nell den Heyer
 #' @source Hammill et al. (2023), see data-raw/grey-seals/grey-seals.R
 "grey_seals"
 
 #' @rdname grey_seals
-#' @docType data
-#' @usage data(grey_seals_2021)
 "grey_seals_2021"
 
 #' North Atlantic Oscillation (NAO) Index (ea_data)
@@ -93,8 +97,8 @@
 #'     }
 #'   }
 #' }
+#' @name nao
 #' @docType data
-#' @usage data(nao)
 #' @author Jamie C. Tam; Chantelle Layton
 #' @source \url{https://www.ncei.noaa.gov/access/monitoring/nao/}
 "nao"
@@ -102,12 +106,12 @@
 #' GLORYS Bottom Temperature (ea_spatial)
 #'
 #' Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.
-#' The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and
+#' The latest ten years of data are included from the Copernicus Marine Service (CMEMS) GLORYS product (monthly and 
 #' interim monthly) for best data coverage.
 #'
 #' Dataset IDs: cmems_mod_glo_phy_my_0.083deg_P1M-m and cmems_mod_glo_phy_myint_0.083deg_P1M-m
 #' Pulled using marea::get_CMEMS_ncdf()
-#'
+#' 
 #' @format An `ea_spatial` (sf) object:
 #' \describe{
 #'   \item{value}{Bottom temperature value (°C)}
@@ -123,8 +127,8 @@
 #'   \item{source_citation}{Character. "Copernicus Marine Service"}
 #'   \item{original_value_col}{Character. The original col used for value}
 #' }
+#' @name glorys_bottom_temperature
 #' @docType data
-#' @usage data(glorys_bottom_temperature)
 #' @author marea/DFO
 #' @source Copernicus Marine Service (GLORYS), see data-raw/glorys/glorys-bottom-temperature.R
 "glorys_bottom_temperature"
@@ -154,16 +158,19 @@
 #'     }
 #'   }
 #' }
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229.
+#' 
 #' @docType data
-#' @usage data(azmp_bottom_temperature)
+#' @name azmp_bottom_temperature
 #' @author Jaimie Harbin and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_bottom_temperature"
 
 #' AZMP Scotian Shelf Surface Temperature (ea_data)
-#'
+#' 
 #' Surface water temperature (annual mean) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#'
+#' 
 #' @format An `ea_data` object:
 #' \describe{
 #'  \item{data}{A tibble with columns:
@@ -184,23 +191,26 @@
 #'      }
 #'      }
 #'      }
-#' @docType data
-#' @usage data(azmp_surface_temperature)
-#' @name azmp_surface_temperature
-#' @author Emily O'Grady and Benoit Casault
-#' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
+#'      
+#'      Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+#'      
+#'      
+#'      @docType data
+#'      @name azmp_surface_temperature
+#'      @author Emily O'Grady and Benoit Casault
+#'      @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_surface_temperature"
 
 #' AZMP Scotian Shelf SST from Satellite (ea_data)
-#'
+#' 
 #' Sea surface temperature (SST) from satellite data for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from satellite observations and are crucial for fisheries and climate analyses.
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
 #' \itemize{
-#'  \item{\code{year}:} Numeric year
-#'  \item{\code{region}:} Character NAFO area name
-#'  \item{\code{mean_value}:} Numeric sea surface temperature (°C)
+#' \item{\code{year}:} Numeric year
+#' \item{\code{region}:} Character NAFO area name
+#' \item{\code{mean_value}:} Numeric sea surface temperature (°C)
 #' }
 #' }
 #' \item{meta}{A named list, including:
@@ -214,18 +224,22 @@
 #' }
 #' }
 #' }
-#'
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+#' 
+#' 
 #' @docType data
-#' @usage data(azmp_satellite_temperature)
+#' @name azmp_satellite_temperature
+#' 
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
-#'
+#' 
 "azmp_satellite_temperature"
 
 #' AZMP Scotian Shelf Stratification Index (ea_data)
-#'
+#' 
 #' Stratification index ( measured as the density difference between 0 and 50 metres) from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
-#'
+#' 
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
@@ -246,19 +260,20 @@
 #' }
 #' }
 #' }
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+#' 
 #' @docType data
-#' @usage data(azmp_stratification)
+#' @name azmp_stratification
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
-#'
+#' 
 "azmp_stratification"
 
 #' AZMP Surface Salinity (ea_data)
-#'
-#' Surface salinity from the Atlantic Zone Monitoring Program (AZMP) for the
-#' Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged
-#' from in situ surveys and are crucial for fisheries and climate analyses.
-#'
+#' 
+#' Surface salinity from the Atlantic Zone Monitoring Program (AZMP) for the Scotian Shelf, covering NAFO Divisions 4X, 4V, and 4W. Data are averaged from in situ surveys and are crucial for fisheries and climate analyses.
+#' 
 #' @format An `ea_data` object:
 #' \describe{
 #' \item{data}{A tibble with columns:
@@ -279,13 +294,170 @@
 #' }
 #' }
 #' }
-#'
+#' 
+#' Galbraith, P.S., Lizotte, M., Blais, M., Bélanger, D., Casault, B., Coyne, J., Layton, C., Azetsu-Scott, K., Beazley, L., Chassé, J., Clay, S., Cyr, F., Devred, E., Fudge, A., Gabriel, C.-E., Greenan, B., Hébert, A.-J., Johnson, C.L., Maillet, G., Penney, J., Rastin, S., Ringuette, M., Shaw, J.-L., Snook, S., Starr, M. 2025. Oceanographic conditions in the Atlantic zone in 2024. Can. Tech. Rep. Hydrogr. Ocean. Sci. 400 : viii + 49 p. https://doi.org/10.60825/e92v-d229
+#' 
 #' @docType data
-#' @usage data(azmp_salinity)
+#' @name azmp_salinity
 #' @author Emily O'Grady and Benoit Casault
 #' @source Generated from running `data-raw/azmpdata/azmpdata-load.R`
 "azmp_salinity"
 
+#' AZMP phytoplankton data (ea_data)
+#'
+#' Phytoplankton data from AZMP monitoring program for Halifax 2 and Prince 5 stations
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character station name for Halifax 2 and Prince 5 where data was collected
+#'       \item{\code{diatoms}:} abundance of diatoms (log10)
+#'       \item{\code{dinoflagellates}:} abundance of diatoms (log10)
+#'       \item{\code{flagillates}:} abundance of diatoms (log10)
+#'       \item{\code{cilliates}:} abundance of diatoms (log10)
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "phytoplankton"
+#'       \item{\code{region}:} "Halifax2 and Prince5 station"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf and Bay of Funday"
+#'       \item{\code{units}:} "log10"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_phytoplankton
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_phytoplankton"
+
+#' AZMP zooplankton data (ea_data)
+#'
+#' Zooplankton data from AZMP monitoring program CS LL HL BBL Sections
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character section name CS LL HL BBL
+#'       \item{\code{calanus_fin_value}:} abundance of Calanus finmarchicus (log10)
+#'       \item{\code{pseudocalanus}:} abundance of pseudocalanus (log10)
+#'       \item{\code{copepod}:} abundance of copepods group (log10)
+#'       \item{\code{non_copepods}:} abundance of non_copepods group (log10)
+#'       \item{\code{arctic_calanus_spp}:} abundance arctic calanus group (log10)
+#'       \item{\code{warm_offshore_copepods}:} abundance of warm offshore copepods group (Clausocalanus spp., Mecynocera clausi, and Pleuromamma borealis) (log10)
+#'       \item{\code{warm_shelf_copepods}:} abundance of warm shelf copepods (the summer-fall copepods Paracalanus spp. and Centropages typicus) (log10)
+#'       \item{\code{meso_zooplankton}:} Dry weight of meso zooplankton
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "zooplankton"
+#'       \item{\code{region}:} "Cabot Strait Line, Lousibourg Line, Halifax Line, Browns Bank Line"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf"
+#'       \item{\code{units}:} "log10"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_zooplankton
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_zooplankton"
+
+#' AZMP chemical data (ea_data)
+#'
+#' Ocean chemistry data from AZMP monitoring program CS LL HL BBL Sections
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character section name CS LL HL BBL
+#'       \item{\code{chlorophyll_0_100_value}:} Chlorophyll concentrations integrated between 0 and 100 metres
+#'       \item{\code{integrated_nitrate_0_50}:} Nitrate concentrations integrated between 0 and 50 metres
+#'       \item{\code{integrated_nitrate_50_150}:} Nitrate concentrations integrated between 50 and 150 metres
+#'       \item{\code{integrated_phosphate_0_50}:} Phosphate concentrations integrated between 0 and 50 metres
+#'       \item{\code{integrated_phosphate_50_150}:} Phosphate concentrations integrated between 50 and 150 metres
+#'       \item{\code{integrated_silicate_0_50s}:} Silicate concentrations integrated between 0 and 50 metres
+#'       \item{\code{integrated_silicate_50_150 }:} Silicate concentrations integrated between 50 and 150 metres
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "chemical"
+#'       \item{\code{region}:} "Cabot Strait Line, Lousibourg Line, Halifax Line, Browns Bank Line"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf"
+#'       \item{\code{units}:} "concentrations"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_chemical
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_chemical"
+
+#' AZMP remotesensing data (ea_data)
+#'
+#' Remote sensing and bloom statistic data from AZMP reporting
+#'
+#' @format An `ea_data` object:
+#' \describe{
+#'   \item{data}{A tibble with columns:
+#'     \itemize{
+#'       \item{\code{year}:} Numeric year
+#'       \item{\code{region}:} Character section name CS ESS CSS WSS GB LS
+#'       \item{\code{surface_cholorophyll_log10_value}:} Average surface chlorophyll as inferred from satellite (remote sensing) measurements, with a log 10 transform
+#'       \item{\code{bloom_start}:} Start of pythoplankton bloom, from satellite
+#'       \item{\code{bloom_duration}:} Length of phytoplankton bloom, from satellite
+#'       \item{\code{bloom_amplitude}:} Amplitude of phytoplankton bloom, from satellite
+#'       \item{\code{bloom_magnitude}:} Magnitude of phytoplankton bloom, from satellite
+#'     }
+#'   }
+#'   \item{meta}{A named list, including:
+#'     \itemize{
+#'       \item{\code{data_type}:} "satellite"
+#'       \item{\code{region}:} "Cabot Strait, Eastern Scotian Shelf, Central Scotian Shelf, Western Scotian Shelf, Georges Bank, Lower Shelf"
+#'       \item{\code{location_descriptor}:} "Scotian Shelf"
+#'       \item{\code{units}:} "phytoplankton bloom statistics"
+#'       \item{\code{species}:} \code{NA}
+#'       \item{\code{source_citation}:} "DFO AZMP, https://www.bio.gc.ca/science/monitoring-monitorage/azmp-pmza/overview-eng.php"
+#'       \item{\code{original_value_col}:} "value"
+#'     }
+#'   }
+#' }
+#' 
+#' Casault, B., Johnson, C.L., Devred, E., Clay, S., and Beazley, L. 2025. Chemical and Biological Oceanographic Conditions on the Scotian Shelf and in the Eastern Gulf of Maine during 2024. Can. Tech. Rep. Fish. Aquat. Sci. 3744: vi + 58 p. https://doi.org/10.60825/p6ad-1k52
+#' 
+#' @docType data
+#' @name azmp_remotesensing
+#' @author Jamie c. Tam and Benoit Casault
+#' @source Generated from running `data-raw/azmpdata/azmpdat-bio-load.R`
+"azmp_remotesensing"
 
 #' Pacific Decadal Oscillation (PDO) Index (ea_data)
 #'
@@ -312,7 +484,7 @@
 #'   }
 #' }
 #' @docType data
-#' @usage data(pdo)
+#' @name pdo
 #' @author Andrew Edwards
 #' @source \url{https://www.ncei.noaa.gov/access/monitoring/pdo/}
 "pdo"
@@ -342,7 +514,7 @@
 #'   }
 #' }
 #' @docType data
-#' @usage data(soi)
+#' @name soi
 #' @author Andrew Edwards
 #' @source \url{https://www.cpc.ncep.noaa.gov/data/indices/soi}
 "soi"
@@ -372,10 +544,11 @@
 #'   }
 #' }
 #' @docType data
-#' @usage data(npgo)
+#' @name npgo
 #' @author Andrew Edwards
 #' @source \url{http://www.o3d.org/npgo/}
 "npgo"
+
 
 
 #' Arctic Oscillation (AO) Index (ea_data)
@@ -402,16 +575,16 @@
 #'     }
 #'   }
 #' }
-#'
+#' 
 #' @docType data
-#' @usage data(ao)
+#' @name ao
 #' @author Andrew Edwards
 #' @source \url{https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/}
 "ao"
-
+ 
 #' Atlantic MultiDecadal Oscillation (AMO) Index (ea_data)
 #'
-#'
+#' 
 #'
 #' @format An `ea_data` object:
 #' \describe{
@@ -433,16 +606,16 @@
 #'     }
 #'   }
 #' }
-#'
+#' 
 #' @docType data
-#' @usage data(amo)
+#' @name amo
 #' @author Emily O'Grady
 #' @source \url{https://www1.ncdc.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.amo.dat}
 "amo"
-
+ 
 #' ecological indicators (ea_data)
 #'
-#' ecological indicators calculated from biomass estimates and commercial harvesting data
+#'ecological indicators calculated from biomass estimates and commercial harvesting data
 #'
 #' @format an `ea_data` object with multiple columns:
 #' \describe{
@@ -581,7 +754,7 @@
 #'   \item{BIOMASS_TL2}{biomass of trophic level 2}
 #' }
 #' @docType data
-#' @usage data(azmp_salinity)
+#' @name eco_indicators
 #' @author Jamie C. Tam
 #' @source Generated from running `data-raw/eco-indicators/eco-indicators.R`
 "eco_indicators"
@@ -590,10 +763,10 @@
 #' Satellite Ocean Colour (ea_spatial)
 #'
 #' Annual spring bloom metrics and average chlorophyll-a derived from the OC-CCI
-#'  POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data().
-#'  NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from
+#'  POLY4 chl-a product in the Northwest Atlantic. Pulled using marea::get_erddap_data(). 
+#'  NRMSE_bloom > 0.5 and |standardized anomalies| > 4 filtered out. Resampled from 
 #'  4.64 km to 0.1 degree resolution.
-#'
+#' 
 #' @format An `ea_spatial` (stars) object:
 #' \describe{
 #'   \item{t_start_value}{Day of year of the start of the spring phytoplankton bloom (day of year)}
@@ -608,47 +781,50 @@
 #'   \item{units}{Character. "t_start: day of year; t_duration: days; amplitude_real: mg/m3; magnitude_real: days*mg/m3; annual_mean: mg/m3"}
 #'   \item{region}{Character. "Northwest Atlantic"}
 #'   \item{time_descriptor}{Character. Year}
-#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1) \[Data set\]. https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
+#'   \item{source_citation}{Character. "Clay, S., & Devred, E. (2025). Northwest Atlantic per-pixel spring bloom metrics derived from OC-CCI POLY4 satellite Chlorophyll-a (v1.1) [Data set]. https://catalogue.cioosatlantic.ca/dataset/ca-cioos_473fe40d-613e-4aba-b335-7a31a04e5d69?local=en"}
 #'   \item{temporal_coverage}{Character. "1998-2024"}
 #'   \item{variable_name}{Character. The name used for the variable}
 #' }
+#' @name satellite_ocean_colour
 #' @docType data
-#' @usage data(satellite_ocean_colour)
 #' @author marea/DFO
 #' @source SOPhyE group, DFO, see data-raw/satellite-ocean-colour/satellite_ocean_colour.R
 "satellite_ocean_colour"
-
-
-#' Coastline Data for North Atlantic Region
+#' 
+#' 
+#' Newfoundland and Labrador Climate Index (ea_data)
 #'
-#' State and province level boundaries from Natural Earth for Canada, United States,
-#' Greenland, and Saint Pierre and Miquelon. Useful for adding coastline context to
-#' spatial plots of marine data in the Northwest Atlantic region.
+#' The Newfoundland and Labrador (NL) climate index aims to describe the environmental conditions on the NL shelf
+#'  and in the Northwest Atlantic as a whole. It consists of annual normalized anomalies of 10 subindices with 
+#'  equal contribution: Winter North Atlantic Oscillation, air temperature, sea ice, icebergs, sea surface temperature, 
+#'  vertically-averaged temperature and salinity at Station~27, cold intermediate layer (CIL) core temperature at Station~27, 
+#'  CIL area on 3 hydrographic sections and bottom temperature on the NL shelf. 
+#'  This index runs from 1951 to 2019 and will be updated annually.
 #'
-#' @format An `sf` object with 72 features and 4 fields:
+#' @format An `ea_data` object with:
 #' \describe{
-#'   \item{admin}{Character. Country name (e.g., "Canada", "United States of America")}
-#'   \item{name_en}{Character. State/province name in English}
-#'   \item{name_fr}{Character. State/province name in French}
-#'   \item{geometry}{sfc_MULTIPOLYGON. Spatial geometry of the state/province boundaries}
+#'    \item{data}{A tibble:
+#'     \describe{
+#'       \item{year}{year (numeric)}
+#'       \item{nlci_value}{nlci_value (numeric)}
+#'     }
+#'   }
+#'   \item{meta}{A named list with:
+#'     \describe{
+#'       \item{data_type}{"NL Climate Index"}
+#'       \item{region}{ "Newfoundland and Labrador Shelf"}
+#'       \item{location_descriptor}{"Newfoundland and Labrador Shelf"}
+#'       \item{units}{""}
+#'       \item{species}{"subindices: Winter North Atlantic Oscillation, air temperature, sea ice, icebergs, sea surface temperature, vertically-averaged temperature and salinity at Station~27, cold intermediate layer (CIL) core temperature at Station~27, CIL area on 3 hydrographic sections and bottom temperature on the NL shelf"}
+#'       \item{source_citation}{Character. "Cyr, F. and Galbraith, P. S. 2021. A climate index for the Newfoundland and Labrador shelf, Earth Syst. Sci. Data, 13, 1807–1828, https://doi.org/10.5194/essd-13-1807-2021"}
+#'       \item{original_value_col}{Character. "nlci"}
+#'       \item{comment}{Character. "Data and associated sources are from https://doi.org/10.20383/101.0301"}
+#'     }
+#'   }
 #' }
-#'
-#' @details
-#' This dataset includes state/province boundaries for:
-#' \itemize{
-#'   \item Canada (CA) - All provinces and territories
-#'   \item United States (US) - States bordering Atlantic coast
-#'   \item Greenland (GL)
-#'   \item Saint Pierre and Miquelon (PM)
-#' }
-#'
-#' The data is in WGS 84 coordinate reference system (EPSG:4326) and is suitable
-#' for use with ggplot2 and sf plotting functions.
-#'
 #' @docType data
-#' @name coastline
-#' @usage data(coastline)
-#' @author marea/DFO
-#' @source Natural Earth Data via rnaturalearth package, see data-raw/coastline/coastline.R
-#' @references \url{https://www.naturalearthdata.com/}
-"coastline"
+#' @name nlci
+#' @author Jamie C. Tam
+#' @source \url{https://doi.org/10.20383/101.0301}
+"nlci"
+

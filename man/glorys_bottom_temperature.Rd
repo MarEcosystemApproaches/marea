@@ -25,7 +25,7 @@ An \code{ea_spatial} (sf) object:
 Copernicus Marine Service (GLORYS), see data-raw/glorys/glorys-bottom-temperature.R
 }
 \usage{
-data(glorys_bottom_temperature)
+glorys_bottom_temperature
 }
 \description{
 Monthly bottom temperature fields from the GLORYS reanalysis, provided as a spatial object for the Maritimes region.

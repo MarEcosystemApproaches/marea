@@ -9,7 +9,7 @@ test_that("get_CMEMS_ncdf sets up venv on first run, logs in, and calls subset w
 
   # Arrange: mock reticulate calls
   use_virtualenv_mock <- mock(
-    structure("first-call-failed", class = "try-error"), # first call triggers setup path
+    stop("venv not found"), # first call throws, triggers error handler
     NULL # second call succeeds
   )
   virtualenv_create_mock <- mock(NULL)
@@ -21,8 +21,15 @@ test_that("get_CMEMS_ncdf sets up venv on first run, logs in, and calls subset w
   subset_fun <- function(...) {
     subset_called <<- subset_called + 1
     subset_args <<- list(...)
-    ofile <- file.path(subset_args$output_directory, subset_args$output_filename)
-    dir.create(subset_args$output_directory, recursive = TRUE, showWarnings = FALSE)
+    ofile <- file.path(
+      subset_args$output_directory,
+      subset_args$output_filename
+    )
+    dir.create(
+      subset_args$output_directory,
+      recursive = TRUE,
+      showWarnings = FALSE
+    )
     file.create(ofile)
     invisible(NULL)
   }
@@ -40,9 +47,15 @@ test_that("get_CMEMS_ncdf sets up venv on first run, logs in, and calls subset w
   }
 
   # Stub within function
-  stub(get_CMEMS_ncdf, "reticulate::use_virtualenv", use_virtualenv_mock)
-  stub(get_CMEMS_ncdf, "reticulate::virtualenv_create", virtualenv_create_mock)
-  stub(get_CMEMS_ncdf, "reticulate::virtualenv_install", virtualenv_install_mock)
+  stub(get_CMEMS_ncdf, "use_virtualenv", use_virtualenv_mock)
+  stub(get_CMEMS_ncdf, "virtualenv_create", virtualenv_create_mock)
+  stub(
+    get_CMEMS_ncdf,
+    "virtualenv_install",
+    virtualenv_install_mock
+  )
+  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
+  stub(get_CMEMS_ncdf, "use_python", function(...) invisible(NULL))
   stub(get_CMEMS_ncdf, "import", import_mock)
 
   # Act
@@ -102,16 +115,22 @@ test_that("get_CMEMS_ncdf skips login when credentials are NA and still calls su
     )
   }
 
-  stub(get_CMEMS_ncdf, "reticulate::use_virtualenv", use_virtualenv_mock)
-  stub(get_CMEMS_ncdf, "reticulate::virtualenv_create", virtualenv_create_mock)
-  stub(get_CMEMS_ncdf, "reticulate::virtualenv_install", virtualenv_install_mock)
+  stub(get_CMEMS_ncdf, "use_virtualenv", use_virtualenv_mock)
+  stub(get_CMEMS_ncdf, "virtualenv_create", virtualenv_create_mock)
+  stub(
+    get_CMEMS_ncdf,
+    "virtualenv_install",
+    virtualenv_install_mock
+  )
+  stub(get_CMEMS_ncdf, "py_available", function(...) TRUE)
+  stub(get_CMEMS_ncdf, "use_python", function(...) invisible(NULL))
   stub(get_CMEMS_ncdf, "import", import_mock)
 
   out_nc <- tempfile(fileext = ".nc")
   get_CMEMS_ncdf(variables = list("thetao"), output_filename = out_nc)
 
   # No venv creation/install expected
-  expect_called(use_virtualenv_mock, 2)
+  expect_called(use_virtualenv_mock, 1)
   expect_called(virtualenv_create_mock, 0)
   expect_called(virtualenv_install_mock, 0)
 

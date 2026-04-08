@@ -1,3 +1,5 @@
+
+
 #' An S4 Class for Environmental Assessment Data
 #'
 #' @description
@@ -56,13 +58,12 @@ setClass(
 #' @examples
 #' df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
 #' obj <- ea_data(df,
-#'   value_col = c("temp_c"),
-#'   data_type = "temperature",
-#'   region = "Scotian Shelf",
-#'   location_descriptor = "bottom",
-#'   units = "°C",
-#'   project = "AZMP"
-#' )
+#'                value_col = c("temp_c"),
+#'                data_type = "temperature",
+#'                region = "Scotian Shelf",
+#'                location_descriptor = "bottom",
+#'                units = "°C",
+#'                project = "AZMP")
 #'
 #' # Access metadata
 #' obj[["region"]]
@@ -79,60 +80,59 @@ setGeneric("ea_data", function(data, value_col, data_type, region,
 
 #' @rdname ea_data
 #' @export
-setMethod(
-  "ea_data", signature(data = "data.frame", value_col = "character"),
-  function(data, value_col, data_type, region,
-           location_descriptor, units, species = NA_character_,
-           source_citation = "No citation provided", ...) {
-    # --- Validation ---
-    for (i in 1:length(value_col)) {
-      val <- value_col[[i]]
-      if (!val %in% names(data)) {
-        stop(paste0("Column '", val, "' not found in the data."), call. = FALSE)
-      }
-    }
-    if (!"year" %in% names(data)) {
-      year_cols <- length(grep("year|yr", names(data), ignore.case = TRUE))
-      if (year_cols == 1) {
-        # rename the column to 'year'
-        original_name <- names(data)[grep("year|yr", names(data), ignore.case = TRUE)]
-        names(data)[grep("year|yr", names(data), ignore.case = TRUE)] <- "year"
-        warning(paste0("Column '", original_name, "' renamed to 'year'."), call. = FALSE)
-      } else if (year_cols > 1) {
-        stop("Multiple columns matching 'year|yr' found. Please ensure only one 'year' column exists.", call. = FALSE)
-      } else {
-        stop("`data` must contain a 'year' column.", call. = FALSE)
-      }
-    }
-    if (!is.numeric(data$year)) {
-      stop(paste0("Columns 'year' must be numeric."), call. = FALSE)
-    }
-
-
-    # --- Standardize ---
-    # rename all columns from value_col (list) to originalname_value
-    for (i in 1:length(value_col)) {
-      val <- value_col[[i]]
-      new_name <- paste0(val, "_value")
-      data <- dplyr::rename(data, !!new_name := .data[[val]])
-    }
-
-    # --- Metadata ---
-    meta <- list(
-      data_type = as.character(data_type),
-      region = as.character(region),
-      location_descriptor = as.character(location_descriptor),
-      units = as.character(units),
-      species = as.character(species),
-      source_citation = as.character(source_citation),
-      original_value_col = value_col, # TODO check that this prints okay as a list
-      ...
-    )
-
-    # --- Construct S4 object ---
-    new("ea_data", data = tibble::as_tibble(data), meta = meta)
-  }
-)
+setMethod("ea_data", signature(data = "data.frame", value_col = "character"),
+          function(data, value_col, data_type, region,
+                   location_descriptor, units, species = NA_character_,
+                   source_citation = "No citation provided", ...) {
+            
+            # --- Validation ---
+            for (i in 1:length(value_col)) {
+              val <- value_col[[i]]
+                 if (!val %in% names(data)) {
+                  stop(paste0("Column '", val, "' not found in the data."), call. = FALSE)
+              }
+            }
+            if (!"year" %in% names(data)) {
+              year_cols <- length(grep('year|yr', names(data), ignore.case = TRUE))
+              if ( year_cols == 1) {
+                # rename the column to 'year'
+                original_name <- names(data)[grep("year|yr", names(data), ignore.case = TRUE)]
+                names(data)[grep("year|yr", names(data), ignore.case = TRUE)] <- "year"
+                warning(paste0("Column '", original_name, "' renamed to 'year'."), call. = FALSE)
+              } else if (year_cols > 1) {
+                stop("Multiple columns matching 'year|yr' found. Please ensure only one 'year' column exists.", call. = FALSE)
+              } else{
+              stop("`data` must contain a 'year' column.", call. = FALSE)
+              }
+            }
+            if (!is.numeric(data$year)) {
+              stop(paste0("Columns 'year' must be numeric."), call. = FALSE)
+            }
+            
+            
+            # --- Standardize ---
+            # rename all columns from value_col (list) to originalname_value
+            for (i in 1:length(value_col)) {
+              val <- value_col[[i]]
+              new_name <- paste0(val, "_value")
+              data <- dplyr::rename(data, !!new_name := .data[[val]])
+            }
+            
+            # --- Metadata ---
+            meta <- list(
+              data_type = as.character(data_type),
+              region = as.character(region),
+              location_descriptor = as.character(location_descriptor),
+              units = as.character(units),
+              species = as.character(species),
+              source_citation = as.character(source_citation),
+              original_value_col = value_col, # TODO check that this prints okay as a list
+              ...
+            )
+            
+            # --- Construct S4 object ---
+            new("ea_data", data = tibble::as_tibble(data), meta = meta)
+          })
 
 
 #' Extract or Access Parts of an ea_data Object
@@ -159,11 +159,9 @@ setMethod(
 #'
 #' @examples
 #' df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
-#' obj <- ea_data(df,
-#'   value_col = c("temp_c"), data_type = "temperature",
-#'   region = "Scotian Shelf", location_descriptor = "bottom",
-#'   units = "°C"
-#' )
+#' obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
+#'                region = "Scotian Shelf", location_descriptor = "bottom",
+#'                units = "°C")
 #'
 #' # Get the units
 #' obj[["units"]]
@@ -214,11 +212,9 @@ setMethod(
 #'
 #' @examples
 #' df <- data.frame(year = 2000:2005, temp_c = rnorm(6))
-#' obj <- ea_data(df,
-#'   value_col = "temp_c", data_type = "temperature",
-#'   region = "Scotian Shelf", location_descriptor = "bottom",
-#'   units = "°C"
-#' )
+#' obj <- ea_data(df, value_col = "temp_c", data_type = "temperature",
+#'                region = "Scotian Shelf", location_descriptor = "bottom",
+#'                units = "°C")
 #'
 #' # Subset the first three rows
 #' obj[1:3, ]
@@ -261,16 +257,12 @@ setMethod(
 #' @return A new `ea_data` object containing only the matching rows.
 #'
 #' @examples
-#' df <- data.frame(
-#'   year = rep(2000:2002, 2),
-#'   temp_c = rnorm(6),
-#'   group = rep(c("A", "B"), each = 3)
-#' )
-#' obj <- ea_data(df,
-#'   value_col = c("temp_c"), data_type = "temperature",
-#'   region = "Test Region", location_descriptor = "surface",
-#'   units = "°C"
-#' )
+#' df <- data.frame(year = rep(2000:2002, 2),
+#'                  temp_c = rnorm(6),
+#'                  group = rep(c("A", "B"), each = 3))
+#' obj <- ea_data(df, value_col = c("temp_c"), data_type = "temperature",
+#'                region = "Test Region", location_descriptor = "surface",
+#'                units = "°C")
 #'
 #' # Filter for a single year
 #' ea.subset(obj, "year", 2001)
@@ -282,17 +274,17 @@ setMethod(
 ea.subset <- function(x, column, value) {
   if (!inherits(x, "ea_data")) stop("x must be an ea_data object.", call. = FALSE)
   if (!column %in% names(x@data)) stop(paste("Column", column, "not found in data."), call. = FALSE)
-
+  
   # Subset rows where column matches value(s)
   rows <- x@data[[column]] %in% value
-
+  
   # Return new ea_data object
   new("ea_data", data = x@data[rows, , drop = FALSE], meta = x@meta)
 }
 
 
 #' Timeseries Data Validity
-#'
+#' 
 #' @description
 #' The validity method for the `ea_data` class ensures that the `data` slot
 #' contains the required `year` and `value` columns. This check is performed
@@ -312,6 +304,6 @@ setValidity("ea_data", function(object) {
   if (length(value_cols) == 0) {
     errors <- c(errors, "Missing value column in the data slot.")
   }
-
+  
   if (length(errors) == 0) TRUE else errors
 })

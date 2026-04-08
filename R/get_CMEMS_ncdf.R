@@ -15,22 +15,83 @@
 #' @param output_filename Name of the output file (NetCDF format).
 #'
 #' @return No return value. Downloads a NetCDF file to the specified location.
-#' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import
+#' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import use_python py_available py_install
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' get_CMEMS_ncdf(username = "your_username", password = "your_password", variables = list("thetao"))
 #' }
-get_CMEMS_ncdf <- function(username = NA, password = NA, dataset_id = "cmems_mod_glo_phy_my_0.083deg_P1M-m", variables, minimum_longitude = -67.74250, maximum_longitude = -54.90132, minimum_latitude = 40.04343, maximum_latitude = 47.83333, start_datetime = "1993-12-01T00:00:00", end_datetime = "1994-12-01T00:00:00", output_filename = tempfile(fileext = ".nc")) {
-  pythonenv <- try(reticulate::use_virtualenv("CopernicusMarine", required = TRUE))
-
-  if (inherits(pythonenv, "try-error")) {
-    reticulate::virtualenv_create(envname = "CopernicusMarine")
-    reticulate::virtualenv_install("CopernicusMarine", packages = c("copernicusmarine"))
+get_CMEMS_ncdf <- function(
+  username = NA,
+  password = NA,
+  dataset_id = "cmems_mod_glo_phy_my_0.083deg_P1M-m",
+  variables,
+  minimum_longitude = -67.74250,
+  maximum_longitude = -54.90132,
+  minimum_latitude = 40.04343,
+  maximum_latitude = 47.83333,
+  start_datetime = "1993-12-01T00:00:00",
+  end_datetime = "1994-12-01T00:00:00",
+  output_filename = tempfile(fileext = ".nc")
+) {
+  # Check if Python is available
+  python_path <- Sys.getenv("RETICULATE_PYTHON", unset = "")
+  if (nchar(python_path) > 0) {
+    use_python(python_path, required = FALSE)
   }
-  reticulate::use_virtualenv("CopernicusMarine", required = TRUE)
-  cmt <- try(import("copernicusmarine"))
+
+  if (!py_available(initialize = TRUE)) {
+    stop(
+      "Python is not installed. Please install Python from https://www.python.org or contact your system administrator.",
+      call. = FALSE
+    )
+  }
+
+  # Try to use virtual environment first
+  venv_setup_success <- FALSE
+  pythonenv <- tryCatch(
+    {
+      use_virtualenv("CopernicusMarine", required = TRUE)
+      venv_setup_success <- TRUE
+      TRUE
+    },
+    error = function(e) {
+      message("Virtual environment not found. Attempting to create one...")
+      tryCatch(
+        {
+          virtualenv_create(envname = "CopernicusMarine")
+          virtualenv_install(
+            "CopernicusMarine",
+            packages = c("copernicusmarine")
+          )
+          use_virtualenv("CopernicusMarine", required = TRUE)
+          venv_setup_success <<- TRUE
+          TRUE
+        },
+        error = function(e2) {
+          message(
+            "Virtual environment creation failed. Falling back to system Python with pip..."
+          )
+          FALSE
+        }
+      )
+    }
+  )
+
+  # If virtual environment setup failed, use pip install on system Python
+  if (!venv_setup_success) {
+    message("Using system Python installation with pip...")
+    tryCatch(
+      import("copernicusmarine"),
+      error = function(e) {
+        message("Installing copernicusmarine via pip...")
+        py_install("copernicusmarine", pip = TRUE)
+      }
+    )
+  }
+
+  cmt <- import("copernicusmarine")
 
   # Login function to create your configuration file
   if (!is.na(username) | !is.na(password)) {
