@@ -15,7 +15,7 @@
 #' @param output_filename Name of the output file (NetCDF format).
 #'
 #' @return No return value. Downloads a NetCDF file to the specified location.
-#' @importFrom reticulate use_virtualenv virtualenv_install virtualenv_create import use_python py_available py_install
+#' @importFrom reticulate import py_available py_install
 #' @export
 #'
 #' @examples
@@ -35,70 +35,45 @@ get_CMEMS_ncdf <- function(
   end_datetime = "1994-12-01T00:00:00",
   output_filename = tempfile(fileext = ".nc")
 ) {
-  # Check if Python is available
-  python_path <- Sys.getenv("RETICULATE_PYTHON", unset = "")
-  if (nchar(python_path) > 0) {
-    use_python(python_path, required = FALSE)
-  }
-
-  if (!py_available(initialize = TRUE)) {
+  if (!reticulate::py_available(initialize = TRUE)) {
     stop(
       "Python is not installed. Please install Python from https://www.python.org or contact your system administrator.",
       call. = FALSE
     )
   }
 
-  # Try to use virtual environment first
-  venv_setup_success <- FALSE
-  pythonenv <- tryCatch(
-    {
-      use_virtualenv("CopernicusMarine", required = TRUE)
-      venv_setup_success <- TRUE
-      TRUE
-    },
-    error = function(e) {
-      message("Virtual environment not found. Attempting to create one...")
-      tryCatch(
-        {
-          virtualenv_create(envname = "CopernicusMarine")
-          virtualenv_install(
-            "CopernicusMarine",
-            packages = c("copernicusmarine")
-          )
-          use_virtualenv("CopernicusMarine", required = TRUE)
-          venv_setup_success <<- TRUE
-          TRUE
-        },
-        error = function(e2) {
-          message(
-            "Virtual environment creation failed. Falling back to system Python with pip..."
-          )
-          FALSE
-        }
-      )
+  required_packages <- c("copernicusmarine", "h5py")
+  for (pkg in required_packages) {
+    if (!reticulate::py_module_available(pkg)) {
+      message(sprintf("Installing %s...", pkg))
+      reticulate::py_install(pkg, pip = TRUE)
     }
-  )
+  }
 
-  # If virtual environment setup failed, use pip install on system Python
-  if (!venv_setup_success) {
-    message("Using system Python installation with pip...")
+  cmt <- reticulate::import("copernicusmarine")
+
+  # Login function to create your configuration file
+  if (!is.na(username) && !is.na(password)) {
     tryCatch(
-      import("copernicusmarine"),
+      {
+        cmt$login(username, password, overwrite = TRUE)
+      },
       error = function(e) {
-        message("Installing copernicusmarine via pip...")
-        py_install("copernicusmarine", pip = TRUE)
+        message("Note: Login skipped. Using stored credentials if available.")
       }
     )
   }
 
-  cmt <- import("copernicusmarine")
-
-  # Login function to create your configuration file
-  if (!is.na(username) | !is.na(password)) {
-    cmt$login(username, password)
+  # make sure variables is a list
+  if (is.character(variables)) {
+    variables <- as.list(variables)
   }
-  tmpdirnc <- tempdir()
-  tmpnc <- tempfile(fileext = ".nc")
+
+  if (!is.list(variables)) {
+    stop("variables must be a character vector or list", call. = FALSE)
+  }
+
+  # get data
   cmt$subset(
     dataset_id = dataset_id,
     variables = variables,
@@ -111,4 +86,6 @@ get_CMEMS_ncdf <- function(
     output_directory = dirname(output_filename),
     output_filename = basename(output_filename)
   )
+
+  return(output_filename)
 }
