@@ -13,6 +13,8 @@ get_CMEMS_ncdf(
   maximum_longitude = -54.90132,
   minimum_latitude = 40.04343,
   maximum_latitude = 47.83333,
+  minimum_depth = NULL,
+  maximum_depth = NULL,
   start_datetime = "1993-12-01T00:00:00",
   end_datetime = "1994-12-01T00:00:00",
   output_filename = tempfile(fileext = ".nc")
@@ -34,6 +36,10 @@ get_CMEMS_ncdf(
 \item{minimum_latitude}{Minimum latitude for the data bounding box.}
 
 \item{maximum_latitude}{Maximum latitude for the data bounding box.}
+
+\item{minimum_depth}{Minimum depth in meters (e.g., 0 for surface). Default is NULL (all depths).}
+
+\item{maximum_depth}{Maximum depth in meters (e.g., 100). Default is NULL (all depths).}
 
 \item{start_datetime}{Start date and time (e.g., "1993-12-01T00:00:00").}
 
