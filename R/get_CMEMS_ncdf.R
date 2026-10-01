@@ -10,6 +10,9 @@
 #' @param maximum_longitude Maximum longitude for the data bounding box.
 #' @param minimum_latitude Minimum latitude for the data bounding box.
 #' @param maximum_latitude Maximum latitude for the data bounding box.
+#' @param minimum_depth Minimum depth in meters (e.g., 0 for surface). Default is NULL (all depths).
+#' @param maximum_depth Maximum depth in meters (e.g., 100). Default is NULL (all depths).
+#' @param start_datetime Start date and time (e.g., "1993-12-01T00:00:00").
 #' @param start_datetime Start date and time (e.g., "1993-12-01T00:00:00").
 #' @param end_datetime End date and time (e.g., "1994-12-01T00:00:00").
 #' @param output_filename Name of the output file (NetCDF format).
@@ -31,6 +34,8 @@ get_CMEMS_ncdf <- function(
   maximum_longitude = -54.90132,
   minimum_latitude = 40.04343,
   maximum_latitude = 47.83333,
+  minimum_depth = NULL,
+  maximum_depth = NULL,
   start_datetime = "1993-12-01T00:00:00",
   end_datetime = "1994-12-01T00:00:00",
   output_filename = tempfile(fileext = ".nc")
@@ -81,6 +86,8 @@ get_CMEMS_ncdf <- function(
     maximum_longitude = maximum_longitude,
     minimum_latitude = minimum_latitude,
     maximum_latitude = maximum_latitude,
+    minimum_depth = minimum_depth,
+    maximum_depth = maximum_depth,
     start_datetime = start_datetime,
     end_datetime = end_datetime,
     output_directory = dirname(output_filename),
