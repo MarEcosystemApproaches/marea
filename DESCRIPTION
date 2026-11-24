@@ -79,6 +79,7 @@ Suggests:
     devtools,
     doParallel,
     foreach,
+    janitor,
     knitr,
     raster,
     rmarkdown,
